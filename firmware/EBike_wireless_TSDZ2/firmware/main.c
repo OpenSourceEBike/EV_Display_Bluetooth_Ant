@@ -1317,7 +1317,7 @@ void eeprom_write_variables_and_reset(void)
 void ble_send_periodic_data(void)
 {
   // send periodic to mobile app
-  uint8_t tx_data[BLE_TSDZ2_PERIODIC_LEN] = {0};
+  uint8_t tx_data[BLE_TSDZ2_PERIODIC_LEN];
   tx_data[0] = (uint8_t)(ui_vars.ui16_battery_voltage_filtered_x10 & 0xff);
   tx_data[1] = (uint8_t)(ui_vars.ui16_battery_voltage_filtered_x10 >> 8);
   tx_data[2] = ui_vars.ui16_battery_current_filtered_x5;
@@ -1834,8 +1834,8 @@ int main(void)
     NVIC_SystemReset(); //reboot into bootloader
   }
 
-  // ble_init();
-  // ant_setup();
+  ble_init();
+  ant_setup();
   uart_init();
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
@@ -1872,8 +1872,8 @@ int main(void)
 
       mainscreen_idle();
 
-      // ble_send_periodic_data();
-      // ble_update_configurations_data();
+      ble_send_periodic_data();
+      ble_update_configurations_data();
       motor_power_manage();
 
     //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
@@ -1881,47 +1881,47 @@ int main(void)
     //   streetMode();
     //   brakeLights();
 
-    //   if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && (!ui8_ble_connected_shown))
-    //   {
-    //     ui8_ble_connected_shown = 1;
-    //     led_sequence_play(LED_EVENT_BLUETOOTH_CONNECT);
-    //   }
+      if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && (!ui8_ble_connected_shown))
+      {
+        ui8_ble_connected_shown = 1;
+        led_sequence_play(LED_EVENT_BLUETOOTH_CONNECT);
+      }
       
-    //   if ((m_conn_handle == BLE_CONN_HANDLE_INVALID) && (ui8_ble_connected_shown))
-    //   {
-    //     ui8_ble_connected_shown = 0;
-    //     led_sequence_play(LED_EVENT_BLUETOOTH_DISCONNECT);
-    //   }
-    // }
+      if ((m_conn_handle == BLE_CONN_HANDLE_INVALID) && (ui8_ble_connected_shown))
+      {
+        ui8_ble_connected_shown = 0;
+        led_sequence_play(LED_EVENT_BLUETOOTH_DISCONNECT);
+      }
+    }
 
-    //   // every 1 second
-    // ui32_time_now = get_time_base_counter_1ms();
-    // if ((ui32_time_now - ui32_dfucheck_last_run_time) >= 1000)
-    // {
-    //   ui32_dfucheck_last_run_time = ui32_time_now;
-    //   //see if DFU reboot is needed
+      // every 1 second
+    ui32_time_now = get_time_base_counter_1ms();
+    if ((ui32_time_now - ui32_dfucheck_last_run_time) >= 1000)
+    {
+      ui32_dfucheck_last_run_time = ui32_time_now;
+      //see if DFU reboot is needed
 
-    //   // see if there was a change to the ANT ID
-    //   if (ui8_m_ant_device_id != mp_ui_vars->ui8_ant_device_id)
-    //   {
-    //     mp_ui_vars->ui8_ant_device_id = ui8_m_ant_device_id;
-    //     eeprom_write_variables_and_reset();
-    //   }
+      // see if there was a change to the ANT ID
+      if (ui8_m_ant_device_id != mp_ui_vars->ui8_ant_device_id)
+      {
+        mp_ui_vars->ui8_ant_device_id = ui8_m_ant_device_id;
+        eeprom_write_variables_and_reset();
+      }
 
-    //   // see if there a request to enter in bootloader
-    //   if (ui8_m_enter_bootloader)
-    //   {
-    //     ui8_m_enter_bootloader = 0;
-    //     mp_ui_vars->ui8_enter_bootloader = 1;
-    //     eeprom_write_variables_and_reset();
-    //   }
+      // see if there a request to enter in bootloader
+      if (ui8_m_enter_bootloader)
+      {
+        ui8_m_enter_bootloader = 0;
+        mp_ui_vars->ui8_enter_bootloader = 1;
+        eeprom_write_variables_and_reset();
+      }
 
-    //   // see if there was a change to the ANT ID
-    //   if (ui8_m_flash_configurations)
-    //   {
-    //     ui8_m_flash_configurations = 0;
-    //     eeprom_write_variables();
-    //   }
+      // see if there was a change to the ANT ID
+      if (ui8_m_flash_configurations)
+      {
+        ui8_m_flash_configurations = 0;
+        eeprom_write_variables();
+      }
     }
   }
 }
