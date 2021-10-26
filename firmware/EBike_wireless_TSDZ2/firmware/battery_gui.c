@@ -19,7 +19,7 @@ bool renderBattery(FieldLayout *layout)
   } else {
     battery_bars = 0;
   }
-battery_bars = 4;
+
   // first, clear the full symbol area
   ui32_x1 = BATTERY_SOC_START_X + 2;
   ui32_y1 = BATTERY_SOC_START_Y + 2;

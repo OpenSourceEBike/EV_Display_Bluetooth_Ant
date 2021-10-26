@@ -613,6 +613,11 @@ void ssd1306_dim(bool dim)
         ssd1306_command(contrast);
 }
 
+void ssd1306_power_off()
+{
+  ssd1306_command(SSD1306_DISPLAYOFF);
+}
+
 void ssd1306_data(uint8_t c)
 {
         // if (use_i2c) {

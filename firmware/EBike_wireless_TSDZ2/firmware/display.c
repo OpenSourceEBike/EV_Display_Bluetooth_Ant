@@ -71,6 +71,11 @@ void display_show() {
   ssd1306_display();
 }
 
+void display_off() {
+  ssd1306_dim(1);
+  ssd1306_power_off();
+}
+
 void display_init(void)
 {
   ssd1306_init_i2c(SSD1306_CONFIG_SCL_PIN, SSD1306_CONFIG_SDA_PIN);

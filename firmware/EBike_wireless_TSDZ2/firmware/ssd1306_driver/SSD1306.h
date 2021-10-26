@@ -107,6 +107,7 @@ extern "C" {
 int16_t ssd1306_width(void);
 int16_t ssd1306_height(void);
 void set_rotation(uint8_t x);
+void ssd1306_power_off();
 void ssd1306_init(uint32_t dc, uint32_t rs, uint32_t cs, uint32_t clk, uint32_t mosi);
 void ssd1306_init_i2c(uint32_t scl, uint32_t sda);
 void ssd1306_command(uint8_t c);

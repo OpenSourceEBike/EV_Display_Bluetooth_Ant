@@ -482,16 +482,17 @@ static bool onPressStreetMode(buttons_events_t events) {
 bool mainScreenOnPress(buttons_events_t events) {
   bool handled = false;
 
-  handled = onPressAlternateField(events);
+  // handled = onPressAlternateField(events);
 
-  if (handled == false)
-    handled = anyscreen_onpress(events);
+  // if (handled == false)
+  //   handled = anyscreen_onpress(events);
 
-  if (handled == false)
-    handled = onPressStreetMode(events);
+  // if (handled == false)
+  //   handled = onPressStreetMode(events);
 
   if (handled == false &&
       ui8_m_alternate_field_state == 0) {
+    
     if (events & UP_CLICK) {
       ui_vars.ui8_assist_level++;
 
@@ -818,7 +819,7 @@ bool appwide_onpress(buttons_events_t events)
   // power off only after we release first time the onoff button
   if (events & ONOFF_LONG_CLICK)
   {
-    lcd_power_off(1);
+    system_power_off(1);
     return true;
   }
 

@@ -10,6 +10,7 @@
 
 #include "SSD1306.h"
 
+void display_off();
 void display_init();
 void display_show(void); // Call to flush framebuffer
 void display_set_backlight_intensity(uint8_t level);

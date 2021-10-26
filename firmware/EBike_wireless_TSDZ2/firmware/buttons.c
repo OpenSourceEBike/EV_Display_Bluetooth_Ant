@@ -59,10 +59,7 @@ void InitButton(Button* button, uint32_t pin_number, nrf_gpio_pin_pull_t pull_co
 bool PollButton(Button* button)
 {
   uint32_t pinState = nrf_gpio_pin_read(button->PinNumber);
-  if (button->ActiveState == BUTTON_ACTIVE_LOW)
-    pinState ^= 1;
-
-  return pinState != 0;
+  return !pinState; // hardware state inverted
 }
 
 uint32_t buttons_get_up_state (void)

@@ -31,7 +31,7 @@ typedef union
 void SW102_rt_processing_stop(void);
 void SW102_rt_processing_start(void);
 void walk_assist_state(void);
-void lcd_power_off(uint8_t updateDistanceOdo);
+void system_power_off(uint8_t updateDistanceOdo);
 uint32_t get_seconds();
 
 // extern Button buttonM, buttonDWN, buttonUP, buttonPWR;

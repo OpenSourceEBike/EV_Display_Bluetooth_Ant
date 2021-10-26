@@ -82,14 +82,14 @@ uint8_t ui8_braking_led_state = 0;
 
 typedef enum
 {
-  TSDZ2_POWER_STATE_OFF_START,
-  TSDZ2_POWER_STATE_OFF_WAIT,
-  TSDZ2_POWER_STATE_OFF,
-  TSDZ2_POWER_STATE_ON_START,
-  TSDZ2_POWER_STATE_ON,
-} TSDZ2_power_state_t;
+  MOTOR_STATE_OFF_START,
+  MOTOR_STATE_OFF_WAIT,
+  MOTOR_STATE_OFF,
+  MOTOR_STATE_ON_START,
+  MOTOR_STATE_ON,
+} motor_power_state_t;
 
-TSDZ2_power_state_t m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_START;
+motor_power_state_t m_motor_state = MOTOR_STATE_OFF;
 
 #define MSEC_PER_TICK 10
 APP_TIMER_DEF(main_timer);
@@ -532,16 +532,16 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
     if (p_profile->page_16.current_front_gear == 3)
     {
 
-      if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_OFF)
+      if (m_motor_state == MOTOR_STATE_OFF)
       {
         // turn on TSDZ2 motor controller
-        m_TSDZ2_power_state = TSDZ2_POWER_STATE_ON_START;
+        m_motor_state = MOTOR_STATE_ON_START;
       }
 
-      else if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_ON)
+      else if (m_motor_state == MOTOR_STATE_ON)
       {
         //  turn off TSDZ2 motor controller
-        m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_START;
+        m_motor_state = MOTOR_STATE_OFF_START;
       }
     }
 
@@ -831,14 +831,14 @@ static void tsdz2_write_handler_periodic(uint8_t *p_data, uint16_t len)
     {
     case 1:
       // turn on TSDZ2 motor controller
-      if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_OFF)
-        m_TSDZ2_power_state = TSDZ2_POWER_STATE_ON_START;
+      if (m_motor_state == MOTOR_STATE_OFF)
+        m_motor_state = MOTOR_STATE_ON_START;
       break;
 
     case 2:
       // turn off TSDZ2 motor controller
-      if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_ON)
-        m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_START;
+      if (m_motor_state == MOTOR_STATE_ON)
+        m_motor_state = MOTOR_STATE_OFF_START;
       break;
     }
   }
@@ -1304,7 +1304,7 @@ void ble_init(void)
 
 void eeprom_write_variables_and_reset(void)
 {
-  // NOTE that flash of EEPROM does not work on an interrupt like on the ant_id_write_handler(), hence it is done here on main()
+  // NOTE that flash of EEPROM does not work on an interrupt like on the ant_id_write_handler(), hence it is done here on main
   eeprom_write_variables();
 
   // wait some time to make sure eeprom is written
@@ -1574,51 +1574,52 @@ void ble_update_configurations_data(void)
   }
 }
 
-void TSDZ2_power_manage(void)
+// called every 50ms
+void motor_power_manage(void)
 {
   static uint8_t counter;
 
-  switch (m_TSDZ2_power_state)
+  switch (m_motor_state)
   {
-  case TSDZ2_POWER_STATE_OFF_START:
-    motor_power_enable(false);
-    counter = 10;
-    m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_WAIT;
-    break;
+    case MOTOR_STATE_OFF_START:
+      motor_power_enable(false);
+      counter = 20; // 1 second
+      m_motor_state = MOTOR_STATE_OFF_WAIT;
+      break;
 
-  case TSDZ2_POWER_STATE_OFF_WAIT:
-    counter--;
-    if (counter == 0)
-    {
-      // reset state variables
-      if (g_motor_init_state != MOTOR_INIT_OFF) 
+    case MOTOR_STATE_OFF_WAIT:
+      if (counter > 0) counter--;
+      if (counter == 0)
       {
-        led_sequence_play(LED_EVENT_MOTOR_OFF);
-        led_sequence_play(LED_EVENT_WAIT_1S);
-        disp_soc(ui8_g_battery_soc/10);
+        // reset state variables
+        if (g_motor_init_state != MOTOR_INIT_OFF) 
+        {
+          led_sequence_play(LED_EVENT_MOTOR_OFF);
+          led_sequence_play(LED_EVENT_WAIT_1S);
+          disp_soc(ui8_g_battery_soc/10);
+        }
+        uart_reset_rx_buffer();
+        g_motor_init_state = MOTOR_INIT_OFF;
+        g_motor_init_state_conf = MOTOR_INIT_CONFIG_SEND_CONFIG;
+        ui8_g_motor_init_status = MOTOR_INIT_STATUS_RESET;
+
+        m_motor_state = MOTOR_STATE_OFF;
       }
-      uart_reset_rx_buffer();
-      g_motor_init_state = MOTOR_INIT_OFF;
-      g_motor_init_state_conf = MOTOR_INIT_CONFIG_SEND_CONFIG;
-      ui8_g_motor_init_status = MOTOR_INIT_STATUS_RESET;
+      break;
 
-      m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF;
-    }
-    break;
+    case MOTOR_STATE_OFF:
+      // do nothing
+      break;
 
-  case TSDZ2_POWER_STATE_OFF:
-    // do nothing
-    break;
+    case MOTOR_STATE_ON_START:
+      motor_power_enable(true);
+      g_motor_init_state = MOTOR_INIT_GET_MOTOR_ALIVE;
+      m_motor_state = MOTOR_STATE_ON;
+      break;
 
-  case TSDZ2_POWER_STATE_ON_START:
-    motor_power_enable(true);
-    g_motor_init_state = MOTOR_INIT_GET_MOTOR_ALIVE;
-    m_TSDZ2_power_state = TSDZ2_POWER_STATE_ON;
-    break;
-
-  case TSDZ2_POWER_STATE_ON:
-    // do nothing
-    break;
+    case MOTOR_STATE_ON:
+      // do nothing
+      break;
   }
 }
 
@@ -1702,16 +1703,16 @@ void TSDZ2_power_manage(void)
 //     if (events & ONOFF_LONG_CLICK)
 //     {
 //       // Toggle power state...
-//             if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_OFF)
+//             if (m_motor_state == MOTOR_STATE_OFF)
 //         {
 //           // turn on TSDZ2 motor controller
-//           m_TSDZ2_power_state = TSDZ2_POWER_STATE_ON_START;
+//           m_motor_state = MOTOR_STATE_ON_START;
 //         }
 
-//         else if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_ON)
+//         else if (m_motor_state == MOTOR_STATE_ON)
 //         {
 //           //  turn off TSDZ2 motor controller
-//           m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_START;
+//           m_motor_state = MOTOR_STATE_OFF_START;
 //         }
 //       handled =  true;
 //     }
@@ -1751,30 +1752,52 @@ void brakeLights(void)
  }
 }
 
-void lcd_power_off(uint8_t updateDistanceOdo)
+void system_power_off(uint8_t updateDistanceOdo)
 {
+  (void) updateDistanceOdo; // for future implementation ??
+
+  display_off();
+
+  // turn off the motor controller
+  m_motor_state = MOTOR_STATE_OFF_START;
+
+  // update variables before save them
   ui_vars.ui32_wh_x10_offset = ui_vars.ui32_wh_x10;
 
-// save the variables on EEPROM
+  // save the variables on EEPROM
   eeprom_write_variables();
 
-  // put screen all black and disable backlight
-  UG_FillScreen(0);
-  display_show();
-  // lcd_set_backlight_intensity(0);
+  // disable softdevice
+  uint32_t  err_code = nrf_sdh_disable_request();
+  // APP_ERROR_CHECK(err_code);
 
-  // // FIXME: wait for flash write to complete before powering down
-  // // now disable the power to all the system
-  // system_power(0);
+  // FIXME: wait for flash write to complete before powering down
+  nrf_delay_ms(500);
 
-  // if (g_motor_init_state == MOTOR_INIT_SIMULATING) {
-  //   // we are running from a bench supply on a developer's desk, so just reboot because the power supply will never die
-  //   sd_nvic_SystemReset();
-  // }
+  // make sure user did release the on/off button
+  while (buttons_get_onoff_state())
+    ;
 
-  // // block here till we die
-  // while (1)
-  //   ;
+  // this will enable wakeup from ultra low power mode
+  nrf_gpio_cfg_sense_input(ONOFF__PIN, GPIO_PIN_CNF_PULL_Pullup, GPIO_PIN_CNF_SENSE_Low);
+
+  // make sure the motor controller is off
+  while (m_motor_state != MOTOR_STATE_OFF)
+    ;
+
+  // will enter in low power mode and block here until on/off button is pressed
+  nrf_pwr_mgmt_run();
+
+  // wait for user press on/off button
+  while (buttons_get_onoff_state() == 0)
+    ;
+
+  // fresh restart
+  sd_nvic_SystemReset();
+
+  // block here but we should not get here anyway
+  while (1)
+    ;
 }
 
 static uint8_t payload_unchanged(uint8_t *old, uint8_t *new, uint8_t len)
@@ -1851,7 +1874,7 @@ int main(void)
 
       // ble_send_periodic_data();
       // ble_update_configurations_data();
-    //   TSDZ2_power_manage();
+      motor_power_manage();
 
     //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
 
