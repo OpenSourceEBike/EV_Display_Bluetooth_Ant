@@ -1759,6 +1759,7 @@ void system_power_off(uint8_t updateDistanceOdo)
   display_off();
 
   // turn off the motor controller
+  motor_power_enable(false);
   m_motor_state = MOTOR_STATE_OFF_START;
 
   // update variables before save them
@@ -1767,12 +1768,12 @@ void system_power_off(uint8_t updateDistanceOdo)
   // save the variables on EEPROM
   eeprom_write_variables();
 
-  // disable softdevice
-  uint32_t  err_code = nrf_sdh_disable_request();
-  // APP_ERROR_CHECK(err_code);
-
   // FIXME: wait for flash write to complete before powering down
   nrf_delay_ms(500);
+
+  // disable softdevice || THIS fails!!
+  // uint32_t  err_code = nrf_sdh_disable_request();
+  // APP_ERROR_CHECK(err_code);
 
   // make sure user did release the on/off button
   while (buttons_get_onoff_state())
@@ -1781,9 +1782,7 @@ void system_power_off(uint8_t updateDistanceOdo)
   // this will enable wakeup from ultra low power mode
   nrf_gpio_cfg_sense_input(ONOFF__PIN, GPIO_PIN_CNF_PULL_Pullup, GPIO_PIN_CNF_SENSE_Low);
 
-  // make sure the motor controller is off
-  while (m_motor_state != MOTOR_STATE_OFF)
-    ;
+  nrf_delay_ms(1000);
 
   // will enter in low power mode and block here until on/off button is pressed
   nrf_pwr_mgmt_run();
