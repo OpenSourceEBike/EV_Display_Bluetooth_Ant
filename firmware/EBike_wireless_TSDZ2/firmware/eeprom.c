@@ -18,6 +18,7 @@
 #include "nrf_log_default_backends.h"
 #include "app_error.h"
 #include "fds.h"
+#include "mainscreen.h"
 
 #define CONFIG_FILE     (0x8010)
 #define CONFIG_REC_KEY  (0x7010)
@@ -132,6 +133,8 @@ const configurations_t m_configurations_defaults = {
   .ui16_torque_sensor_calibration_table_right[6][1] = DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_7,
   .ui16_torque_sensor_calibration_table_right[7][0] = DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_WEIGHT_8,
   .ui16_torque_sensor_calibration_table_right[7][1] = DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_8,
+
+  .ui8_buttons_up_down_invert = DEFAULT_VALUE_BUTTONS_UP_DOWN_INVERT,
 
   .ui8_street_mode_function_enabled = DEFAULT_STREET_MODE_FUNCTION_ENABLE,
   .ui8_street_mode_enabled_on_startup = DEFAULT_STREET_MODE_ENABLE_AT_STARTUP,
@@ -374,6 +377,8 @@ void eeprom_init_variables(void) {
 
   ui_vars->ui8_enter_bootloader =
     m_configurations.ui8_enter_bootloader;
+
+  ui_vars->ui8_buttons_up_down_invert = m_configurations.ui8_buttons_up_down_invert;
 }
 
 void eeprom_write_variables(void) {
@@ -477,6 +482,8 @@ void eeprom_write_variables(void) {
 
   m_configurations.ui8_enter_bootloader =
     ui_vars->ui8_enter_bootloader;
+
+  m_configurations.ui8_buttons_up_down_invert = ui_vars->ui8_buttons_up_down_invert;
 
   /* Write the updated record to flash. */
   ret_code_t err_code = fds_record_update(&m_desc_config, &m_fds_configurations);

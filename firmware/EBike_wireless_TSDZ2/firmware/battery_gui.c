@@ -10,8 +10,8 @@ bool renderBattery(FieldLayout *layout)
 {
   uint32_t ui32_x1, ui32_x2;
   uint32_t ui32_y1, ui32_y2;
-  int16_t height = BATTERY_SOC_HEIGHT;
-  int16_t width = BATTERY_SOC_WITH;
+  // int16_t height = BATTERY_SOC_HEIGHT;
+  // int16_t width = BATTERY_SOC_WITH;
   uint8_t battery_bars;
 
   if (ui8_g_battery_soc > 0) {
@@ -19,7 +19,7 @@ bool renderBattery(FieldLayout *layout)
   } else {
     battery_bars = 0;
   }
-
+battery_bars = 4;
   // first, clear the full symbol area
   ui32_x1 = BATTERY_SOC_START_X + 2;
   ui32_y1 = BATTERY_SOC_START_Y + 2;
@@ -59,12 +59,12 @@ bool renderBattery(FieldLayout *layout)
   return true;
 }
 
-bool batteryClearSymbol(void)
+void batteryClearSymbol(void)
 {
   uint32_t ui32_x1, ui32_x2;
   uint32_t ui32_y1, ui32_y2;
-  uint16_t ui16_color;
-  uint32_t ui32_i;
+  // uint16_t ui16_color;
+  // uint32_t ui32_i;
 
   int16_t height = BATTERY_SOC_HEIGHT;
   int16_t width = BATTERY_SOC_WITH;

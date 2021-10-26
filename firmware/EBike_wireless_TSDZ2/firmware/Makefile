@@ -150,6 +150,7 @@ SRC_FILES += \
 	$(PROJ_DIR)/mainscreen.c \
 	$(PROJ_DIR)/mainscreen-oled128x64.c \
 	$(PROJ_DIR)/battery_gui.c \
+	$(PROJ_DIR)/rtc.c \
  
 # Include folders common to all targets
 INC_FOLDERS += \

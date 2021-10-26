@@ -21,6 +21,4 @@ void rtc_set_time(rtc_time_t *rtc_time);
 rtc_time_t* rtc_get_time(void);
 rtc_time_t* rtc_get_time_since_startup(void);
 
-extern uint32_t ui32_seconds_since_startup;
-
 #endif /* _RTC_H_ */

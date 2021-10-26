@@ -68,8 +68,8 @@ volatile uint8_t ui8_m_enter_bootloader = 0;
 volatile uint8_t ui8_m_ant_device_id = 0;
 volatile uint8_t ui8_m_flash_configurations = 0;
 
-// uint8_t ui8_m_wheel_speed_integer;
-// uint8_t ui8_m_wheel_speed_decimal;
+uint8_t ui8_m_wheel_speed_integer;
+uint8_t ui8_m_wheel_speed_decimal;
 
 static uint8_t ui8_walk_assist_timeout = 0;
 static uint8_t ui8_walk_assist_state_process_locally = 0;
@@ -182,12 +182,6 @@ static ble_uuid_t m_adv_uuids[] =
 
 /**@brief Clear bond information from persistent storage.
  */
-/*
-uint32_t ui32_seconds_since_startup = 0;
-//uint32_t err_code=0;
-volatile uint32_t main_ticks;
-uint8_t enable_bluetooth = 0;
-*/
 static void delete_bonds(void)
 {
   ret_code_t err_code;
@@ -199,7 +193,7 @@ static void delete_bonds(void)
 }
 
 /**@brief Function for starting advertising.
- */
+*/
 static void advertising_start(bool erase_bonds)
 {
   if (erase_bonds == true)
@@ -517,7 +511,7 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
     if (p_profile->page_16.current_rear_gear == 15)
     {
       // enable brakes: be as fast as possible
-      nrf_gpio_port_out_clear(NRF_P0, 1UL << BRAKE__PIN);
+      // nrf_gpio_port_out_clear(NRF_P0, 1UL << BRAKE__PIN);
       led_sequence_play_next_until(LED_EVENT_SHORT_RED);
     }
     if (p_profile->page_16.current_rear_gear == 0)
@@ -531,8 +525,8 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
         ui8_walk_assist_state_process_locally = 1;
       }
       // disable brakes: be as fast as possible
-      nrf_gpio_port_out_set(NRF_P0, 1UL << BRAKE__PIN);
-       led_sequence_cancel_play_until();
+      // nrf_gpio_port_out_set(NRF_P0, 1UL << BRAKE__PIN);
+      led_sequence_cancel_play_until();
     }
     
     if (p_profile->page_16.current_front_gear == 3)
@@ -1628,103 +1622,103 @@ void TSDZ2_power_manage(void)
   }
 }
 
-bool wiredRemoteOnPress(buttons_events_t events) {
+// bool wiredRemoteOnPress(buttons_events_t events) {
 
-  bool handled = false;
+//   bool handled = false;
 
-  if (events & ONOFFDOWN_LONG_CLICK)
-  {
-    if (ui_vars.ui8_street_mode_function_enabled && ui_vars.ui8_street_mode_hotkey_enabled) 
-    {
-      if (ui_vars.ui8_street_mode_enabled)
-      {
-        ui_vars.ui8_street_mode_enabled = 0;
-        led_sequence_play(LED_EVENT_STREET_MODE_OFF);
-      }
-      else
-      {
-        ui_vars.ui8_street_mode_enabled = 1;
-        led_sequence_play(LED_EVENT_STREET_MODE_ON);
-      }
-    }
-    handled = true;
-  }
+//   if (events & ONOFFDOWN_LONG_CLICK)
+//   {
+//     if (ui_vars.ui8_street_mode_function_enabled && ui_vars.ui8_street_mode_hotkey_enabled) 
+//     {
+//       if (ui_vars.ui8_street_mode_enabled)
+//       {
+//         ui_vars.ui8_street_mode_enabled = 0;
+//         led_sequence_play(LED_EVENT_STREET_MODE_OFF);
+//       }
+//       else
+//       {
+//         ui_vars.ui8_street_mode_enabled = 1;
+//         led_sequence_play(LED_EVENT_STREET_MODE_ON);
+//       }
+//     }
+//     handled = true;
+//   }
 
-  if (handled == false)
-  {
-    if ((events & DOWN_LONG_CLICK) && ui_vars.ui8_walk_assist_feature_enabled) {
-      ui_vars.ui8_walk_assist = 1;
-        led_sequence_play_now_until(LED_EVENT_WALK_ASSIST_ACTIVE);
-        ui8_walk_assist_state_process_locally = 1;
-      handled =  true;
-    }
+//   if (handled == false)
+//   {
+//     if ((events & DOWN_LONG_CLICK) && ui_vars.ui8_walk_assist_feature_enabled) {
+//       ui_vars.ui8_walk_assist = 1;
+//         led_sequence_play_now_until(LED_EVENT_WALK_ASSIST_ACTIVE);
+//         ui8_walk_assist_state_process_locally = 1;
+//       handled =  true;
+//     }
 
-    // long up to turn on headlights
-    if (events & UP_LONG_CLICK) {
-      ui_vars.ui8_lights = !ui_vars.ui8_lights;
-      if (ui_vars.ui8_lights) 
-      {
-        led_set_global_brightness(1); // When lights are on - assume it's dark and make the LEDs dimmer
-        led_sequence_play(LED_EVENT_LIGHTS_ON);
-      }
-        else 
-      {
-        led_set_global_brightness(7); // Lights are off - assume it's daylight - let's have the brightest LEDs
-        led_sequence_play(LED_EVENT_LIGHTS_OFF);
-      }
-      handled =  true;
-    }
-  }
+//     // long up to turn on headlights
+//     if (events & UP_LONG_CLICK) {
+//       ui_vars.ui8_lights = !ui_vars.ui8_lights;
+//       if (ui_vars.ui8_lights) 
+//       {
+//         led_set_global_brightness(1); // When lights are on - assume it's dark and make the LEDs dimmer
+//         led_sequence_play(LED_EVENT_LIGHTS_ON);
+//       }
+//         else 
+//       {
+//         led_set_global_brightness(7); // Lights are off - assume it's daylight - let's have the brightest LEDs
+//         led_sequence_play(LED_EVENT_LIGHTS_OFF);
+//       }
+//       handled =  true;
+//     }
+//   }
 
-  if (handled == false)
-  {
-    if (events & UP_CLICK) {
-      ui_vars.ui8_assist_level++;
+//   if (handled == false)
+//   {
+//     if (events & UP_CLICK) {
+//       ui_vars.ui8_assist_level++;
 
-      if (ui_vars.ui8_assist_level > ui_vars.ui8_number_of_assist_levels) {
-        ui_vars.ui8_assist_level = ui_vars.ui8_number_of_assist_levels;
-        led_sequence_play_next(LED_EVENT_ASSIST_LIMITS_REACHED);
-      }
-      else led_sequence_play_next(LED_EVENT_ASSIST_LEVEL_DECREASE);
+//       if (ui_vars.ui8_assist_level > ui_vars.ui8_number_of_assist_levels) {
+//         ui_vars.ui8_assist_level = ui_vars.ui8_number_of_assist_levels;
+//         led_sequence_play_next(LED_EVENT_ASSIST_LIMITS_REACHED);
+//       }
+//       else led_sequence_play_next(LED_EVENT_ASSIST_LEVEL_DECREASE);
 
-      handled = true;
-    }
+//       handled = true;
+//     }
 
-    if (events & DOWN_CLICK && !ui_vars.ui8_walk_assist) // do not lower assist level if walk assist is active
-    {
-      if (ui_vars.ui8_assist_level > 0)
-      {
-        ui_vars.ui8_assist_level--;
-        led_sequence_play_next(LED_EVENT_ASSIST_LEVEL_DECREASE);
-      }
-      else led_sequence_play_next(LED_EVENT_ASSIST_LIMITS_REACHED);
+//     if (events & DOWN_CLICK && !ui_vars.ui8_walk_assist) // do not lower assist level if walk assist is active
+//     {
+//       if (ui_vars.ui8_assist_level > 0)
+//       {
+//         ui_vars.ui8_assist_level--;
+//         led_sequence_play_next(LED_EVENT_ASSIST_LEVEL_DECREASE);
+//       }
+//       else led_sequence_play_next(LED_EVENT_ASSIST_LIMITS_REACHED);
 
-      handled = true;
-    }
-  }
+//       handled = true;
+//     }
+//   }
 
-  if (handled == false)
-  {
-    if (events & ONOFF_LONG_CLICK)
-    {
-      // Toggle power state...
-            if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_OFF)
-        {
-          // turn on TSDZ2 motor controller
-          m_TSDZ2_power_state = TSDZ2_POWER_STATE_ON_START;
-        }
+//   if (handled == false)
+//   {
+//     if (events & ONOFF_LONG_CLICK)
+//     {
+//       // Toggle power state...
+//             if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_OFF)
+//         {
+//           // turn on TSDZ2 motor controller
+//           m_TSDZ2_power_state = TSDZ2_POWER_STATE_ON_START;
+//         }
 
-        else if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_ON)
-        {
-          //  turn off TSDZ2 motor controller
-          m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_START;
-        }
-      handled =  true;
-    }
-  }
+//         else if (m_TSDZ2_power_state == TSDZ2_POWER_STATE_ON)
+//         {
+//           //  turn off TSDZ2 motor controller
+//           m_TSDZ2_power_state = TSDZ2_POWER_STATE_OFF_START;
+//         }
+//       handled =  true;
+//     }
+//   }
 
-	return handled;
-}
+// 	return handled;
+// }
 
 void walk_assist_state(void) {
 // kevinh - note on the sw102 we show WALK in the box normally used for BRAKE display - the display code is handled there now
@@ -1757,26 +1751,30 @@ void brakeLights(void)
  }
 }
 
+void lcd_power_off(uint8_t updateDistanceOdo)
+{
+  ui_vars.ui32_wh_x10_offset = ui_vars.ui32_wh_x10;
 
-/// Called every 50ms to check for wired button events and dispatch to our handlers
-static void handle_buttons() {
+// save the variables on EEPROM
+  eeprom_write_variables();
 
-  static uint8_t firstTime = 1;
+  // put screen all black and disable backlight
+  UG_FillScreen(0);
+  display_show();
+  // lcd_set_backlight_intensity(0);
 
-  // keep tracking of first time release of onoff button
-  if(firstTime && buttons_get_onoff_state() == 0) {
-    firstTime = 0;
-    buttons_clear_onoff_click_event();
-    buttons_clear_onoff_long_click_event();
-    buttons_clear_onoff_click_long_click_event();
-  }
+  // // FIXME: wait for flash write to complete before powering down
+  // // now disable the power to all the system
+  // system_power(0);
 
-  if (buttons_events && firstTime == 0)
-  {
- 		if (wiredRemoteOnPress(buttons_events)) buttons_clear_all_events();
-  }
+  // if (g_motor_init_state == MOTOR_INIT_SIMULATING) {
+  //   // we are running from a bench supply on a developer's desk, so just reboot because the power supply will never die
+  //   sd_nvic_SystemReset();
+  // }
 
-	buttons_clock(); // Note: this is done _after_ button events is checked to provide a 50ms debounce
+  // // block here till we die
+  // while (1)
+  //   ;
 }
 
 static uint8_t payload_unchanged(uint8_t *old, uint8_t *new, uint8_t len)
@@ -1791,116 +1789,116 @@ static uint8_t payload_unchanged(uint8_t *old, uint8_t *new, uint8_t len)
 
 int main(void)
 {
-  // mp_ui_vars = get_ui_vars();
-  // // Initialize the async SVCI interface to bootloader before any interrupts are enabled.
-  // pins_init();
-  // lfclk_config(); // needed by the APP_TIMER
-  // init_app_timers();
-  // eeprom_init();
+  mp_ui_vars = get_ui_vars();
+  // Initialize the async SVCI interface to bootloader before any interrupts are enabled.
+  pins_init();
+  lfclk_config(); // needed by the APP_TIMER
+  init_app_timers();
+  eeprom_init();
 
-  // //below is what I had to do to get NVIC_SystemReset() not to hangup.
-  // //the s340 sd if what is preventing the restart into the bootloader, so it is important to reset before bluetooth starts.
-  // //basically, the user changes the ANT_ID to 0x99 , the firmware reboots as normal and we catch the change here before bluetooth starts
-  // //it now works in debug mode!
-  // if (mp_ui_vars->ui8_enter_bootloader) //check to see if reboot into the bootloader is needed
-  // {
-  //   mp_ui_vars->ui8_enter_bootloader = 0;
-  //   nrf_power_gpregret_set(BOOTLOADER_DFU_START); //set the dfu register
-  //   bsp_board_led_on(LED_B__PIN); // Indicate about to enter bootloader
-  //   nrf_delay_ms(1000);                           //wait for write to complete
-  //   eeprom_write_variables();
-  //   nrf_delay_ms(3000); //wait for write to complete
-  //   NVIC_SystemReset(); //reboot into bootloader
-  // }
+  //below is what I had to do to get NVIC_SystemReset() not to hangup.
+  //the s340 sd if what is preventing the restart into the bootloader, so it is important to reset before bluetooth starts.
+  //basically, the user changes the ANT_ID to 0x99 , the firmware reboots as normal and we catch the change here before bluetooth starts
+  //it now works in debug mode!
+  if (mp_ui_vars->ui8_enter_bootloader) //check to see if reboot into the bootloader is needed
+  {
+    mp_ui_vars->ui8_enter_bootloader = 0;
+    nrf_power_gpregret_set(BOOTLOADER_DFU_START); //set the dfu register
+    bsp_board_led_on(LED_B__PIN); // Indicate about to enter bootloader
+    nrf_delay_ms(1000);                           //wait for write to complete
+    eeprom_write_variables();
+    nrf_delay_ms(3000); //wait for write to complete
+    NVIC_SystemReset(); //reboot into bootloader
+  }
 
   // ble_init();
   // ant_setup();
-  // uart_init();
-  // led_init();
-  // led_set_global_brightness(7); // For wireless controller - brightest
-  // //ui_vars.ui8_street_mode_function_enabled = 1;
+  uart_init();
+  led_init();
+  led_set_global_brightness(7); // For wireless controller - brightest
+  //ui_vars.ui8_street_mode_function_enabled = 1;
 
-  // // setup this member variable ui8_m_ant_device_id
-  // ui8_m_ant_device_id = mp_ui_vars->ui8_ant_device_id;
-  // uint32_t ui32_rt_last_run_time = 0;
-  // uint32_t ui32_dfucheck_last_run_time = 0;
-  // uint8_t ui8_ble_connected_shown = 0;
+  // setup this member variable ui8_m_ant_device_id
+  ui8_m_ant_device_id = mp_ui_vars->ui8_ant_device_id;
+  uint32_t ui32_rt_last_run_time = 0;
+  uint32_t ui32_dfucheck_last_run_time = 0;
+  uint8_t ui8_ble_connected_shown = 0;
   
-  // led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
+  led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
 
+  // init the display
   display_init();
   screen_init();
 
+  // show the first screen: boot screen
   screenShow(&bootScreen);
-
-ssd1306_draw_rect(0, 0, 64, 128, 1);
-display_show();
-
 
   while (1)
   {
-  //   // every 50 ms
-  //   uint32_t ui32_time_now = get_time_base_counter_1ms();
-  //   if ((ui32_time_now - ui32_rt_last_run_time) >= 50)
-  //   {
-  //     ui32_rt_last_run_time = ui32_time_now;
-  //     // exchange data from realtime layer to UI layer
-  //     // do this in atomic way, disabling the real time layer (should be no problem as
-  //     // copy_rt_to_ui_vars() should be fast and take a small piece of the 50ms periodic realtime layer processing
-  //     rt_processing_stop();
-  //     copy_rt_ui_vars();
-  //     rt_processing_start();
+    // every 50 ms
+    uint32_t ui32_time_now = get_time_base_counter_1ms();
+    if ((ui32_time_now - ui32_rt_last_run_time) >= 50)
+    {
+      ui32_rt_last_run_time = ui32_time_now;
+      // exchange data from realtime layer to UI layer
+      // do this in atomic way, disabling the real time layer (should be no problem as
+      // copy_rt_to_ui_vars() should be fast and take a small piece of the 50ms periodic realtime layer processing
+      // rt_processing_stop();
+      // copy_rt_ui_vars();
+      // rt_processing_start();
 
-  //     ble_send_periodic_data();
-  //     ble_update_configurations_data();
-  //     TSDZ2_power_manage();
+      mainscreen_idle();
 
-  //     if (ui8_walk_assist_state_process_locally) walk_assist_state();
-  //     handle_buttons();
-  //     streetMode();
-  //     brakeLights();
+      // ble_send_periodic_data();
+      // ble_update_configurations_data();
+    //   TSDZ2_power_manage();
 
-  //     if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && (!ui8_ble_connected_shown))
-  //     {
-  //       ui8_ble_connected_shown = 1;
-  //       led_sequence_play(LED_EVENT_BLUETOOTH_CONNECT);
-  //     }
+    //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
+
+    //   streetMode();
+    //   brakeLights();
+
+    //   if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && (!ui8_ble_connected_shown))
+    //   {
+    //     ui8_ble_connected_shown = 1;
+    //     led_sequence_play(LED_EVENT_BLUETOOTH_CONNECT);
+    //   }
       
-  //     if ((m_conn_handle == BLE_CONN_HANDLE_INVALID) && (ui8_ble_connected_shown))
-  //     {
-  //       ui8_ble_connected_shown = 0;
-  //       led_sequence_play(LED_EVENT_BLUETOOTH_DISCONNECT);
-  //     }
-  //   }
+    //   if ((m_conn_handle == BLE_CONN_HANDLE_INVALID) && (ui8_ble_connected_shown))
+    //   {
+    //     ui8_ble_connected_shown = 0;
+    //     led_sequence_play(LED_EVENT_BLUETOOTH_DISCONNECT);
+    //   }
+    // }
 
-  //   // every 1 second
-  //  ui32_time_now = get_time_base_counter_1ms();
-  //  if ((ui32_time_now - ui32_dfucheck_last_run_time) >= 1000)
-  //   {
-  //     ui32_dfucheck_last_run_time = ui32_time_now;
-  //     //see if DFU reboot is needed
+    //   // every 1 second
+    // ui32_time_now = get_time_base_counter_1ms();
+    // if ((ui32_time_now - ui32_dfucheck_last_run_time) >= 1000)
+    // {
+    //   ui32_dfucheck_last_run_time = ui32_time_now;
+    //   //see if DFU reboot is needed
 
-  //     // see if there was a change to the ANT ID
-  //     if (ui8_m_ant_device_id != mp_ui_vars->ui8_ant_device_id)
-  //     {
-  //       mp_ui_vars->ui8_ant_device_id = ui8_m_ant_device_id;
-  //       eeprom_write_variables_and_reset();
-  //     }
+    //   // see if there was a change to the ANT ID
+    //   if (ui8_m_ant_device_id != mp_ui_vars->ui8_ant_device_id)
+    //   {
+    //     mp_ui_vars->ui8_ant_device_id = ui8_m_ant_device_id;
+    //     eeprom_write_variables_and_reset();
+    //   }
 
-  //     // see if there a request to enter in bootloader
-  //     if (ui8_m_enter_bootloader)
-  //     {
-  //       ui8_m_enter_bootloader = 0;
-  //       mp_ui_vars->ui8_enter_bootloader = 1;
-  //       eeprom_write_variables_and_reset();
-  //     }
+    //   // see if there a request to enter in bootloader
+    //   if (ui8_m_enter_bootloader)
+    //   {
+    //     ui8_m_enter_bootloader = 0;
+    //     mp_ui_vars->ui8_enter_bootloader = 1;
+    //     eeprom_write_variables_and_reset();
+    //   }
 
-  //     // see if there was a change to the ANT ID
-  //     if (ui8_m_flash_configurations)
-  //     {
-  //       ui8_m_flash_configurations = 0;
-  //       eeprom_write_variables();
-  //     }
-  //   }
+    //   // see if there was a change to the ANT ID
+    //   if (ui8_m_flash_configurations)
+    //   {
+    //     ui8_m_flash_configurations = 0;
+    //     eeprom_write_variables();
+    //   }
+    }
   }
 }

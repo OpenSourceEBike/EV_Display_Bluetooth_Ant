@@ -9,18 +9,18 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "nrf_gpio.h"
+#include "buttons.h"
 #include "pins.h"
 
 void pins_init(void)
 {
-  nrf_gpio_cfg_output(MOTOR_POWER_ENABLE__PIN);
   nrf_gpio_pin_clear(MOTOR_POWER_ENABLE__PIN);
-  nrf_gpio_cfg_output(BRAKE__PIN);
-  nrf_gpio_pin_set(BRAKE__PIN);
-  nrf_gpio_cfg_sense_input(PLUS__PIN, GPIO_PIN_CNF_PULL_Pullup, GPIO_PIN_CNF_SENSE_Low);
-  nrf_gpio_cfg_sense_input(MINUS__PIN, GPIO_PIN_CNF_PULL_Pullup, GPIO_PIN_CNF_SENSE_Low);
-  nrf_gpio_cfg_sense_input(ENTER__PIN, GPIO_PIN_CNF_PULL_Pullup, GPIO_PIN_CNF_SENSE_Low);
-  nrf_gpio_cfg_sense_input(STANDBY__PIN, GPIO_PIN_CNF_PULL_Pullup, GPIO_PIN_CNF_SENSE_Low);
+  nrf_gpio_cfg_output(MOTOR_POWER_ENABLE__PIN);
+
+    /* Buttons */
+  InitButton(&buttonPWR, ONOFF__PIN, NRF_GPIO_PIN_NOPULL, BUTTON_ACTIVE_HIGH);
+  InitButton(&buttonUP, UP__PIN, NRF_GPIO_PIN_PULLUP, BUTTON_ACTIVE_LOW);
+  InitButton(&buttonDWN, DOWN__PIN, NRF_GPIO_PIN_PULLUP, BUTTON_ACTIVE_LOW);
 }
 
 void motor_power_enable(bool state)

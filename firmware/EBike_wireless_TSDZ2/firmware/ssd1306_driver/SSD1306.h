@@ -16,7 +16,7 @@ typedef uint32_t PortMask;
 
 
 #define BLACK 0
-#define WHITE 1
+#define WHITE 0xFFFF
 #define INVERSE 2
 
 #define SSD1306_I2C_ADDRESS   (0x3C)  // 011110+SA0+RW - 0x3C or 0x3D

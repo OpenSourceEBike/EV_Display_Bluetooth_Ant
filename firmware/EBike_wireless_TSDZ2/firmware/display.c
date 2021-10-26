@@ -36,7 +36,7 @@ static UG_RESULT accel_fill_frame(UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG
     ssd1306_swap(y1, y2); // Always draw top to bottom
 
   while(y1 <= y2) {
-    ssd1306_draw_fast_hline_internal(x1, y1, w, c);
+    ssd1306_draw_fast_hline(x1, y1, w, c);
     y1++;
   }
 
@@ -49,32 +49,14 @@ static UG_RESULT accel_draw_line(UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_
 
   if(y1 == y2)  {
     if(x1 <= x2)
-      ssd1306_draw_fast_hline_internal(x1, y1, x2 - x1 + 1, c);
+      ssd1306_draw_fast_hline(x1, y1, x2 - x1 + 1, c);
     else
-      ssd1306_draw_fast_hline_internal(x2, y1, x1 - x2 + 1, c);
+      ssd1306_draw_fast_hline(x2, y1, x1 - x2 + 1, c);
 
     return UG_RESULT_OK;
   }
   return UG_RESULT_FAIL;
 }
-
-void display_init(void)
-{
-  ssd1306_init_i2c(SSD1306_CONFIG_SCL_PIN, SSD1306_CONFIG_SDA_PIN);
-  ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
-  ssd1306_clear_display();
-  ssd1306_display();
-  set_rotation(3);
-
-  // Setup uGUI library
-  UG_Init(&gui, ssd1306_draw_pixel, 64, 128); // Pixel set function
-
-  UG_DriverRegister(DRIVER_DRAW_LINE, (void *) accel_draw_line);
-  UG_DriverRegister(DRIVER_FILL_FRAME, (void *) accel_fill_frame);
-}
-
-static int lcdBacklight = -1; // -1 means unset
-static int oldBacklight = -1;
 
 void display_show() {
   // if(lcdBacklight != oldBacklight) {
@@ -88,6 +70,24 @@ void display_show() {
 
   ssd1306_display();
 }
+
+void display_init(void)
+{
+  ssd1306_init_i2c(SSD1306_CONFIG_SCL_PIN, SSD1306_CONFIG_SDA_PIN);
+  ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
+  ssd1306_clear_display();
+  ssd1306_display();
+  set_rotation(1); // makes vertical
+
+  // Setup uGUI library
+  UG_Init(&gui, ssd1306_draw_pixel, display_show, 64, 128); // Pixel set function
+
+  UG_DriverRegister(DRIVER_DRAW_LINE, (void *) accel_draw_line);
+  UG_DriverRegister(DRIVER_FILL_FRAME, (void *) accel_fill_frame);
+}
+
+static int lcdBacklight = -1; // -1 means unset
+static int oldBacklight = -1;
 
 //SW102 version, we are an oled so if the user asks for lots of backlight we really want to dim instead
 // Note: This routine might be called from an ISR, so do not do slow SPI operations (especially because

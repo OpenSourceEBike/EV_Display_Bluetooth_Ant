@@ -292,6 +292,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_braking;
 	uint8_t ui8_walk_assist;
 	uint8_t ui8_offroad_mode;
+  uint8_t ui8_buttons_up_down_invert;
 
 	uint8_t ui8_torque_sensor_calibration_feature_enabled;
 	uint8_t ui8_torque_sensor_calibration_pedal_ground;
@@ -343,8 +344,12 @@ typedef struct {
 void copy_rt_ui_vars(void);
 void prepare_torque_sensor_calibration_table(void);
 void rt_processing(void);
+void automatic_power_off_management(void);
 
 extern tsdz2_firmware_version_t g_tsdz2_firmware_version;
 extern volatile motor_init_status_t ui8_g_motor_init_status;
 
 extern uint8_t ui8_g_battery_soc;
+
+/// Set correct backlight brightness for current headlight state
+void set_lcd_backlight();

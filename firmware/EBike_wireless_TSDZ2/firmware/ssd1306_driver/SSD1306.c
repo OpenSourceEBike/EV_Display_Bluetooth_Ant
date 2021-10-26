@@ -492,10 +492,10 @@ void ssd1306_draw_pixel(int16_t x, int16_t y, uint16_t color)
 
         // x is which column
         switch (color) {
-        case 0xFFFF: //WHITE:
+        case WHITE:
                 buffer[x + (y / 8)*SSD1306_LCDWIDTH] |=  (1 << (y & 7));
                 break;
-        case 0x0000: //BLACK:
+        case BLACK:
                 buffer[x + (y / 8)*SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
                 break;
         case INVERSE:
@@ -974,7 +974,7 @@ void ssd1306_draw_circle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
                 ssd1306_draw_pixel(x0 - x, y0 + y, color);
                 ssd1306_draw_pixel(x0 + x, y0 - y, color);
                 ssd1306_draw_pixel(x0 - x, y0 - y, color);
-                ssd1306_draw_pixel(x0 + y, y0 + x, color);
+                ssdssd1306_clear_display1306_draw_pixel(x0 + y, y0 + x, color);
                 ssd1306_draw_pixel(x0 - y, y0 + x, color);
                 ssd1306_draw_pixel(x0 + y, y0 - x, color);
                 ssd1306_draw_pixel(x0 - y, y0 - x, color);

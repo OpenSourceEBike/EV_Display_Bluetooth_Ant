@@ -1846,7 +1846,7 @@ static bool onPressEditable(buttons_events_t events) {
 		handled = true;
 	}
 
-// Mark that we are no longer editing - click pwr button to exit
+  // Mark that we are no longer editing - click pwr button to exit
 	if (events & SCREENCLICK_STOP_EDIT) {
 		setActiveEditable(NULL);
 
@@ -2172,27 +2172,23 @@ void screenUpdate() {
 	if (screenDirty) {
 		// clear screen (to prevent turds from old screen staying around)
 		UG_FillScreen(C_BLACK);
+    display_show();
 		didDraw = true;
 
 		if (curScreen->onDirtyClean)
 			(*curScreen->onDirtyClean)();
 	}
 
-// For each field if that field is dirty (or the screen is) redraw it
+  // For each field if that field is dirty (or the screen is) redraw it
 	didDraw |= renderLayouts(curScreen->fields, screenDirty);
 
 	if (didDraw) {
 		if (curScreen->onPostUpdate)
 			(*curScreen->onPostUpdate)();
-	}
 
-#ifdef SW102
-// flush the screen to the hardware
-  if (didDraw)
-  {
-    display_show();
-  }
-#endif
+    // flush the screen to the hardware
+    display_show();  
+	}
 
 	screenDirty = false;
 }

@@ -6,8 +6,21 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _BUTTON_H_
-#define _BUTTON_H_
+#pragma once
+
+#include "nrf_gpio.h"
+
+typedef enum
+{
+    BUTTON_ACTIVE_LOW = 0,
+    BUTTON_ACTIVE_HIGH = 1
+} button_active_state;
+
+typedef struct
+{
+  button_active_state ActiveState;
+  uint32_t PinNumber;
+} Button;
 
 typedef enum {
 	ONOFF_CLICK = 1,
@@ -24,6 +37,11 @@ typedef enum {
 	M_LONG_CLICK = 2048,
 	ONOFFUPDOWN_LONG_CLICK = 4096,
 } buttons_events_t;
+
+extern Button buttonDWN, buttonUP, buttonPWR;
+
+void InitButton(Button* button, uint32_t pin_number, nrf_gpio_pin_pull_t pull_config, button_active_state active_state);
+bool PollButton(Button* button);
 
 uint32_t buttons_get_m_state(void);
 uint32_t buttons_get_up_state(void);
@@ -57,4 +75,3 @@ void buttons_init(void);
 
 extern buttons_events_t buttons_events;
 
-#endif /* _BUTTON_H_ */

@@ -11,6 +11,8 @@
 #include "buttons.h"
 #include "state.h"
 #include "timer.h"
+#include "pins.h"
+#include "buttons.h"
 
 #define TIME_1 1500 // changed to 1.5 sec because 2 secs seems too long to me and a user asked for it also
 #define TIME_2 200
@@ -31,109 +33,41 @@ static uint32_t ui32_m_button_state_counter = 0;
 static uint32_t ui32_m_clear_event = 0;
 buttons_events_t buttons_events = 0;
 
-#if defined(BOARD_PCA10059)
-#include "pins.h"
-// Read buttons for NRF Blue Dongle
-
 uint32_t ui32_up_presstime = 0;
 uint32_t ui32_down_presstime = 0;
 uint32_t ui32_onoff_presstime = 0;
 uint32_t ui32_m_presstime = 0;
 
-uint32_t buttons_get_up_state (void)
-{
-  uint8_t ui8_up_state = (nrf_gpio_pin_read(PLUS__PIN) != 0) ? 0:1;
-  uint32_t ui32_now = get_time_base_counter_1ms();
+/* Buttons */
+Button buttonDWN, buttonUP, buttonPWR;
 
-  if (ui8_up_state == 0)
-  {
-    ui32_up_presstime = 0;
-    return 0;
-  }
-  else if ((ui8_up_state == 1) && (ui32_up_presstime == 0)) 
-  {
-    ui32_up_presstime = ui32_now;
-    return 0;
-  }
-  else if ((ui8_up_state == 1) && ((ui32_now - ui32_up_presstime)> BUTTONS_CLOCK_MS))
-  {
-    return 1;
-  }
-  else return 0;
+/**
+ * @brief Init button struct. Call once.
+ */
+void InitButton(Button* button, uint32_t pin_number, nrf_gpio_pin_pull_t pull_config, button_active_state active_state)
+{
+  /* Init GPIO */
+  nrf_gpio_cfg_input(pin_number, pull_config);
+
+  button->ActiveState = active_state;
+  button->PinNumber = pin_number;
 }
 
-uint32_t buttons_get_down_state (void)
+/**
+ * @brief Process button struct. Call every 10 ms.
+ */
+bool PollButton(Button* button)
 {
-  uint8_t ui8_down_state = (nrf_gpio_pin_read(MINUS__PIN) != 0) ? 0:1;
-  uint32_t ui32_now = get_time_base_counter_1ms();
+  uint32_t pinState = nrf_gpio_pin_read(button->PinNumber);
+  if (button->ActiveState == BUTTON_ACTIVE_LOW)
+    pinState ^= 1;
 
-  if (ui8_down_state == 0)
-  {
-    ui32_down_presstime = 0;
-    return 0;
-  }
-  else if ((ui8_down_state == 1) && (ui32_down_presstime == 0)) 
-  {
-    ui32_down_presstime = ui32_now;
-    return 0;
-  }
-  else if ((ui8_down_state == 1) && ((ui32_now - ui32_down_presstime)> BUTTONS_CLOCK_MS))
-  {
-    return 1;
-  }
-  else return 0;
+  return pinState != 0;
 }
-
-uint32_t buttons_get_onoff_state (void)
-{
-  uint8_t ui8_onoff_state = (nrf_gpio_pin_read(STANDBY__PIN) != 0) ? 0:1;
-  uint32_t ui32_now = get_time_base_counter_1ms();
-
-  if (ui8_onoff_state == 0)
-  {
-    ui32_onoff_presstime = 0;
-    return 0;
-  }
-  else if ((ui8_onoff_state == 1) && (ui32_onoff_presstime == 0)) 
-  {
-    ui32_onoff_presstime = ui32_now;
-    return 0;
-  }
-  else if ((ui8_onoff_state == 1) && ((ui32_now - ui32_onoff_presstime)> BUTTONS_CLOCK_MS))
-  {
-    return 1;
-  }
-  else return 0;
-}
-
-uint32_t buttons_get_m_state (void)
-{
-  uint8_t ui8_m_state = (nrf_gpio_pin_read(ENTER__PIN) != 0) ? 0:1;
-  uint32_t ui32_now = get_time_base_counter_1ms();
-
-  if (ui8_m_state == 0)
-  {
-    ui32_m_presstime = 0;
-    return 0;
-  }
-  else if ((ui8_m_state == 1) && (ui32_m_presstime == 0)) 
-  {
-    ui32_m_presstime = ui32_now;
-    return 0;
-  }
-  else if ((ui8_m_state == 1) && ((ui32_now - ui32_m_presstime)> BUTTONS_CLOCK_MS))
-  {
-    return 1;
-  }
-  else return 0;
-}
-
-#else
-#include "main.h"
 
 uint32_t buttons_get_up_state (void)
 {
-  if(!ui_vars.ui8_buttons_up_down_invert)
+  if (!ui_vars.ui8_buttons_up_down_invert)
   {
     return PollButton(&buttonUP);
   }
@@ -145,7 +79,7 @@ uint32_t buttons_get_up_state (void)
 
 uint32_t buttons_get_down_state (void)
 {
-  if(ui_vars.ui8_buttons_up_down_invert)
+  if (ui_vars.ui8_buttons_up_down_invert)
   {
     return PollButton(&buttonUP);
   }
@@ -162,9 +96,9 @@ uint32_t buttons_get_onoff_state (void)
 
 uint32_t buttons_get_m_state (void)
 {
-  return PollButton(&buttonM);
+  // return PollButton(&buttonM);
+  return 0;
 }
-#endif 
 
 uint32_t buttons_get_m_click_event(void) {
 	return (buttons_events & M_CLICK) ? 1 : 0;
@@ -266,8 +200,7 @@ void buttons_clear_all_events(void) {
 void buttons_clock(void) {
 	// exit if any button is pressed after clear event
 	if ((ui32_m_clear_event)
-			&& (buttons_get_up_state() || buttons_get_down_state() || buttons_get_m_state()
-					|| buttons_get_onoff_state())) {
+			&& (buttons_get_up_state() || buttons_get_down_state() || buttons_get_onoff_state())) {
 		return;
 	} else {
 		ui32_m_clear_event = 0;
@@ -356,49 +289,6 @@ void buttons_clock(void) {
 		ui32_onoff_button_state = 0;
 		break;
 	}
-
-
-
-
-  switch (ui32_m_button_state) {
-  case 0:
-    if (buttons_get_m_state()) {
-      ui32_m_button_state_counter = 0;
-      ui32_m_button_state = 1;
-    }
-    break;
-
-  case 1:
-    // event long click
-    if (ui32_m_button_state_counter++ > MS_TO_TICKS(TIME_1)) {
-      buttons_set_events(M_LONG_CLICK);
-      ui32_m_button_state = 2;
-      ui32_m_button_state_counter = 0;
-      break;
-    }
-
-    // if button release
-    if (!buttons_get_m_state()) {
-      buttons_set_events(M_CLICK);
-      ui32_m_button_state = 0;
-      break;
-    }
-    break;
-
-    case 2:
-      // wait for button release
-      if (!buttons_get_m_state()) {
-        ui32_m_button_state = 0;
-      }
-      break;
-
-  default:
-    ui32_m_button_state = 0;
-    break;
-  }
-
-
-
 
 	switch (ui32_up_button_state) {
     case 0:

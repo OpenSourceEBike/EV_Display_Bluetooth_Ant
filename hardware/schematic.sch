@@ -152,9 +152,9 @@ $EndComp
 Wire Notes Line
 	7737 5623 8937 5623
 Wire Notes Line
-	8937 5623 8937 7223
+	8937 5623 8937 7353
 Wire Notes Line
-	8937 7223 7737 7223
+	8932 7343 7732 7343
 Text Notes 7737 5573 0    79   ~ 0
 850C remote keypad
 Text GLabel 5209 3284 2    50   Output ~ 0
@@ -210,7 +210,7 @@ TSDZ2_GND
 Text GLabel 5214 7529 2    50   Input ~ 0
 TSDZ2_5V
 Wire Notes Line
-	7737 5623 7737 7223
+	7737 5623 7737 7343
 $Comp
 L Wired_remote:Switch_SW_Push button_3
 U 1 1 5F4A4B3B
@@ -295,8 +295,6 @@ Wire Wire Line
 	7956 6074 7956 6574
 Wire Wire Line
 	7956 6574 8086 6574
-Wire Wire Line
-	7956 6574 7956 7074
 Wire Wire Line
 	7956 7074 8086 7074
 Connection ~ 7956 6574
@@ -441,4 +439,20 @@ Wire Wire Line
 	4099 7529 5214 7529
 Wire Wire Line
 	4099 7629 5214 7629
+Wire Wire Line
+	7956 7220 8800 7220
+Wire Wire Line
+	8800 7220 8800 6780
+Wire Wire Line
+	8800 6780 9925 6780
+Wire Wire Line
+	9925 6780 9925 5364
+Wire Wire Line
+	9925 5364 10296 5364
+Wire Wire Line
+	7956 6574 7956 7074
+Connection ~ 7956 7074
+Wire Wire Line
+	7956 7074 7956 7220
+Connection ~ 10296 5364
 $EndSCHEMATC

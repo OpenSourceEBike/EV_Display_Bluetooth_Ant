@@ -880,7 +880,7 @@ typedef struct
 /* -- PROTOTYPES                                                                 -- */
 /* -------------------------------------------------------------------------------- */
 /* Classic functions */
-UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16,UG_S16,UG_COLOR), UG_S16 x, UG_S16 y );
+UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16,UG_S16,UG_COLOR), void (p_display_show)(void), UG_S16 x, UG_S16 y );
 UG_S16 UG_SelectGUI( UG_GUI* g );
 void UG_FontSelect( const UG_FONT* font );
 void UG_FillScreen( UG_COLOR c );

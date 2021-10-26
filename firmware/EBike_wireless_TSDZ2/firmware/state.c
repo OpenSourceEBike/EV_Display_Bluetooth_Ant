@@ -53,10 +53,36 @@ rt_vars_t* get_rt_vars(void) {
 
 /// Set correct backlight brightness for current headlight state
 void set_lcd_backlight() {
-	display_set_backlight_intensity(
-			ui_vars.ui8_lights ?
-					ui_vars.ui8_lcd_backlight_on_brightness :
-					ui_vars.ui8_lcd_backlight_off_brightness);
+	// display_set_backlight_intensity(
+	// 		ui_vars.ui8_lights ?
+	// 				ui_vars.ui8_lcd_backlight_on_brightness :
+	// 				ui_vars.ui8_lcd_backlight_off_brightness);
+}
+
+/// must be called from main() idle loop
+void automatic_power_off_management(void) {
+	// static uint32_t ui16_lcd_power_off_time_counter = 0;
+
+	// if (ui_vars.ui8_lcd_power_off_time_minutes != 0) {
+	// 	// see if we should reset the automatic power off minutes counter
+	// 	if ((ui_vars.ui16_wheel_speed_x10 > 0) ||   // wheel speed > 0
+	// 			(ui_vars.ui8_battery_current_x5 > 0) || // battery current > 0
+	// 			(ui_vars.ui8_braking) ||                // braking
+	// 			buttons_get_events()) {                 // any button active
+	// 		ui16_lcd_power_off_time_counter = 0;
+	// 	} else {
+	// 		// increment the automatic power off ticks counter
+	// 		ui16_lcd_power_off_time_counter++;
+
+	// 		// check if we should power off the LCD
+	// 		if (ui16_lcd_power_off_time_counter
+	// 				>= (ui_vars.ui8_lcd_power_off_time_minutes * 10 * 60)) { // have we passed our timeout?
+	// 			lcd_power_off(1);
+	// 		}
+	// 	}
+	// } else {
+	// 	ui16_lcd_power_off_time_counter = 0;
+	// }
 }
 
 void rt_send_tx_package(frame_type_t type) {

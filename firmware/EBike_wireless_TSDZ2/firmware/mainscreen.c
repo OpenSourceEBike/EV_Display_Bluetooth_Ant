@@ -175,76 +175,6 @@ Field motorFOCFieldGraph = FIELD_READONLY_UINT("motor foc", &rt_vars.ui8_foc_ang
 // Note: this field label is special, the string it is pointing to must be in RAM so we can change it later
 Field batteryPowerUsageFieldGraph = FIELD_READONLY_UINT((char [MAX_BATTERY_POWER_USAGE_STR_LEN]){ 0 }, &rt_vars.battery_energy_h_km.ui32_value_x10, "kph", false, .div_digits = 1);
 
-#ifndef SW102 // we don't have any graphs yet on SW102, possibly move this into mainscreen_850.c
-Field wheelSpeedGraph = FIELD_GRAPH(&wheelSpeedFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsWheelSpeed]);
-Field tripDistanceGraph = FIELD_GRAPH(&tripDistanceFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsTripDistance]);
-Field cadenceGraph = FIELD_GRAPH(&cadenceFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsCadence]);
-Field humanPowerGraph = FIELD_GRAPH(&humanPowerFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsHumanPower]);
-Field batteryPowerGraph = FIELD_GRAPH(&batteryPowerFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsBatteryPower]);
-Field batteryPowerUsageGraph = FIELD_GRAPH(&batteryPowerUsageFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsBatteryPowerUsage]);
-Field batteryVoltageGraph = FIELD_GRAPH(&batteryVoltageFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsBatteryVoltage]);
-Field batteryCurrentGraph = FIELD_GRAPH(&batteryCurrentFieldGraph, .filter = FilterSquare, .min_threshold = -1, .graph_vars = &g_graphVars[VarsBatteryCurrent]);
-Field motorCurrentGraph = FIELD_GRAPH(&motorCurrentFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsMotorCurrent]);
-Field batterySOCGraph = FIELD_GRAPH(&batterySOCFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsBatterySOC]);
-Field motorTempGraph = FIELD_GRAPH(&motorTempFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsMotorTemp]);
-Field motorErpsGraph = FIELD_GRAPH(&motorErpsFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsMotorERPS]);
-Field pwmDutyGraph = FIELD_GRAPH(&pwmDutyFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsMotorPWM]);
-Field motorFOCGraph = FIELD_GRAPH(&motorFOCFieldGraph, .min_threshold = -1, .graph_vars = &g_graphVars[VarsMotorFOC]);
-#endif
-
-// Note: the number of graphs in this collection must equal GRAPH_VARIANT_SIZE (for now)
-#ifndef SW102
-Field graph1 = FIELD_CUSTOMIZABLE(&ui_vars.graphs_field_selectors[0],
-  &wheelSpeedGraph,
-  &tripDistanceGraph,
-  &cadenceGraph,
-  &humanPowerGraph,
-  &batteryPowerGraph,
-  &batteryPowerUsageGraph,
-  &batteryVoltageGraph,
-  &batteryCurrentGraph,
-  &motorCurrentGraph,
-  &batterySOCGraph,
-  &motorTempGraph,
-  &motorErpsGraph,
-  &pwmDutyGraph,
-  &motorFOCGraph);
-
-Field graph2 = FIELD_CUSTOMIZABLE(&ui_vars.graphs_field_selectors[1],
-  &wheelSpeedGraph,
-  &tripDistanceGraph,
-  &cadenceGraph,
-  &humanPowerGraph,
-  &batteryPowerGraph,
-  &batteryPowerUsageGraph,
-  &batteryVoltageGraph,
-  &batteryCurrentGraph,
-  &motorCurrentGraph,
-  &batterySOCGraph,
-  &motorTempGraph,
-  &motorErpsGraph,
-  &pwmDutyGraph,
-  &motorFOCGraph);
-
-Field graph3 = FIELD_CUSTOMIZABLE(&ui_vars.graphs_field_selectors[2],
-  &wheelSpeedGraph,
-  &tripDistanceGraph,
-  &cadenceGraph,
-  &humanPowerGraph,
-  &batteryPowerGraph,
-  &batteryPowerUsageGraph,
-  &batteryVoltageGraph,
-  &batteryCurrentGraph,
-  &motorCurrentGraph,
-  &batterySOCGraph,
-  &motorTempGraph,
-  &motorErpsGraph,
-  &pwmDutyGraph,
-  &motorFOCGraph);
-
-Field *graphs[3] = { &graph1, &graph2, &graph3 }; // 3 graphs, each one for each main screen
-#endif
-
 Field *activeGraphs = NULL; // set only once graph data is safe to read
 
 // Note: field_selectors[0] is used on the 850C for the graphs selector
@@ -253,28 +183,12 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom3 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[2], customizables),
   custom4 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[3], customizables),
   custom5 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[4], customizables),
-#ifdef SW102
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
-#else
-  custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables),
-  custom7 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[6], customizables),
-  custom8 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[7], customizables),
-  custom9 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[8], customizables),
-  custom10 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[9], customizables),
-  custom11 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[10], customizables),
-  custom12 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[11], customizables);
-#endif
 
 
 Field bootHeading = FIELD_DRAWTEXT_RO(_S("OpenSource EBike", "OS-EBike")),
    bootURL_1 = FIELD_DRAWTEXT_RO(_S("www.github.com/", "Keep pedal")),
    bootURL_2 = FIELD_DRAWTEXT_RO(_S("OpenSource-EBike-Firmware", "free")),
-
-#ifdef DISPLAY_850C
-   bootFirmwareVersion = FIELD_DRAWTEXT_RO("850C firmware version:"),
-#elif DISPLAY_860C
-   bootFirmwareVersion = FIELD_DRAWTEXT_RO("860C firmware version:"),
-#endif
 
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
    bootStatus1 = FIELD_DRAWTEXT_RO(_S("Keep pedals free and wait", "free pedal")),
@@ -612,12 +526,11 @@ void set_conversions() {
 }
 
 void lcd_main_screen(void) {
-	time();
-	walk_assist_state();
+	// walk_assist_state();
 //  offroad_mode();
 	battery_soc();
 	battery_display();
-	warnings();
+	// warnings();
   up_time();
 	trip_time();
 	wheel_speed();
@@ -634,13 +547,11 @@ void wheel_speed(void)
   ui8_m_wheel_speed_integer = (uint8_t) (ui16_wheel_speed / 10);
   ui8_m_wheel_speed_decimal = (uint8_t) (ui16_wheel_speed % 10);
 
-#ifdef SW102
   // if we are inside the timeout, override the wheel speed value so assist level is shown there
   if (m_assist_level_change_timeout > 0) {
     m_assist_level_change_timeout--;
     ui8_m_wheel_speed_integer = ui_vars.ui8_assist_level;
   }
-#endif
 }
 
 void alternatField(void) {
@@ -711,246 +622,22 @@ void streetMode(void) {
   }
 }
 
-void screen_clock(void) {
-//   static int counter_time_ms = 0;
-//   int time_ms = 0;
+void mainscreen_clock(void) {
+  lcd_main_screen();
+  DisplayResetToDefaults();
+  TripMemoriesReset();
+  DisplayResetBluetoothPeers();
+  batteryTotalWh();
+  batteryCurrent();
+  batteryResistance();
+  motorCurrent();
+  batteryPower();
+  pedalPower();
+  alternatField();
+  streetMode();
 
-//   // No point to processing less than every 100ms, as the data comming from the motor is only updated every 100ms, not less
-//   time_ms = get_time_base_counter_1ms();
-//   if((time_ms - counter_time_ms) >= 100) // not least than evey 100ms
-//   {
-//     counter_time_ms = time_ms;
-
-//     // exchange data from realtime layer to UI layer
-//     // do this in atomic way, disabling the real time layer (should be no problem as
-//     // copy_rt_to_ui_vars() should be fast and take a small piece of the 100ms periodic realtime layer processing
-//     rt_processing_stop();
-//     copy_rt_to_ui_vars();
-//     rt_processing_start();
-
-//     lcd_main_screen();
-// #ifndef SW102
-//     clock_time();
-// #endif
-//     DisplayResetToDefaults();
-//     TripMemoriesReset();
-//     DisplayResetBluetoothPeers();
-//     batteryTotalWh();
-//     batteryCurrent();
-//     batteryResistance();
-//     motorCurrent();
-//     batteryPower();
-//     pedalPower();
-//     alternatField();
-//     streetMode();
-// #ifndef SW102
-//     thresholds();
-// #endif
-//     screenUpdate();
-//   }
-}
-
-void thresholds(void) {
-#ifndef SW102
-
-  odoField.rw->editable.number.auto_thresholds = FIELD_THRESHOLD_DISABLED;
-  odoFieldGraph.rw->editable.number.auto_thresholds = FIELD_THRESHOLD_DISABLED;
-  tripADistanceField.rw->editable.number.auto_thresholds = FIELD_THRESHOLD_DISABLED;
-  tripDistanceFieldGraph.rw->editable.number.auto_thresholds = FIELD_THRESHOLD_DISABLED;
-  batteryPowerUsageField.rw->editable.number.auto_thresholds = FIELD_THRESHOLD_DISABLED;
-  batteryPowerUsageFieldGraph.rw->editable.number.auto_thresholds = FIELD_THRESHOLD_DISABLED;
-
-  if (*wheelSpeedField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    wheelSpeedField.rw->editable.number.error_threshold =
-        wheelSpeedFieldGraph.rw->editable.number.error_threshold = ui_vars.wheel_max_speed_x10;
-    wheelSpeedField.rw->editable.number.warn_threshold =
-        wheelSpeedFieldGraph.rw->editable.number.warn_threshold = ui_vars.wheel_max_speed_x10 - (ui_vars.wheel_max_speed_x10 / 5); // -20%
-  } else if (*wheelSpeedField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    wheelSpeedField.rw->editable.number.error_threshold =
-        wheelSpeedFieldGraph.rw->editable.number.error_threshold = *wheelSpeedField.rw->editable.number.config_error_threshold;
-    wheelSpeedField.rw->editable.number.warn_threshold =
-        wheelSpeedFieldGraph.rw->editable.number.warn_threshold = *wheelSpeedField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (g_graphVars[VarsWheelSpeed].auto_max_min == GRAPH_AUTO_MAX_MIN_SEMI_AUTO) {
-    g_graphVars[VarsWheelSpeed].max = ui_vars.wheel_max_speed_x10;
-    // forcing 0 to min, this way the max will adjust automatically if is higher
-    g_graphVars[VarsWheelSpeed].min = 0;
-  }
-
-  if (*cadenceField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    if (ui_vars.ui8_torque_sensor_calibration_feature_enabled) {
-      cadenceField.rw->editable.number.error_threshold =
-        cadenceFieldGraph.rw->editable.number.error_threshold = 120; // max value for motor assistance
-      cadenceField.rw->editable.number.warn_threshold =
-        cadenceFieldGraph.rw->editable.number.warn_threshold = 100;
-    } else {
-      cadenceField.rw->editable.number.error_threshold =
-        cadenceFieldGraph.rw->editable.number.error_threshold = 92;
-      cadenceField.rw->editable.number.warn_threshold =
-        cadenceFieldGraph.rw->editable.number.warn_threshold = 83; // -10%
-    }
-  } else if (*cadenceField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    cadenceField.rw->editable.number.error_threshold =
-        cadenceFieldGraph.rw->editable.number.error_threshold = *cadenceField.rw->editable.number.config_error_threshold;
-    cadenceField.rw->editable.number.warn_threshold =
-        cadenceFieldGraph.rw->editable.number.warn_threshold = *cadenceField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (*humanPowerField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    humanPowerField.rw->editable.number.error_threshold =
-        humanPowerFieldGraph.rw->editable.number.error_threshold = *humanPowerField.rw->editable.number.config_error_threshold;
-    humanPowerField.rw->editable.number.warn_threshold =
-        humanPowerFieldGraph.rw->editable.number.warn_threshold = *humanPowerField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (*batteryPowerField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    batteryPowerField.rw->editable.number.error_threshold =
-        batteryPowerFieldGraph.rw->editable.number.error_threshold = *batteryPowerField.rw->editable.number.config_error_threshold;
-    batteryPowerField.rw->editable.number.warn_threshold =
-        batteryPowerFieldGraph.rw->editable.number.warn_threshold = *batteryPowerField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (*batteryVoltageField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    int32_t temp = (int32_t) ui_vars.ui16_battery_low_voltage_cut_off_x10;
-    batteryVoltageField.rw->editable.number.error_threshold =
-        batteryVoltageFieldGraph.rw->editable.number.error_threshold = temp;
-    temp *= 10;
-    batteryVoltageField.rw->editable.number.warn_threshold =
-        batteryVoltageFieldGraph.rw->editable.number.warn_threshold = (temp + (temp / 20)) / 10; // -5%
-  } else if (*batteryVoltageField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    batteryVoltageField.rw->editable.number.error_threshold =
-        batteryVoltageFieldGraph.rw->editable.number.error_threshold = *batteryVoltageField.rw->editable.number.config_error_threshold;
-    batteryVoltageField.rw->editable.number.warn_threshold =
-        batteryVoltageFieldGraph.rw->editable.number.warn_threshold = *batteryVoltageField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (g_graphVars[VarsBatteryVoltage].auto_max_min == GRAPH_AUTO_MAX_MIN_SEMI_AUTO) {
-    g_graphVars[VarsBatteryVoltage].min = ui_vars.ui16_battery_low_voltage_cut_off_x10;
-    // forcing the same value as the min, this way the max will adjust automatically if is higher
-    g_graphVars[VarsBatteryVoltage].max = g_graphVars[VarsBatteryVoltage].min;
-  }
-
-  if (*batteryCurrentField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    int32_t temp = (int32_t) ui_vars.ui8_battery_max_current * 10;
-    batteryCurrentField.rw->editable.number.error_threshold =
-        batteryCurrentFieldGraph.rw->editable.number.error_threshold = temp;
-    temp *= 10; // current_x10 * 10
-    batteryCurrentField.rw->editable.number.warn_threshold =
-        batteryCurrentFieldGraph.rw->editable.number.warn_threshold = (temp - (temp / 10)) / 10; // -10%
-  } else if (*batteryCurrentField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    batteryCurrentField.rw->editable.number.error_threshold =
-        batteryCurrentFieldGraph.rw->editable.number.error_threshold = *batteryCurrentField.rw->editable.number.config_error_threshold;
-    batteryCurrentField.rw->editable.number.warn_threshold =
-        batteryCurrentFieldGraph.rw->editable.number.warn_threshold = *batteryCurrentField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (g_graphVars[VarsBatteryCurrent].auto_max_min == GRAPH_AUTO_MAX_MIN_SEMI_AUTO) {
-    g_graphVars[VarsBatteryCurrent].max = ((uint32_t) ui_vars.ui8_battery_max_current) * 10;
-    g_graphVars[VarsBatteryCurrent].min = 0;
-  }
-
-  if (*motorCurrentField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    int32_t temp = (int32_t) ui_vars.ui8_motor_max_current * 10;
-    motorCurrentField.rw->editable.number.error_threshold =
-        motorCurrentFieldGraph.rw->editable.number.error_threshold = temp;
-    temp *= 10; // current_x10 * 10
-    motorCurrentField.rw->editable.number.warn_threshold =
-        motorCurrentFieldGraph.rw->editable.number.warn_threshold = (temp - (temp / 10)) / 10; // -10%
-  } else if (*motorCurrentField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    motorCurrentField.rw->editable.number.error_threshold =
-        motorCurrentFieldGraph.rw->editable.number.error_threshold = *motorCurrentField.rw->editable.number.config_error_threshold;
-    motorCurrentField.rw->editable.number.warn_threshold =
-        motorCurrentFieldGraph.rw->editable.number.warn_threshold = *motorCurrentField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (g_graphVars[VarsMotorCurrent].auto_max_min == GRAPH_AUTO_MAX_MIN_SEMI_AUTO) {
-    g_graphVars[VarsMotorCurrent].max = ((uint32_t) ui_vars.ui8_motor_max_current) * 10;
-    g_graphVars[VarsMotorCurrent].min = 0;
-  }
-
-  if (*batterySOCField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    batterySOCField.rw->editable.number.error_threshold =
-        batterySOCFieldGraph.rw->editable.number.error_threshold = 10;
-    batterySOCField.rw->editable.number.warn_threshold =
-        batterySOCFieldGraph.rw->editable.number.warn_threshold = 25;
-  } else if (*batterySOCField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    batterySOCField.rw->editable.number.error_threshold =
-        batterySOCFieldGraph.rw->editable.number.error_threshold = *batterySOCField.rw->editable.number.config_error_threshold;
-    batterySOCField.rw->editable.number.warn_threshold =
-        batterySOCFieldGraph.rw->editable.number.warn_threshold = *batterySOCField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (*motorTempField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    motorTempField.rw->editable.number.error_threshold =
-        motorTempFieldGraph.rw->editable.number.error_threshold = (int32_t) ui_vars.ui8_motor_temperature_max_value_to_limit;
-    motorTempField.rw->editable.number.warn_threshold =
-        motorTempFieldGraph.rw->editable.number.warn_threshold = (int32_t) ui_vars.ui8_motor_temperature_min_value_to_limit;
-  } else if (*motorTempField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    motorTempField.rw->editable.number.error_threshold =
-        motorTempFieldGraph.rw->editable.number.error_threshold = *motorTempField.rw->editable.number.config_error_threshold;
-    motorTempField.rw->editable.number.warn_threshold =
-        motorTempFieldGraph.rw->editable.number.error_threshold = *motorTempField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (g_graphVars[VarsMotorTemp].auto_max_min == GRAPH_AUTO_MAX_MIN_SEMI_AUTO) {
-    g_graphVars[VarsMotorTemp].max = ui_vars.ui8_motor_temperature_max_value_to_limit;
-    g_graphVars[VarsMotorTemp].min = 0;
-  }
-
-  if (*motorErpsField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    motorErpsField.rw->editable.number.error_threshold =
-        motorErpsFieldGraph.rw->editable.number.error_threshold = 525;
-    motorErpsField.rw->editable.number.warn_threshold =
-        motorErpsFieldGraph.rw->editable.number.warn_threshold = 473; // -10%
-  } else if (*motorErpsField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    motorErpsField.rw->editable.number.error_threshold =
-        motorErpsFieldGraph.rw->editable.number.error_threshold = *motorErpsField.rw->editable.number.config_error_threshold;
-    motorErpsField.rw->editable.number.warn_threshold =
-        motorErpsFieldGraph.rw->editable.number.warn_threshold = *motorErpsField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (*pwmDutyField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    if (ui_vars.ui8_torque_sensor_calibration_feature_enabled) {
-      pwmDutyField.rw->editable.number.error_threshold =
-          pwmDutyFieldGraph.rw->editable.number.error_threshold = 111;
-      pwmDutyField.rw->editable.number.warn_threshold =
-          pwmDutyFieldGraph.rw->editable.number.warn_threshold = 99;
-    } else {
-      pwmDutyField.rw->editable.number.error_threshold =
-          pwmDutyFieldGraph.rw->editable.number.error_threshold = 100;
-      pwmDutyField.rw->editable.number.warn_threshold =
-          pwmDutyFieldGraph.rw->editable.number.warn_threshold = 90;
-    }
-  } else if (*pwmDutyField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    pwmDutyField.rw->editable.number.error_threshold =
-        pwmDutyFieldGraph.rw->editable.number.error_threshold = *pwmDutyField.rw->editable.number.config_error_threshold;
-    pwmDutyField.rw->editable.number.warn_threshold =
-        pwmDutyFieldGraph.rw->editable.number.warn_threshold = *pwmDutyField.rw->editable.number.config_warn_threshold;
-  }
-
-  if (g_graphVars[VarsMotorPWM].auto_max_min == GRAPH_AUTO_MAX_MIN_SEMI_AUTO) {
-    if (ui_vars.ui8_torque_sensor_calibration_feature_enabled) {
-      g_graphVars[VarsMotorPWM].max = 111;
-      g_graphVars[VarsMotorPWM].min = 0;
-    } else {
-      g_graphVars[VarsMotorPWM].max = 100;
-      g_graphVars[VarsMotorPWM].min = 0;
-    }
-  }
-
-  if (*motorFOCField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_AUTO) {
-    motorFOCField.rw->editable.number.error_threshold =
-        motorFOCFieldGraph.rw->editable.number.error_threshold = 8;
-    motorFOCField.rw->editable.number.warn_threshold =
-        motorFOCFieldGraph.rw->editable.number.warn_threshold = 6; // -20%
-  } else if (*motorFOCField.rw->editable.number.auto_thresholds == FIELD_THRESHOLD_MANUAL) {
-    motorFOCField.rw->editable.number.error_threshold =
-        motorFOCFieldGraph.rw->editable.number.error_threshold = *motorFOCField.rw->editable.number.config_error_threshold;
-    motorFOCField.rw->editable.number.warn_threshold =
-        motorFOCFieldGraph.rw->editable.number.warn_threshold = *motorFOCField.rw->editable.number.config_warn_threshold;
-  }
-#endif
+  // finally, update the screen
+  screenUpdate();
 }
 
 void up_time(void) {
@@ -1090,6 +777,9 @@ void warnings(void) {
 }
 
 void battery_soc(void) {
+ui_vars.ui8_battery_soc_enable = 1;
+ui8_g_battery_soc = 42;
+
   switch (ui_vars.ui8_battery_soc_enable) {
     default:
     case 0:
@@ -1109,43 +799,6 @@ void battery_soc(void) {
   }
 }
 
-
-void time(void) {
-#ifndef SW102
-  rtc_time_t *p_rtc_time = rtc_get_time();
-
-  switch (ui_vars.ui8_time_field_enable) {
-    default:
-    case 0:
-      // clear the area
-      fieldPrintf(&timeField, "");
-      break;
-
-    case 1:
-      // force to be [0 - 12]
-      if (ui_vars.ui8_units_type) { // FIXME, should be based on a different eeprom config value, just because someone is using mph doesn't mean they want 12 hr time
-        if (p_rtc_time->ui8_hours > 12) {
-          p_rtc_time->ui8_hours -= 12;
-        }
-      }
-
-      fieldPrintf(&timeField, "%d:%02d", p_rtc_time->ui8_hours,
-          p_rtc_time->ui8_minutes);
-      break;
-
-    case 2:
-      fieldPrintf(&timeField, "%3d%%", ui8_g_battery_soc);
-      break;
-
-    case 3:
-      fieldPrintf(&timeField, "%u.%1uV",
-          ui_vars.ui16_battery_voltage_soc_x10 / 10,
-          ui_vars.ui16_battery_voltage_soc_x10 % 10);
-      break;
-  }
-#endif
-}
-
 // Screens in a loop, shown when the user short presses the power button
 extern Screen *screens[];
 
@@ -1160,7 +813,7 @@ void showNextScreen() {
 	screenShow(screens[g_showNextScreenIndex]);
 }
 
-static bool appwide_onpress(buttons_events_t events)
+bool appwide_onpress(buttons_events_t events)
 {
   // power off only after we release first time the onoff button
   if (events & ONOFF_LONG_CLICK)
@@ -1169,22 +822,19 @@ static bool appwide_onpress(buttons_events_t events)
     return true;
   }
 
-  if ((events & SCREENCLICK_NEXT_SCREEN) &&
-      (g_motor_init_state == MOTOR_INIT_READY)) {
+  // if ((events & SCREENCLICK_NEXT_SCREEN) &&
+  //     (g_motor_init_state == MOTOR_INIT_READY)) {
+
+          if ((events & SCREENCLICK_NEXT_SCREEN)) {
     showNextScreen();
     return true;
   }
 
-  // if (events & SCREENCLICK_ENTER_CONFIGURATIONS) {
-  //   screenShow(&configScreen);
-  //   return true;
-  // }
-
 	return false;
 }
 
-/// Called every 20ms to check for button events and dispatch to our handlers
-static void handle_buttons() {
+/// Called every 50ms
+void handle_buttons() {
 
   static uint8_t firstTime = 1;
 
@@ -1196,53 +846,35 @@ static void handle_buttons() {
     buttons_clear_onoff_click_long_click_event();
   }
 
-  if (ui8_m_alternate_field_state == 7) { // if virtual throttle mode
-    if (buttons_get_up_state() == 0 && // UP and DOWN buttons not pressed
-            buttons_get_down_state() == 0) {
-      if (ui8_m_alternate_field_timeout_cnt) {
-        ui8_m_alternate_field_timeout_cnt--;
-      } else {
-        ui8_m_vthrottle_can_increment_decrement = 0;
-        ui_vars.ui8_throttle_virtual = 0;
-      }
-    } else {
-      ui8_m_alternate_field_timeout_cnt = 50;
-    }
-  }
-
-  if (buttons_events && firstTime == 0)
+  if (buttons_get_events() && firstTime == 0)
   {
     bool handled = false;
 
 		if (!handled)
-			handled |= screenOnPress(buttons_events);
+			handled |= screenOnPress(buttons_get_events());
 
 		// Note: this must be after the screen/menu handlers have had their shot
 		if (!handled)
-			handled |= appwide_onpress(buttons_events);
+			handled |= appwide_onpress(buttons_get_events());
 
 		if (handled)
 			buttons_clear_all_events();
 	}
 
-	buttons_clock(); // Note: this is done _after_ button events is checked to provide a 20ms debounce
-}
-
-/// Call every 20ms from the main thread.
-void main_idle() {
-  // static int counter_time_ms = 0;
-  // int time_ms = 0;
-
-  // // no point to processing less than every 100ms, as the data comming from the motor is only updated every 100ms, not less
-  // time_ms = get_time_base_counter_1ms();
-  // if((time_ms - counter_time_ms) >= 100) // not least than evey 100ms
+  // if (buttons_get_events() && firstTime == 0)
   // {
-  //   counter_time_ms = time_ms;
-  //   automatic_power_off_management();
+ 	// 	if (wiredRemoteOnPress(buttons_get_events())) buttons_clear_all_events();
   // }
 
-	// handle_buttons();
-	// screen_clock(); // This is _after_ handle_buttons so if a button was pressed this tick, we immediately update the GUI
+	buttons_clock(); // Note: this is done _after_ button events is checked to provide a 50ms debounce
+}
+
+void mainscreen_idle() {
+   
+  automatic_power_off_management();
+
+	handle_buttons();
+	mainscreen_clock(); // This is _after_ handle_buttons so if a button was pressed this tick, we immediately update the GUI
 }
 
 void batteryTotalWh(void) {

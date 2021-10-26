@@ -54,6 +54,7 @@
 //
 /* -------------------------------------------------------------------------------- */
 #include "ugui.h"
+#include "display.h"
 
 /* SW102 Extensions */
 static void (*p_refresh)( void ) = (void *)0;
@@ -4565,9 +4566,11 @@ __UG_FONT_DATA unsigned char font_32x53[256][212]={
 
 
 
-UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16,UG_S16,UG_COLOR), UG_S16 x, UG_S16 y )
+UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16,UG_S16,UG_COLOR), void (*p_display_show)(void), UG_S16 x, UG_S16 y )
 {
    UG_U8 i;
+
+   p_refresh = p_display_show;
 
    g->pset = (void(*)(UG_S16,UG_S16,UG_COLOR))p;
    g->x_dim = x;
@@ -4628,7 +4631,7 @@ void UG_FontSelect( const UG_FONT* font )
 void UG_FillScreen( UG_COLOR c )
 {
    calledByParent = 1;
-   UG_FillFrame(0,0,gui->x_dim-1,gui->y_dim-1,c);
+   ssd1306_fill_screen(c);
    _UG_Refresh();
 }
 
