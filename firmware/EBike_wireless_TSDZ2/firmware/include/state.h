@@ -17,11 +17,7 @@
 // Battery voltage (readed on motor controller):
 #define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 866
 
-#ifdef SW102
 #define NUM_CUSTOMIZABLE_FIELDS 6
-#else
-#define NUM_CUSTOMIZABLE_FIELDS 12
-#endif
 
 typedef enum {
   MOTOR_INIT_OFF = 0,
@@ -300,7 +296,7 @@ typedef struct ui_vars_struct {
 	uint16_t ui16_torque_sensor_calibration_table_right[8][2];
 
   uint8_t field_selectors[NUM_CUSTOMIZABLE_FIELDS]; // this array is opaque to the app, but the screen layer uses it to store which field is being displayed (it is stored to EEPROM)
-	uint8_t graphs_field_selectors[3]; // 3 screen main pages
+  uint8_t showNextScreenIndex;
 
 	uint8_t ui8_street_mode_function_enabled;
 	uint8_t ui8_street_mode_enabled;

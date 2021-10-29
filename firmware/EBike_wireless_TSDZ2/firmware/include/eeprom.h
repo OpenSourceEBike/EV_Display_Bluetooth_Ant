@@ -179,6 +179,9 @@ typedef struct configurations {
   uint8_t ui8_ant_device_id;
   uint8_t ui8_configurations_version;
   uint8_t ui8_enter_bootloader;
+  uint8_t field_selectors[NUM_CUSTOMIZABLE_FIELDS]; // this array is opaque to the app, but the screen layer uses it to store which field is being displayed (it is stored to EEPROM)
+	uint8_t showNextScreenIndex;
+
 } configurations_t;
 
 void eeprom_init(void);

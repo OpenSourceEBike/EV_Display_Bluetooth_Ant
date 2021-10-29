@@ -89,7 +89,7 @@ typedef enum
   MOTOR_STATE_ON,
 } motor_power_state_t;
 
-motor_power_state_t m_motor_state = MOTOR_STATE_OFF;
+motor_power_state_t m_motor_state = MOTOR_STATE_ON_START;
 
 #define MSEC_PER_TICK 10
 APP_TIMER_DEF(main_timer);
@@ -1865,9 +1865,9 @@ int main(void)
       // exchange data from realtime layer to UI layer
       // do this in atomic way, disabling the real time layer (should be no problem as
       // copy_rt_to_ui_vars() should be fast and take a small piece of the 50ms periodic realtime layer processing
-      // rt_processing_stop();
-      // copy_rt_ui_vars();
-      // rt_processing_start();
+      rt_processing_stop();
+      copy_rt_ui_vars();
+      rt_processing_start();
 
       mainscreen_idle();
 

@@ -152,6 +152,18 @@ const configurations_t m_configurations_defaults = {
 
   .ui8_ant_device_id = DEFAULT_ANT_LEV_ID,
   .ui8_enter_bootloader = 0,
+
+  .field_selectors = {
+    12, // human power
+    13, // motor power
+
+    0, // up time
+    2, // trip distance
+
+    13, // motor power
+    20, // PWM
+  },
+  .showNextScreenIndex = 0,
 };
 
 /* Keep track of the progress of a delete_all operation. */
@@ -379,6 +391,9 @@ void eeprom_init_variables(void) {
     m_configurations.ui8_enter_bootloader;
 
   ui_vars->ui8_buttons_up_down_invert = m_configurations.ui8_buttons_up_down_invert;
+
+  COPY_ARRAY(ui_vars, &m_configurations, field_selectors);
+  g_showNextScreenIndex = m_configurations.showNextScreenIndex;
 }
 
 void eeprom_write_variables(void) {
@@ -484,6 +499,9 @@ void eeprom_write_variables(void) {
     ui_vars->ui8_enter_bootloader;
 
   m_configurations.ui8_buttons_up_down_invert = ui_vars->ui8_buttons_up_down_invert;
+
+  COPY_ARRAY(&m_configurations, ui_vars, field_selectors);
+  m_configurations.showNextScreenIndex = g_showNextScreenPreviousIndex;
 
   /* Write the updated record to flash. */
   ret_code_t err_code = fds_record_update(&m_desc_config, &m_fds_configurations);

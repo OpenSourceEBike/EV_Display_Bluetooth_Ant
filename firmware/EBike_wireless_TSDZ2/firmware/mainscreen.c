@@ -484,8 +484,8 @@ bool mainScreenOnPress(buttons_events_t events) {
 
   // handled = onPressAlternateField(events);
 
-  // if (handled == false)
-  //   handled = anyscreen_onpress(events);
+  if (handled == false)
+    handled = anyscreen_onpress(events);
 
   // if (handled == false)
   //   handled = onPressStreetMode(events);
@@ -504,8 +504,7 @@ bool mainScreenOnPress(buttons_events_t events) {
       handled = true;
     }
 
-    if (
-      events & DOWN_CLICK
+    if (events & DOWN_CLICK
       && !ui_vars.ui8_walk_assist // do not lower assist level if walk assist is active
     ) {
       if (ui_vars.ui8_assist_level > 0)
@@ -527,11 +526,11 @@ void set_conversions() {
 }
 
 void lcd_main_screen(void) {
-	// walk_assist_state();
+	walk_assist_state();
 //  offroad_mode();
 	battery_soc();
 	battery_display();
-	// warnings();
+	warnings();
   up_time();
 	trip_time();
 	wheel_speed();
