@@ -10,8 +10,6 @@ bool renderBattery(FieldLayout *layout)
 {
   uint32_t ui32_x1, ui32_x2;
   uint32_t ui32_y1, ui32_y2;
-  // int16_t height = BATTERY_SOC_HEIGHT;
-  // int16_t width = BATTERY_SOC_WITH;
   uint8_t battery_bars;
 
   if (ui8_g_battery_soc > 0) {

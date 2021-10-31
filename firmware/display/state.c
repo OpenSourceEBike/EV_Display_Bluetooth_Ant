@@ -517,8 +517,8 @@ static void motor_init(void) {
         break;
 
       case MOTOR_INIT_GOT_MOTOR_FIRMWARE_VERSION:
-        if (g_tsdz2_firmware_version.major == atoi(TSDZ2_FIRMWARE_MAJOR) &&
-            g_tsdz2_firmware_version.minor == atoi(TSDZ2_FIRMWARE_MINOR)) {
+        if (g_tsdz2_firmware_version.major == atoi(MOTOR_FIRMWARE_MAJOR) &&
+            g_tsdz2_firmware_version.minor == atoi(MOTOR_FIRMWARE_MINOR)) {
 
             g_motor_init_state = MOTOR_INIT_SET_CONFIGURATIONS;
             // not break here to follow for next case

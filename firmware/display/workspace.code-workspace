@@ -1,12 +1,12 @@
 {
 	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../../common_firmware"
-		}
-	],
+    {
+      "path": "."
+    },
+    {
+      "path": ".."
+    }
+  ],
   "settings": {
     "git.ignoreLimitWarning": true,
     "files.associations": {

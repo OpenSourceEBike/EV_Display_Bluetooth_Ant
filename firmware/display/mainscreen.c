@@ -227,7 +227,6 @@ Screen bootScreen = {
   .onExit = bootScreenOnExit,
 
   .fields = {
-#ifdef SW102
     {
       .x = 0, .y = YbyEighths(0) + 2, .height = -1,
       .field = &bootHeading,
@@ -244,49 +243,11 @@ Screen bootScreen = {
       .field = &bootURL_2,
       .font = &SMALL_TEXT_FONT,
     },
-#else
-    {
-      .x = 0, .y = YbyEighths(1), .height = -1,
-      .field = &bootHeading,
-      .font = &REGULAR_TEXT_FONT,
-    },
-    {
-      .x = 0, .y = -20, .height = -1,
-      .field = &bootURL_1,
-      .font = &SMALL_TEXT_FONT,
-    },
-
-    {
-      .x = 0, .y = -6, .height = -1,
-      .field = &bootURL_2,
-      .font = &SMALL_TEXT_FONT,
-    },
-#endif
-#ifndef SW102
-    {
-      .x = 0, .y = YbyEighths(4), .height = -1,
-      .field = &bootStatus1,
-      .font = &SMALL_TEXT_FONT,
-    },
-    {
-      .x = 0, .y = YbyEighths(6), .height = -1,
-      .field = &bootFirmwareVersion,
-      .font = &SMALL_TEXT_FONT,
-    },
-#endif
-#ifdef SW102
     {
       .x = 0, .y = -24, .height = -1,
       .field = &bootVersion,
       .font = &SMALL_TEXT_FONT,
     },
-#else
-    {
-      .x = 0, .y = -8, .height = -1,
-      .field = &bootVersion,
-      .font = &SMALL_TEXT_FONT,
-    },
-#endif
     {
       .x = 0, .y = YbyEighths(7), .height = -1,
       .field = &bootStatus2,

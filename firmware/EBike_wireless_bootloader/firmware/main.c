@@ -72,8 +72,9 @@ static void leds_init(void)
     ret_val = bsp_init(BSP_INIT_LEDS, NULL);
     APP_ERROR_CHECK(ret_val);
   }
+  
   // turn on the led to indicate we are in the bootloader
- // bsp_board_led_on(BSP_BOARD_LED_1); //indicate that the bootloader is active
+  bsp_board_led_on(BSP_BOARD_LED_1); //indicate that the bootloader is active
 }
 
 static void on_error(void)
@@ -199,11 +200,13 @@ static bool gpio_init(void)
   err_code = nrf_drv_gpiote_init();
   APP_ERROR_CHECK(err_code);
     
- // bootloader_pin_pressed = check_pin_and_enable_interrupt(PLUS__PIN);
- // bootloader_pin_pressed |= check_pin_and_enable_interrupt(MINUS__PIN);
-  bootloader_pin_pressed = check_pin_and_enable_interrupt(ENTER__PIN);
+  bootloader_pin_pressed = check_pin_and_enable_interrupt(PLUS__PIN);
+  bootloader_pin_pressed |= check_pin_and_enable_interrupt(MINUS__PIN);
   bootloader_pin_pressed |= check_pin_and_enable_interrupt(STANDBY__PIN);
-  bootloader_pin_pressed |= check_pin_and_enable_interrupt(BUTTON_1);
+
+  // user do not have access to the following pins, so do not use them
+  // bootloader_pin_pressed |= check_pin_and_enable_interrupt(ENTER__PIN);
+  // bootloader_pin_pressed |= check_pin_and_enable_interrupt(BUTTON_1);
 
   return bootloader_pin_pressed;
 }
@@ -214,9 +217,9 @@ static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
   {
     if (((read_pin(PLUS__PIN) == 0) &&
         (read_pin(MINUS__PIN) == 0) &&
-        (read_pin(ENTER__PIN) == 0) &&
-        (read_pin(STANDBY__PIN) == 0)) ||
-        (read_pin(BUTTON_1) == 0))
+        // (read_pin(ENTER__PIN) == 0) &&
+        (read_pin(STANDBY__PIN) == 0)))
+        // || (read_pin(BUTTON_1) == 0))
     {
       g_start_bootloader = true;
     }
@@ -243,7 +246,7 @@ static void rtc_config(void)
   APP_ERROR_CHECK(err_code);
 
   //Set compare channel to trigger interrupt after COMPARE_COUNTERTIME seconds
-  err_code = nrf_drv_rtc_cc_set(&rtc, 0, 10 * 8,true);
+  err_code = nrf_drv_rtc_cc_set(&rtc, 0, 10 * 8, true);
   APP_ERROR_CHECK(err_code);
 
   //Power on RTC instance
@@ -296,12 +299,12 @@ int main(void)
       nrf_drv_gpiote_in_event_disable(PLUS__PIN);
       nrf_drv_gpiote_in_uninit(MINUS__PIN);
       nrf_drv_gpiote_in_event_disable(MINUS__PIN);
-      nrf_drv_gpiote_in_uninit(ENTER__PIN);
-      nrf_drv_gpiote_in_event_disable(ENTER__PIN);
+      // nrf_drv_gpiote_in_uninit(ENTER__PIN);
+      // nrf_drv_gpiote_in_event_disable(ENTER__PIN);
       nrf_drv_gpiote_in_uninit(STANDBY__PIN);
       nrf_drv_gpiote_in_event_disable(STANDBY__PIN);
-      nrf_drv_gpiote_in_uninit(BUTTON_1);
-      nrf_drv_gpiote_in_event_disable(BUTTON_1);
+      // nrf_drv_gpiote_in_uninit(BUTTON_1);
+      // nrf_drv_gpiote_in_event_disable(BUTTON_1);
 
       // RTC uninit because it will be used by the softdevice
       rtc_uninit();

@@ -12,7 +12,7 @@
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/_build/TSDZ2_wireless.out",
+            "program": "${workspaceFolder}/_build/display_firmware.out",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",            
@@ -31,7 +31,7 @@
             "customLaunchSetupCommands": [
                 {
                     "description": "Set remote target",
-                    "text": "file ${workspaceFolder}/_build/TSDZ2_wireless.out"
+                    "text": "file ${workspaceFolder}/_build/display_firmware.out"
                 },
                 {
                     "description": "Set remote target",
@@ -48,7 +48,7 @@
                 },
                 {
                     "description": "Flash firmware",
-                    "text": "monitor flash write_image erase ${workspaceFolder}/_build/TSDZ2_wireless_combined.hex"
+                    "text": "monitor flash write_image erase ${workspaceFolder}/_build/display_firmware_combined.hex"
                 },
                 {
                     "description": "Start debug",
@@ -63,7 +63,7 @@
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/_build/TSDZ2_wireless.out",
+            "program": "${workspaceFolder}/_build/display_firmware.out",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",            
@@ -82,7 +82,7 @@
             "customLaunchSetupCommands": [
                 {
                     "description": "Set remote target",
-                    "text": "file ${workspaceFolder}/_build/TSDZ2_wireless.out"
+                    "text": "file ${workspaceFolder}/_build/display_firmware.out"
                 },
                 {
                     "description": "Set remote target",

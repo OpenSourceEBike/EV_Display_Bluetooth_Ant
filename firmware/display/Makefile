@@ -1,17 +1,17 @@
-PROJECT_NAME     := TSDZ2_wireless
-TARGETS          := TSDZ2_wireless
+PROJECT_NAME     := display_firmware
+TARGETS          := display_firmware
 
 # This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
-TSDZ2_FIRMWARE_MAJOR := 1
-TSDZ2_FIRMWARE_MINOR := 1
+MOTOR_FIRMWARE_MAJOR := 1
+MOTOR_FIRMWARE_MINOR := 1
 
 OUTPUT_DIRECTORY := _build
 
 SDK_ROOT := ../common_firmware/nRF5_SDK_16.0.0
 PROJ_DIR := .
 
-$(OUTPUT_DIRECTORY)/TSDZ2_wireless.out: \
-  LINKER_SCRIPT  := TSDZ2_wireless_gcc_nrf52.ld
+$(OUTPUT_DIRECTORY)/display_firmware.out: \
+  LINKER_SCRIPT  := linker_script_nrf52.ld
 
 BOOTLOADER_DIR = $(PROJ_DIR)/../EBike_wireless_bootloader/firmware
 BOOTLOADER_HEX = $(BOOTLOADER_DIR)/_build/TSDZ2_bootloader_with_sd.hex
@@ -27,10 +27,10 @@ VERSION_NUM := 1
 VERSION_STRING := 1.0.0
 
 # This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
-TSDZ2_FIRMWARE_MAJOR := 1
-TSDZ2_FIRMWARE_MINOR := 1
+MOTOR_FIRMWARE_MAJOR := 1
+MOTOR_FIRMWARE_MINOR := 1
 
-CFLAGS += -DVERSION_STRING=\"$(VERSION_STRING)\" -DTSDZ2_FIRMWARE_MAJOR=\"$(TSDZ2_FIRMWARE_MAJOR)\" -DTSDZ2_FIRMWARE_MINOR=\"$(TSDZ2_FIRMWARE_MINOR)\"
+CFLAGS += -DVERSION_STRING=\"$(VERSION_STRING)\" -DMOTOR_FIRMWARE_MAJOR=\"$(MOTOR_FIRMWARE_MAJOR)\" -DMOTOR_FIRMWARE_MINOR=\"$(MOTOR_FIRMWARE_MINOR)\"
 
 # Source files common to all targets
 SRC_FILES += \
@@ -268,8 +268,8 @@ CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in a separate section, this allows linker to discard unused ones
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin -fshort-enums
-CFLAGS += -DTSDZ2_FIRMWARE_MAJOR=\"$(TSDZ2_FIRMWARE_MAJOR)\"
-CFLAGS += -DTSDZ2_FIRMWARE_MINOR=\"$(TSDZ2_FIRMWARE_MINOR)\"
+CFLAGS += -DMOTOR_FIRMWARE_MAJOR=\"$(MOTOR_FIRMWARE_MAJOR)\"
+CFLAGS += -DMOTOR_FIRMWARE_MINOR=\"$(MOTOR_FIRMWARE_MINOR)\"
 
 
 
@@ -300,10 +300,10 @@ LDFLAGS += -Wl,--gc-sections
 # use newlib in nano version
 LDFLAGS += --specs=nano.specs
 
-TSDZ2_wireless: CFLAGS += -D__HEAP_SIZE=8192
-TSDZ2_wireless: CFLAGS += -D__STACK_SIZE=8192
-TSDZ2_wireless: ASMFLAGS += -D__HEAP_SIZE=8192
-TSDZ2_wireless: ASMFLAGS += -D__STACK_SIZE=8192
+display_firmware: CFLAGS += -D__HEAP_SIZE=8192
+display_firmware: CFLAGS += -D__STACK_SIZE=8192
+display_firmware: ASMFLAGS += -D__HEAP_SIZE=8192
+display_firmware: ASMFLAGS += -D__STACK_SIZE=8192
 
 # Add standard libraries at the very end of the linker input, after all objects
 # that may need symbols provided by these libraries.
@@ -313,9 +313,10 @@ LIB_FILES += -lc -lnosys -lm
 .PHONY: default help
 
 # Default target - first one defined
-default: TSDZ2_wireless TSDZ2_bootloader bl_settings final OTA
+default: display_firmware TSDZ2_bootloader bl_settings final OTA
+#default: display_firmware
 
-for_development_only: TSDZ2_wireless bl_settings final
+for_development_only: display_firmware bl_settings final
 
 
 TSDZ2_bootloader:
@@ -323,13 +324,13 @@ TSDZ2_bootloader:
 
 # We use srec_cat here but if you want to be able to use the combined hex file with nRF Connect you should use Nordic's mergehex tool
 final:
-	srec_cat $(OUTPUT_DIRECTORY)/TSDZ2_wireless.hex -intel $(OUTPUT_DIRECTORY)/bl_settings.hex -intel $(BOOTLOADER_HEX) -intel -o $(OUTPUT_DIRECTORY)/TSDZ2_wireless_combined.hex -intel -address-length=4
+	srec_cat $(OUTPUT_DIRECTORY)/display_firmware.hex -intel $(OUTPUT_DIRECTORY)/bl_settings.hex -intel $(BOOTLOADER_HEX) -intel -o $(OUTPUT_DIRECTORY)/display_firmware_combined.hex -intel -address-length=4
 
 bl_settings:
-	$(SREC_PATH)nrfutil settings generate --family NRF52840 --application $(OUTPUT_DIRECTORY)/TSDZ2_wireless.hex --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --bootloader-version 1 --bl-settings-version 2 $(OUTPUT_DIRECTORY)/bl_settings.hex
+	$(SREC_PATH)nrfutil settings generate --family NRF52840 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --bootloader-version 1 --bl-settings-version 2 $(OUTPUT_DIRECTORY)/bl_settings.hex
 
 OTA:
-	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/TSDZ2_wireless.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/TSDZ2_wireless_ota_update.zip
+	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/display_firmware_ota_update.zip
 
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc
@@ -342,8 +343,8 @@ $(foreach target, $(TARGETS), $(call define_target, $(target)))
 
 # Flash the program
 flash: default
-	@echo Flashing: $(OUTPUT_DIRECTORY)/TSDZ2_wireless.hex
-	nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/TSDZ2_wireless.hex --sectorerase
+	@echo Flashing: $(OUTPUT_DIRECTORY)/display_firmware.hex
+	nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/display_firmware.hex --sectorerase
 	nrfjprog -f nrf52 --reset
 
 erase:

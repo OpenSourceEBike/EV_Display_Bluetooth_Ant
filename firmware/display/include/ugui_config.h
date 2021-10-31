@@ -31,6 +31,7 @@
 
 // Standard default font selections used most of the time
 #define  SMALL_TEXT_FONT              FONT_5X12
+#define  MEDIUM_TEXT_FONT             FONT_8X14
 #define  REGULAR_TEXT_FONT            FONT_5X12
 
 #define  TITLE_TEXT_FONT              MY_FONT_8X12
@@ -99,7 +100,7 @@
 //#define  USE_FONT_8X8
 //#define  USE_FONT_8X12_CYRILLIC
 //#define  USE_FONT_8X12
-//#define  USE_FONT_8X14
+#define  USE_FONT_8X14
 // #define  USE_FONT_10X16  // a max of 5 chars per line on SW102 (including padding)
 // #define  USE_FONT_12X16
 // #define  USE_FONT_12X20
