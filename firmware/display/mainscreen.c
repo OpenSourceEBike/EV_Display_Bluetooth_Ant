@@ -739,7 +739,6 @@ void warnings(void) {
 
 void battery_soc(void) {
 ui_vars.ui8_battery_soc_enable = 1;
-ui8_g_battery_soc = 42;
 
   switch (ui_vars.ui8_battery_soc_enable) {
     default:
@@ -749,7 +748,7 @@ ui8_g_battery_soc = 42;
       break;
 
     case 1:
-      fieldPrintf(&socField, "%3d%%", ui8_g_battery_soc);
+      fieldPrintf(&socField, "%3d%", ui8_g_battery_soc);
       break;
 
     case 2:

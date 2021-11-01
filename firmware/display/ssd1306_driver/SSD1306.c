@@ -396,8 +396,12 @@ void ssd1306_begin(uint8_t vccstate, uint8_t i2caddr, bool reset)
         }
         ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
         ssd1306_command(0x00);                              // 0x0 act like ks0108
-        ssd1306_command(SSD1306_SEGREMAP | 0x1);
-        ssd1306_command(SSD1306_COMSCANDEC);
+        
+        // ssd1306_command(SSD1306_SEGREMAP | 0x1);
+        ssd1306_command(SSD1306_SEGREMAP | 0x0);
+
+        ssd1306_command(SSD1306_COMSCANINC);
+        
         ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
         ssd1306_command(0x12);
         ssd1306_command(SSD1306_SETCONTRAST);               // 0x81

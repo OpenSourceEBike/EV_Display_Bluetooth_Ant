@@ -1,8 +1,8 @@
 #include "state.h"
 #include "screen.h"
 
-#define BATTERY_SOC_START_X 3
-#define BATTERY_SOC_START_Y 3
+#define BATTERY_SOC_START_X 0
+#define BATTERY_SOC_START_Y 2
 #define BATTERY_SOC_WITH    25
 #define BATTERY_SOC_HEIGHT  11
 
@@ -19,37 +19,37 @@ bool renderBattery(FieldLayout *layout)
   }
 
   // first, clear the full symbol area
-  ui32_x1 = BATTERY_SOC_START_X + 2;
+  ui32_x1 = BATTERY_SOC_START_X;
   ui32_y1 = BATTERY_SOC_START_Y + 2;
   ui32_x2 = ui32_x1 + 18 - 1;
   ui32_y2 = ui32_y1 + 7 - 1;
   UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_BLACK);
 
-  ui32_x1 = BATTERY_SOC_START_X + 2 + 18;
+  ui32_x1 = BATTERY_SOC_START_X + 18;
   ui32_y1 = BATTERY_SOC_START_Y + 2 + 2;
-  ui32_x2 = ui32_x1 + 2;
+  ui32_x2 = ui32_x1;
   ui32_y2 = ui32_y1 + 2;
   UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_BLACK);
 
   // draw the bars
   if (battery_bars > 0 &&
       battery_bars < 10) {
-    ui32_x1 = BATTERY_SOC_START_X + 2;
+    ui32_x1 = BATTERY_SOC_START_X;
     ui32_y1 = BATTERY_SOC_START_Y + 2;
     ui32_x2 = ui32_x1 + (battery_bars * 2) - 1;
     ui32_y2 = ui32_y1 + 7 - 1;
     UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
   } else if (battery_bars >= 10) {
-    ui32_x1 = BATTERY_SOC_START_X + 2;
+    ui32_x1 = BATTERY_SOC_START_X;
     ui32_y1 = BATTERY_SOC_START_Y + 2;
     ui32_x2 = ui32_x1 + (9 * 2) - 1;
     ui32_y2 = ui32_y1 + 7 - 1;
     UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
-    ui32_x1 = BATTERY_SOC_START_X + 2 + 18;
+    ui32_x1 = BATTERY_SOC_START_X + 18;
     ui32_y1 = BATTERY_SOC_START_Y + 2 + 2;
-    ui32_x2 = ui32_x1 + 2;
+    ui32_x2 = ui32_x1;
     ui32_y2 = ui32_y1 + 2;
     UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
   }
