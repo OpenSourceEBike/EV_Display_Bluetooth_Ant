@@ -11,6 +11,7 @@
 #include "SSD1306.h"
 #include "app_error.h"
 #include "app_util_platform.h"
+#include "main.h"
 
 static uint8_t _i2caddr, _vccstate;
 static uint32_t _dc, _rs, _cs;
@@ -643,6 +644,42 @@ void ssd1306_data(uint8_t c)
 
 void ssd1306_display(void)
 {
+#ifdef DISPLAY_SSD1306
+  ssd1306_command(SSD1306_COLUMNADDR);
+  ssd1306_command(0); // Column start address (0 = reset)
+  ssd1306_command(SSD1306_LCDWIDTH - 1); // Column end address (127 = reset)
+
+  ssd1306_command(SSD1306_PAGEADDR);
+  ssd1306_command(0); // Page start address (0 = reset)
+#if SSD1306_LCDHEIGHT == 64
+  ssd1306_command(7); // Page end address
+#endif
+#if SSD1306_LCDHEIGHT == 32
+  ssd1306_command(3); // Page end address
+#endif
+#if SSD1306_LCDHEIGHT == 16
+  ssd1306_command(1); // Page end address
+#endif
+
+  // I2C
+  for (uint16_t i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++)
+  {
+    uint8_t tmpBuf[17];
+    tmpBuf[0] = SSD1306_SETSTARTLINE;
+    // data
+    for (uint8_t j = 0; j < 16; j++) {
+      tmpBuf[j+1] = buffer[i];
+      i++;
+    }
+    i--;
+
+    ret_code_t ret;
+    ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, tmpBuf, sizeof(tmpBuf), false);
+    APP_ERROR_CHECK(ret);
+  }
+
+#elif defined(DISPLAY_SH1106)
+
   ssd1306_command(SSD1306_COLUMNADDR);
   ssd1306_command(0x00);
   ssd1306_command(0x7F);
@@ -666,6 +703,9 @@ void ssd1306_display(void)
     UNUSED_VARIABLE(ret);
     k += 128;
   }
+#else
+#error DISPLAY_xxx must be defined
+#endif
 }
 
 // clear everything

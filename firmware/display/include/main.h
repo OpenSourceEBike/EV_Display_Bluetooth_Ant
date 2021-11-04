@@ -5,6 +5,8 @@
 // #include "button.h"
 
 #define SW102 // our display is similar to SW102 OLED 128x64
+// #define DISPLAY_SSD1306
+#define DISPLAY_SH1106
 
 /* Typedef of unions for handy access of single bytes */
 /* Access bytewise: U16 var; var.byte[x] = z; */
