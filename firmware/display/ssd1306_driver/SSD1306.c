@@ -641,235 +641,32 @@ void ssd1306_data(uint8_t c)
   // }
 }
 
-int8_t i2c_write(uint8_t *data, uint16_t length)
-{
-    ret_code_t err_code = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data, length, false);
-    APP_ERROR_CHECK(err_code);
-    if (err_code == NRF_SUCCESS)
-    {
-        return 0;
-    }
-    return 1;
-}
-
-// Send a single byte command to the OLED controller
-static void oledWriteCommand(unsigned char c)
-{
-  unsigned char buf[2];
-  int rc;
-
-	buf[0] = 0x00; // command introducer
-	buf[1] = c;
-	rc = i2c_write(buf, 2);
-	if (rc) {} // suppress warning
-} /* oledWriteCommand() */
-
-static void oledSetPosition(int x, int y)
-{
-  x += 2;
-  oledWriteCommand(0xb0 | y); // go to page Y
-  oledWriteCommand(0x10 | ((x >> 4) & 0xf)); // upper col addr
-	oledWriteCommand(0x00 | (x & 0xf)); // // lower col addr
-}
-
-// Write a block of pixel data to the OLED
-// Length can be anything from 1 to 1024 (whole display)
-static void oledWriteDataBlock(unsigned char *ucBuf, int iLen)
-{
-  unsigned char ucTemp[129];
-  int rc;
-
-	ucTemp[0] = 0x40; // data command
-	memcpy(&ucTemp[1], ucBuf, iLen);
-	rc = i2c_write(ucTemp, iLen+1);
-	if (rc) {} // suppress warning
-}
-
-int oledInit(int bFlip, int bInvert)
-{
-    uint8_t oled64_initbuf[]={0x00,0xae,0xa8,0x3f,0xd3,0x00,0x40,0xa1,0xc8,
-      0xda,0x12,0x81,0xff,0xa4,0xa6,0xd5,0x80,0x8d,0x14,
-      0xaf,0x20,0x02};
-
-unsigned char uc[4];
-
-
-		i2c_write(oled64_initbuf, sizeof(oled64_initbuf));
-
-	if (bInvert)
-	{
-		uc[0] = 0; // command
-		uc[1] = 0xa7; // invert command
-		i2c_write(uc, 2);
-	}
-	if (bFlip) // rotate display 180
-	{
-		uc[0] = 0; // command
-		uc[1] = 0xa0;
-		i2c_write(uc, 2);
-		uc[1] = 0xc0;
-		i2c_write(uc, 2);
-	}
-	return 0;
-} /* oledInit() */
-
 void ssd1306_display(void)
 {
-  int y;
-  int iLines, iCols;
-	iLines = 8;
-	iCols = 8;
+  ssd1306_command(SSD1306_COLUMNADDR);
+  ssd1306_command(0x00);
+  ssd1306_command(0x7F);
+  ssd1306_command(SSD1306_PAGEADDR);
+  ssd1306_command(0x0);
+  ssd1306_command(0x7);
+  ssd1306_command(SSD1306_SETSTARTLINE | 0x00);
+
   uint16_t k = 0;
+  for (uint16_t y = 0; y < 8; y++) {
+    uint16_t x = 2;
+    ssd1306_command(0xb0 | y); // go to page Y
+    ssd1306_command(0x10 | ((x >> 4) & 0xf)); // upper col addr
+    ssd1306_command(0x00 | (x & 0xf)); // // lower col addr
 
-  for (y = 0; y < iLines; y++) {
-    oledSetPosition(0, y); // set to (0,Y)
-    oledWriteDataBlock(&buffer[k], iCols*16); // fill with data byte
+    ret_code_t ret;
+    uint8_t data[129];
+    data[0] = 0x40; // data command
+    memcpy(&data[1], &buffer[k], 128);
+    ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data, sizeof(data), false);
+    UNUSED_VARIABLE(ret);
     k += 128;
-  } // for y
+  }
 }
-
-
-//   ret_code_t ret;
-
-// #define COLUMNADDR 0x21
-// #define PAGEADDR 0x22
-// #define SETSTARTLINE 0x40
-
-//   ssd1306_command(COLUMNADDR);
-//   ssd1306_command(0x00);
-//   ssd1306_command(0x7F);
-
-//   ssd1306_command(PAGEADDR);
-//   ssd1306_command(0x0);
-//   ssd1306_command(0x7);
-
-//   ssd1306_command(SETSTARTLINE | 0x00);
-  
-//   for (uint16_t i = 0; i < ((128 * 64) / 8); ) {
-
-//     uint8_t data_display[17];
-//     data_display[0] = 0x40;
-//     for (uint8_t x = 1; x < 17; x++) {
-//       data_display[x] = buffer[i++];
-//     }
-
-//     ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data_display, sizeof(data_display), false);
-//     UNUSED_VARIABLE(ret);
-//   }
-// }
-
-//   uint16_t k = 0;
-//   for (uint8_t page = 0; page < SH1106_MAX_PAGE_COUNT; page++)
-//   {
-//     uint8_t page_array[3] = {
-//       0xb0 + page,
-//       0x02,
-//       0x10
-//     };
-//     ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, page_array, 3, false);
-//     UNUSED_VARIABLE(ret);
-
-// 		// ssd1306_command(SH1106_SET_PAGE_ADDRESS + page);
-//     // ssd1306_command(0x02); // low column start address
-//     // ssd1306_command(0x10); // high column start address
-
-//     for (uint16_t i = 0; i < (SH1106_LCDWIDTH*SH1106_LCDHEIGHT/8); ) {
-
-//       uint8_t data_display[17];
-//       data_display[0] = 0x40;
-//       for (uint8_t x = 1; x < 17; x++) {
-//         data_display[x] = buffer[k++];
-//       }
-//       i += 16;
-
-//       ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data_display, sizeof(data_display), false);
-//       UNUSED_VARIABLE(ret);
-//     }
-//   }
-// }
-
-
-
-
-
-
-
-// //SCREEN PIXEL SIZE
-// #define SH1106_I2C_OLED_MAX_COLUMN					127u
-// #define SH1106_I2C_OLED_MAX_PAGE					7u
-// //CONTROL BYTES
-// #define SH1106_I2C_CONTROL_BYTE_CMD_SINGLE			0x80
-// #define SH1106_I2C_CONTROL_BYTE_CMD_STREAM			0x00
-// #define SH1106_I2C_CONTROL_BYTE_DATA_SINGLE			0xC0
-// #define SH1106_I2C_CONTROL_BYTE_DATA_STREAM			0x40
-// //FUNDAMENTAL COMMANDS (DATASHEET PG 29)
-// #define SH1106_I2C_CMD_SET_COLUMN_LOWER_4			0x00
-// #define SH1106_I2C_CMD_SET_COLUMN_UPPER_4			0x10
-// #define SH1106_I2C_CMD_SET_CHARGE_PUMP_VOLTAGE		0x30
-// #define SH1106_I2C_CMD_SET_DISPLAY_START_LINE		0x40
-// #define SH1106_I2C_CMD_SET_CONTRAST_CONTROL_MODE	0x81
-// #define SH1106_I2C_CMD_SET_SEGMENT_REMAP			0xA0
-// #define SH1106_I2C_CMD_SET_ENTIRE_DISPLAY_OFF		0xA5
-// #define SH1106_I2C_CMD_SET_ENTIRE_DISPLAY_ON		0xA4
-// #define SH1106_I2C_CMD_SET_DISPLAY_NORMAL			0xA6
-// #define SH1106_I2C_CMD_SET_DISPLAY_REVERSED			0xA7
-// #define SH1106_I2C_CMD_SET_MULTIPLEX_RATIO			0xA8
-// #define SH1106_I2C_CMD_SET_DC_DC_MODE				0xAD
-// #define SH1106_I2C_CMD_SET_DISPLAY_ON				0xAF
-// #define SH1106_I2C_CMD_SET_DISPLAY_OFF				0xAE
-// #define SH1106_I2C_CMD_SET_PAGE_ADDRESS				0xB0
-// #define SH1106_I2C_CMD_SET_COMMON_SCAN_DIRECTION	0xC0
-// #define SH1106_I2C_CMD_SET_DISPLAY_OFFSET_MODE		0xD3
-// #define SH1106_I2C_CMD_SET_OSCILLATOR_FREQUENCY		0xD5
-// #define SH1106_I2C_CMD_SET_DISCHARGE_PRECHARGE		0xD9
-// #define SH1106_I2C_CMD_COMMON_PADS_HARDWARE_CONFIG	0xDA
-// #define SH1106_I2C_CMD_COMMON_PADS_OUTPUT_VOLTAGE	0xDB
-// #define SH1106_I2C_CMD_SET_READ_MODIFY_WRITE		0xE0
-// #define SH1106_I2C_CMD_SET_READ_MODIFY_WRITE_END	0xEE
-// #define SH1106_I2C_CMD_NOP			
-
-// //https://github.com/ankitmcgill/OLED_SH1106_I2C/blob/master/SH1106_I2C.c
-
-//   uint16_t counter = 0;
-// 	uint16_t x = 0;
-// 	uint16_t y = 0;
-//   uint16_t j = 0;
-
-// 	for (y = 0; y < (SH1106_I2C_OLED_MAX_PAGE + 1); y++)
-// 	{
-//     ret_code_t ret;
-//     uint8_t data_send[4];
-//     data_send[0] = SH1106_I2C_CONTROL_BYTE_CMD_STREAM;
-//     data_send[1] = SH1106_I2C_CMD_SET_PAGE_ADDRESS | y;
-//     data_send[2] = 0x02;
-//     data_send[3] = 0x01;
-//     ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data_send, sizeof(data_send), false);
-//     UNUSED_VARIABLE(ret);
-
-//     uint8_t display_data_send[((128 * 64) / 8) + 1];
-// 		for (x = 0; x < ((128 * 64) / 8); x++)
-// 		{
-//       display_data_send[0] = SH1106_I2C_CONTROL_BYTE_DATA_STREAM;
-//       for (uint16_t i = 0; i < ((128 * 64) / 8); i++)
-//       {
-//         display_data_send[i + 1] = buffer[j++];
-//       }
-
-//       for (uint16_t l = 0; l < 16; l++)
-//       {
-//         ret_code_t ret;     
-//         ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, display_data_send, sizeof(display_data_send), false);
-//         APP_ERROR_CHECK(ret);
-//       }
-
-
-//       ret_code_t ret;     
-//       ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, display_data_send, sizeof(display_data_send), false);
-//       APP_ERROR_CHECK(ret);
-// 			counter++;
-// 		}
-// 	}
-// }
 
 // clear everything
 void ssd1306_clear_display(void)
