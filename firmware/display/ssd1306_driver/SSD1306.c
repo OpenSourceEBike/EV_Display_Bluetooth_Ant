@@ -217,7 +217,7 @@ static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = {
 //        0x06, 0x06, 0x06, 0x0C, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0xFE, 0xFE, 0x00, 0x00, 0x00, 0x00, 0xFC,
 //        0xFE, 0xFC, 0x00, 0x18, 0x3C, 0x7E, 0x66, 0xE6, 0xCE, 0x84, 0x00, 0x00, 0x06, 0xFF, 0xFF, 0x06,
 //        0x06, 0xFC, 0xFE, 0xFC, 0x0C, 0x06, 0x06, 0x06, 0x00, 0x00, 0xFE, 0xFE, 0x00, 0x00, 0xC0, 0xF8,
-//        0xFC, 0x4E, 0x46, 0x46, 0x46, 0x4E, 0x7C, 0x78, 0x40, 0x18, 0x3C, 0x76, 0xE6, 0xCE, 0xCC, 0x80,
+//        0xFC, 0x4E, 0x4 0x10+( ((2+x)6, 0x46, 0x46, 0x4E, 0x7C, 0x78, 0x40, 0x18, 0x3C, 0x76, 0xE6, 0xCE, 0xCC, 0x80,
 //        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 //        0x00, 0x00, 0x00, 0x00, 0x01, 0x07, 0x0F, 0x1F, 0x1F, 0x3F, 0x3F, 0x3F, 0x3F, 0x1F, 0x0F, 0x03,
 //        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x0F, 0x00, 0x00,
@@ -283,240 +283,242 @@ void ssd1306_init(uint32_t dc, uint32_t rs, uint32_t cs, uint32_t clk, uint32_t 
 
 void ssd1306_init_i2c(uint32_t scl, uint32_t sda)
 {
-        _i2caddr = SSD1306_I2C_ADDRESS;
-        use_i2c = true;
-        twi_master_init(scl, sda);
+  _i2caddr = SSD1306_I2C_ADDRESS;
+  use_i2c = true;
+  twi_master_init(scl, sda);
 }
 
 void ssd1306_command(uint8_t c)
 {
-        if (use_i2c) {
-                ret_code_t ret;
-                uint8_t dta_send[] = {0x00, c};
-                ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, dta_send, 2, false);
-                UNUSED_VARIABLE(ret);
-        }
-//        else {
-//                _HI_CS();
-//                _LO_DC();
-//                _LO_CS();
-//                UNUSED_VARIABLE(spi_transfer(&c, 1));
-//                _HI_CS();
-//        }
+  if (use_i2c) {
+    ret_code_t ret;
+    uint8_t dta_send[] = {0x00, c};
+    ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, dta_send, 2, false);
+    UNUSED_VARIABLE(ret);
+  }
+  // else {
+  //   _HI_CS();
+  //   _LO_DC();
+  //   _LO_CS();
+  //   UNUSED_VARIABLE(spi_transfer(&c, 1));
+  //   _HI_CS();
+  // }
 }
+
+int oledInit(int bFlip, int bInvert);
 
 void ssd1306_begin(uint8_t vccstate, uint8_t i2caddr, bool reset)
 {
-        _vccstate = vccstate;
-        _i2caddr = i2caddr;
-        UNUSED_VARIABLE(_i2caddr);
+  _vccstate = vccstate;
+  _i2caddr = i2caddr;
+  UNUSED_VARIABLE(_i2caddr);
 
-        _width    = WIDTH;
-        _height   = HEIGHT;
-        cursor_y  = cursor_x    = 0;
-        textsize  = 1;
-        textcolor = textbgcolor = 0xFFFF;
-        wrap      = true;
-        _cp437    = false;
+  _width    = WIDTH;
+  _height   = HEIGHT;
+  cursor_y  = cursor_x    = 0;
+  textsize  = 1;
+  textcolor = textbgcolor = 0xFFFF;
+  wrap      = true;
+  _cp437    = false;
 
-        _width = WIDTH = SSD1306_LCDWIDTH;
-        _height = HEIGHT = SSD1306_LCDHEIGHT;
-        rotation  = 0;
+  _width = WIDTH = SSD1306_LCDWIDTH;
+  _height = HEIGHT = SSD1306_LCDHEIGHT;
+  rotation  = 0;
+
+  // oledInit(1, 0);
 
 
-        if (reset) {
-                // Setup reset pin direction (used by both SPI and I2C)
-                _HI_RS();
-                // VDD (3.3V) goes high at start, lets just chill for a ms
-                nrf_delay_ms(1);
-                // bring reset low
-                _LO_RS();
-                // wait 10ms
-                nrf_delay_ms(10);
-                // bring out of reset
-                _HI_RS();
-                // turn on VCC (9V?)
-        }
+  if (reset) {
+    // Setup reset pin direction (used by both SPI and I2C)
+    _HI_RS();
+    // VDD (3.3V) goes high at start, lets just chill for a ms
+    nrf_delay_ms(1);
+    // bring reset low
+    _LO_RS();
+    // wait 10ms
+    nrf_delay_ms(10);
+    // bring out of reset
+    _HI_RS();
+    // turn on VCC (9V?)
+  }
 
 #if defined SSD1306_128_32
-        // Init sequence for 128x32 OLED module
-        ssd1306_command(SSD1306_DISPLAYOFF);                // 0xAE
-        ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);        // 0xD5
-        ssd1306_command(0x80);                              // the suggested ratio 0x80
+  // Init sequence for 128x32 OLED module
+  ssd1306_command(SSD1306_DISPLAYOFF);                // 0xAE
+  ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);        // 0xD5
+  ssd1306_command(0x80);                              // the suggested ratio 0x80
 
-        ssd1306_command(SSD1306_SETMULTIPLEX);              // 0xA8
-        ssd1306_command(0x1F);
-        ssd1306_command(SSD1306_SETDISPLAYOFFSET);          // 0xD3
-        ssd1306_command(0x0);                               // no offset
-        ssd1306_command(SSD1306_SETSTARTLINE | 0x0);        // line #0
-        ssd1306_command(SSD1306_CHARGEPUMP);                // 0x8D
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x10);
-        }
-        else {
-                ssd1306_command(0x14);
-        }
-        ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
-        ssd1306_command(0x00);                              // 0x0 act like ks0108
-        ssd1306_command(SSD1306_SEGREMAP | 0x1);
-        ssd1306_command(SSD1306_COMSCANDEC);
-        ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
-        ssd1306_command(0x02);
-        ssd1306_command(SSD1306_SETCONTRAST);               // 0x81
-        ssd1306_command(0x8F);
-        ssd1306_command(SSD1306_SETPRECHARGE);              // 0xd9
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x22);
-        }
-        else {
-                ssd1306_command(0xF1);
-        }
-        ssd1306_command(SSD1306_SETVCOMDETECT);             // 0xDB
-        ssd1306_command(0x40);
-        ssd1306_command(SSD1306_DISPLAYALLON_RESUME);       // 0xA4
-        ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
+  ssd1306_command(SSD1306_SETMULTIPLEX);              // 0xA8
+  ssd1306_command(0x1F);
+  ssd1306_command(SSD1306_SETDISPLAYOFFSET);          // 0xD3
+  ssd1306_command(0x0);                               // no offset
+  ssd1306_command(SSD1306_SETSTARTLINE | 0x0);        // line #0
+  ssd1306_command(SSD1306_CHARGEPUMP);                // 0x8D
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x10);
+  }
+  else {
+    ssd1306_command(0x14);
+  }
+  ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
+  ssd1306_command(0x00);                              // 0x0 act like ks0108
+  ssd1306_command(SSD1306_SEGREMAP | 0x1);
+  ssd1306_command(SSD1306_COMSCANDEC);
+  ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
+  ssd1306_command(0x02);
+  ssd1306_command(SSD1306_SETCONTRAST);               // 0x81
+  ssd1306_command(0x8F);
+  ssd1306_command(SSD1306_SETPRECHARGE);              // 0xd9
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x22);
+  }
+  else {
+    ssd1306_command(0xF1);
+  }
+  ssd1306_command(SSD1306_SETVCOMDETECT);             // 0xDB
+  ssd1306_command(0x40);
+  ssd1306_command(SSD1306_DISPLAYALLON_RESUME);       // 0xA4
+  ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
 #endif
 
 #if defined SSD1306_128_64
-        // Init sequence for 128x64 OLED module
-        ssd1306_command(SSD1306_DISPLAYOFF);                // 0xAE
-        ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);        // 0xD5
-        ssd1306_command(0x80);                              // the suggested ratio 0x80
-        ssd1306_command(SSD1306_SETMULTIPLEX);              // 0xA8
-        ssd1306_command(0x3F);
-        ssd1306_command(SSD1306_SETDISPLAYOFFSET);          // 0xD3
-        ssd1306_command(0x0);                               // no offset
-        ssd1306_command(SSD1306_SETSTARTLINE | 0x0);        // line #0
-        ssd1306_command(SSD1306_CHARGEPUMP);                // 0x8D
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x10);
-        }
-        else {
-                ssd1306_command(0x14);
-        }
-        ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
-        ssd1306_command(0x00);                              // 0x0 act like ks0108
-        
-        // ssd1306_command(SSD1306_SEGREMAP | 0x1);
-        ssd1306_command(SSD1306_SEGREMAP | 0x0);
+  // Init sequence for 128x64 OLED module
+  ssd1306_command(SSD1306_DISPLAYOFF);                // 0xAE
+  ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);        // 0xD5
+  ssd1306_command(0x80);                              // the suggested ratio 0x80
+  ssd1306_command(SSD1306_SETMULTIPLEX);              // 0xA8
+  ssd1306_command(0x3F);
+  ssd1306_command(SSD1306_SETDISPLAYOFFSET);          // 0xD3
+  ssd1306_command(0x0);                               // no offset
+  ssd1306_command(SSD1306_SETSTARTLINE | 0x0);        // line #0
+  ssd1306_command(SSD1306_CHARGEPUMP);                // 0x8D
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x10);
+  }
+  else {
+    ssd1306_command(0x14);
+  }
+  ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
+  ssd1306_command(0x00);                              // 0x0 act like ks0108
+  
+  // ssd1306_command(SSD1306_SEGREMAP | 0x1);
+  ssd1306_command(SSD1306_SEGREMAP | 0x0);
 
-        ssd1306_command(SSD1306_COMSCANINC);
-        
-        ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
-        ssd1306_command(0x12);
-        ssd1306_command(SSD1306_SETCONTRAST);               // 0x81
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x9F);
-        }
-        else {
-                ssd1306_command(0xCF);
-        }
-        ssd1306_command(SSD1306_SETPRECHARGE);              // 0xd9
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x22);
-        }
-        else {
-                ssd1306_command(0xF1);
-        }
-        ssd1306_command(SSD1306_SETVCOMDETECT);             // 0xDB
-        ssd1306_command(0x40);
-        ssd1306_command(SSD1306_DISPLAYALLON_RESUME);       // 0xA4
-        ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
+  ssd1306_command(SSD1306_COMSCANINC);
+  
+  ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
+  ssd1306_command(0x12);
+  ssd1306_command(SSD1306_SETCONTRAST);               // 0x81
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x9F);
+  }
+  else {
+    ssd1306_command(0xCF);
+  }
+  ssd1306_command(SSD1306_SETPRECHARGE);              // 0xd9
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x22);
+  }
+  else {
+    ssd1306_command(0xF1);
+  }
+  ssd1306_command(SSD1306_SETVCOMDETECT);             // 0xDB
+  ssd1306_command(0x40);
+  ssd1306_command(SSD1306_DISPLAYALLON_RESUME);       // 0xA4
+  ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
 #endif
 
 #if defined SSD1306_96_16
-        // Init sequence for 96x16 OLED module
-        ssd1306_command(SSD1306_DISPLAYOFF);                // 0xAE
-        ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);        // 0xD5
-        ssd1306_command(0x80);                              // the suggested ratio 0x80
-        ssd1306_command(SSD1306_SETMULTIPLEX);              // 0xA8
-        ssd1306_command(0x0F);
-        ssd1306_command(SSD1306_SETDISPLAYOFFSET);          // 0xD3
-        ssd1306_command(0x00);                               // no offset
-        ssd1306_command(SSD1306_SETSTARTLINE | 0x0);        // line #0
-        ssd1306_command(SSD1306_CHARGEPUMP);                // 0x8D
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x10);
-        }
-        else {
-                ssd1306_command(0x14);
-        }
-        ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
-        ssd1306_command(0x00);                              // 0x0 act like ks0108
-        ssd1306_command(SSD1306_SEGREMAP | 0x1);
-        ssd1306_command(SSD1306_COMSCANDEC);
-        ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
-        ssd1306_command(0x2); //ada x12
-        ssd1306_command(SSD1306_SETCONTRAST);               // 0x81
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x10);
-        }
-        else {
-                ssd1306_command(0xAF);
-        }
-        ssd1306_command(SSD1306_SETPRECHARGE);              // 0xd9
-        if (vccstate == SSD1306_EXTERNALVCC) {
-                ssd1306_command(0x22);
-        }
-        else {
-                ssd1306_command(0xF1);
-        }
-        ssd1306_command(SSD1306_SETVCOMDETECT);             // 0xDB
-        ssd1306_command(0x40);
-        ssd1306_command(SSD1306_DISPLAYALLON_RESUME);       // 0xA4
-        ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
+  // Init sequence for 96x16 OLED module
+  ssd1306_command(SSD1306_DISPLAYOFF);                // 0xAE
+  ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV);        // 0xD5
+  ssd1306_command(0x80);                              // the suggested ratio 0x80
+  ssd1306_command(SSD1306_SETMULTIPLEX);              // 0xA8
+  ssd1306_command(0x0F);
+  ssd1306_command(SSD1306_SETDISPLAYOFFSET);          // 0xD3
+  ssd1306_command(0x00);                               // no offset
+  ssd1306_command(SSD1306_SETSTARTLINE | 0x0);        // line #0
+  ssd1306_command(SSD1306_CHARGEPUMP);                // 0x8D
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x10);
+  }
+  else {
+    ssd1306_command(0x14);
+  }
+  ssd1306_command(SSD1306_MEMORYMODE);                // 0x20
+  ssd1306_command(0x00);                              // 0x0 act like ks0108
+  ssd1306_command(SSD1306_SEGREMAP | 0x1);
+  ssd1306_command(SSD1306_COMSCANDEC);
+  ssd1306_command(SSD1306_SETCOMPINS);                // 0xDA
+  ssd1306_command(0x2); //ada x12
+  ssd1306_command(SSD1306_SETCONTRAST);               // 0x81
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x10);
+  }
+  else {
+    ssd1306_command(0xAF);
+  }
+  ssd1306_command(SSD1306_SETPRECHARGE);              // 0xd9
+  if (vccstate == SSD1306_EXTERNALVCC) {
+    ssd1306_command(0x22);
+  }
+  else {
+    ssd1306_command(0xF1);
+  }
+  ssd1306_command(SSD1306_SETVCOMDETECT);             // 0xDB
+  ssd1306_command(0x40);
+  ssd1306_command(SSD1306_DISPLAYALLON_RESUME);       // 0xA4
+  ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
 #endif
 
-        ssd1306_command(SSD1306_DISPLAYON);//--turn on oled panel
+  ssd1306_command(SSD1306_DISPLAYON);//--turn on oled panel
 }
-
-
 
 // the most basic function, set a single pixel
 void ssd1306_draw_pixel(int16_t x, int16_t y, uint16_t color)
 {
-        if ((x < 0) || (x >= ssd1306_width()) || (y < 0) || (y >= ssd1306_height()))
-                return;
+  if ((x < 0) || (x >= ssd1306_width()) || (y < 0) || (y >= ssd1306_height()))
+    return;
 
-        // check rotation, move pixel around if necessary
-        switch (rotation) {
-        case 1:
-                ssd1306_swap(x, y);
-                x = WIDTH - x - 1;
-                break;
-        case 2:
-                x = WIDTH - x - 1;
-                y = HEIGHT - y - 1;
-                break;
-        case 3:
-                ssd1306_swap(x, y);
-                y = HEIGHT - y - 1;
-                break;
-        }
+  // check rotation, move pixel around if necessary
+  switch (rotation) {
+  case 1:
+    ssd1306_swap(x, y);
+    x = WIDTH - x - 1;
+    break;
+  case 2:
+    x = WIDTH - x - 1;
+    y = HEIGHT - y - 1;
+    break;
+  case 3:
+    ssd1306_swap(x, y);
+    y = HEIGHT - y - 1;
+    break;
+  }
 
-        // x is which column
-        switch (color) {
-        case WHITE:
-                buffer[x + (y / 8)*SSD1306_LCDWIDTH] |=  (1 << (y & 7));
-                break;
-        case BLACK:
-                buffer[x + (y / 8)*SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
-                break;
-        case INVERSE:
-                buffer[x + (y / 8)*SSD1306_LCDWIDTH] ^=  (1 << (y & 7));
-                break;
-        }
+  // x is which column
+  switch (color) {
+  case WHITE:
+    buffer[x + (y / 8)*SSD1306_LCDWIDTH] |=  (1 << (y & 7));
+    break;
+  case BLACK:
+    buffer[x + (y / 8)*SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
+    break;
+  case INVERSE:
+    buffer[x + (y / 8)*SSD1306_LCDWIDTH] ^=  (1 << (y & 7));
+    break;
+  }
 }
 
 
 void ssd1306_invert_display(uint8_t i)
 {
-        if (i) {
-                ssd1306_command(SSD1306_INVERTDISPLAY);
-        }
-        else {
-                ssd1306_command(SSD1306_NORMALDISPLAY);
-        }
+  if (i) {
+    ssd1306_command(SSD1306_INVERTDISPLAY);
+  }
+  else {
+    ssd1306_command(SSD1306_NORMALDISPLAY);
+  }
 }
 
 
@@ -526,14 +528,14 @@ void ssd1306_invert_display(uint8_t i)
 // display.scrollright(0x00, 0x0F)
 void ssd1306_start_scroll_right(uint8_t start, uint8_t stop)
 {
-        ssd1306_command(SSD1306_RIGHT_HORIZONTAL_SCROLL);
-        ssd1306_command(0X00);
-        ssd1306_command(start);
-        ssd1306_command(0X00);
-        ssd1306_command(stop);
-        ssd1306_command(0X00);
-        ssd1306_command(0XFF);
-        ssd1306_command(SSD1306_ACTIVATE_SCROLL);
+  ssd1306_command(SSD1306_RIGHT_HORIZONTAL_SCROLL);
+  ssd1306_command(0X00);
+  ssd1306_command(start);
+  ssd1306_command(0X00);
+  ssd1306_command(stop);
+  ssd1306_command(0X00);
+  ssd1306_command(0XFF);
+  ssd1306_command(SSD1306_ACTIVATE_SCROLL);
 }
 
 // startscrollleft
@@ -542,14 +544,14 @@ void ssd1306_start_scroll_right(uint8_t start, uint8_t stop)
 // display.scrollright(0x00, 0x0F)
 void ssd1306_start_scroll_left(uint8_t start, uint8_t stop)
 {
-        ssd1306_command(SSD1306_LEFT_HORIZONTAL_SCROLL);
-        ssd1306_command(0X00);
-        ssd1306_command(start);
-        ssd1306_command(0X00);
-        ssd1306_command(stop);
-        ssd1306_command(0X00);
-        ssd1306_command(0XFF);
-        ssd1306_command(SSD1306_ACTIVATE_SCROLL);
+  ssd1306_command(SSD1306_LEFT_HORIZONTAL_SCROLL);
+  ssd1306_command(0X00);
+  ssd1306_command(start);
+  ssd1306_command(0X00);
+  ssd1306_command(stop);
+  ssd1306_command(0X00);
+  ssd1306_command(0XFF);
+  ssd1306_command(SSD1306_ACTIVATE_SCROLL);
 }
 
 // startscrolldiagright
@@ -558,16 +560,16 @@ void ssd1306_start_scroll_left(uint8_t start, uint8_t stop)
 // display.scrollright(0x00, 0x0F)
 void ssd1306_start_scroll_diag_right(uint8_t start, uint8_t stop)
 {
-        ssd1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
-        ssd1306_command(0X00);
-        ssd1306_command(SSD1306_LCDHEIGHT);
-        ssd1306_command(SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL);
-        ssd1306_command(0X00);
-        ssd1306_command(start);
-        ssd1306_command(0X00);
-        ssd1306_command(stop);
-        ssd1306_command(0X01);
-        ssd1306_command(SSD1306_ACTIVATE_SCROLL);
+  ssd1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
+  ssd1306_command(0X00);
+  ssd1306_command(SSD1306_LCDHEIGHT);
+  ssd1306_command(SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL);
+  ssd1306_command(0X00);
+  ssd1306_command(start);
+  ssd1306_command(0X00);
+  ssd1306_command(stop);
+  ssd1306_command(0X01);
+  ssd1306_command(SSD1306_ACTIVATE_SCROLL);
 }
 
 // startscrolldiagleft
@@ -576,21 +578,21 @@ void ssd1306_start_scroll_diag_right(uint8_t start, uint8_t stop)
 // display.scrollright(0x00, 0x0F)
 void ssd1306_start_scroll_diag_left(uint8_t start, uint8_t stop)
 {
-        ssd1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
-        ssd1306_command(0X00);
-        ssd1306_command(SSD1306_LCDHEIGHT);
-        ssd1306_command(SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL);
-        ssd1306_command(0X00);
-        ssd1306_command(start);
-        ssd1306_command(0X00);
-        ssd1306_command(stop);
-        ssd1306_command(0X01);
-        ssd1306_command(SSD1306_ACTIVATE_SCROLL);
+  ssd1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
+  ssd1306_command(0X00);
+  ssd1306_command(SSD1306_LCDHEIGHT);
+  ssd1306_command(SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL);
+  ssd1306_command(0X00);
+  ssd1306_command(start);
+  ssd1306_command(0X00);
+  ssd1306_command(stop);
+  ssd1306_command(0X01);
+  ssd1306_command(SSD1306_ACTIVATE_SCROLL);
 }
 
 void ssd1306_stop_scroll(void)
 {
-        ssd1306_command(SSD1306_DEACTIVATE_SCROLL);
+  ssd1306_command(SSD1306_DEACTIVATE_SCROLL);
 }
 
 // Dim the display
@@ -598,23 +600,23 @@ void ssd1306_stop_scroll(void)
 // dim = false: display is normal
 void ssd1306_dim(bool dim)
 {
-        uint8_t contrast;
+  uint8_t contrast;
 
-        if (dim) {
-                contrast = 0; // Dimmed display
-        }
-        else {
-                if (_vccstate == SSD1306_EXTERNALVCC) {
-                        contrast = 0x9F;
-                }
-                else {
-                        contrast = 0xCF;
-                }
-        }
-        // the range of contrast to too small to be really useful
-        // it is useful to dim the display
-        ssd1306_command(SSD1306_SETCONTRAST);
-        ssd1306_command(contrast);
+  if (dim) {
+    contrast = 0; // Dimmed display
+  }
+  else {
+    if (_vccstate == SSD1306_EXTERNALVCC) {
+      contrast = 0x9F;
+    }
+    else {
+      contrast = 0xCF;
+    }
+  }
+  // the range of contrast to too small to be really useful
+  // it is useful to dim the display
+  ssd1306_command(SSD1306_SETCONTRAST);
+  ssd1306_command(contrast);
 }
 
 void ssd1306_power_off()
@@ -624,80 +626,256 @@ void ssd1306_power_off()
 
 void ssd1306_data(uint8_t c)
 {
-        // if (use_i2c) {
-                ret_code_t ret;
-                uint8_t dta_send[] = {0x40, c};
-                ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, dta_send, 2, false);
-                UNUSED_VARIABLE(ret);
-        // }
-        // else {
-        //         _HI_CS();
-        //         _HI_DC();
-        //         _LO_CS();
-        //         UNUSED_VARIABLE(spi_transfer(&c, 1));
-        //         _HI_CS();
-        // }
+// if (use_i2c) {
+  ret_code_t ret;
+  uint8_t dta_send[] = {0x40, c};
+  ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, dta_send, 2, false);
+  UNUSED_VARIABLE(ret);
+  // }
+  // else {
+  //   _HI_CS();
+  //   _HI_DC();
+  //   _LO_CS();
+  //   UNUSED_VARIABLE(spi_transfer(&c, 1));
+  //   _HI_CS();
+  // }
 }
+
+int8_t i2c_write(uint8_t *data, uint16_t length)
+{
+    ret_code_t err_code = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data, length, false);
+    APP_ERROR_CHECK(err_code);
+    if (err_code == NRF_SUCCESS)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+// Send a single byte command to the OLED controller
+static void oledWriteCommand(unsigned char c)
+{
+  unsigned char buf[2];
+  int rc;
+
+	buf[0] = 0x00; // command introducer
+	buf[1] = c;
+	rc = i2c_write(buf, 2);
+	if (rc) {} // suppress warning
+} /* oledWriteCommand() */
+
+static void oledSetPosition(int x, int y)
+{
+  x += 2;
+  oledWriteCommand(0xb0 | y); // go to page Y
+  oledWriteCommand(0x10 | ((x >> 4) & 0xf)); // upper col addr
+	oledWriteCommand(0x00 | (x & 0xf)); // // lower col addr
+}
+
+// Write a block of pixel data to the OLED
+// Length can be anything from 1 to 1024 (whole display)
+static void oledWriteDataBlock(unsigned char *ucBuf, int iLen)
+{
+  unsigned char ucTemp[129];
+  int rc;
+
+	ucTemp[0] = 0x40; // data command
+	memcpy(&ucTemp[1], ucBuf, iLen);
+	rc = i2c_write(ucTemp, iLen+1);
+	if (rc) {} // suppress warning
+}
+
+int oledInit(int bFlip, int bInvert)
+{
+    uint8_t oled64_initbuf[]={0x00,0xae,0xa8,0x3f,0xd3,0x00,0x40,0xa1,0xc8,
+      0xda,0x12,0x81,0xff,0xa4,0xa6,0xd5,0x80,0x8d,0x14,
+      0xaf,0x20,0x02};
+
+unsigned char uc[4];
+
+
+		i2c_write(oled64_initbuf, sizeof(oled64_initbuf));
+
+	if (bInvert)
+	{
+		uc[0] = 0; // command
+		uc[1] = 0xa7; // invert command
+		i2c_write(uc, 2);
+	}
+	if (bFlip) // rotate display 180
+	{
+		uc[0] = 0; // command
+		uc[1] = 0xa0;
+		i2c_write(uc, 2);
+		uc[1] = 0xc0;
+		i2c_write(uc, 2);
+	}
+	return 0;
+} /* oledInit() */
 
 void ssd1306_display(void)
 {
-        ssd1306_command(SSD1306_COLUMNADDR);
-        ssd1306_command(0); // Column start address (0 = reset)
-        ssd1306_command(SSD1306_LCDWIDTH - 1); // Column end address (127 = reset)
+  int y;
+  int iLines, iCols;
+	iLines = 8;
+	iCols = 8;
+  uint16_t k = 0;
 
-        ssd1306_command(SSD1306_PAGEADDR);
-        ssd1306_command(0); // Page start address (0 = reset)
-#if SSD1306_LCDHEIGHT == 64
-        ssd1306_command(7); // Page end address
-#endif
-#if SSD1306_LCDHEIGHT == 32
-        ssd1306_command(3); // Page end address
-#endif
-#if SSD1306_LCDHEIGHT == 16
-        ssd1306_command(1); // Page end address
-#endif
-
-        // I2C
-        for (uint16_t i=0; i<(SSD1306_LCDWIDTH*SSD1306_LCDHEIGHT/8); i++)
-        {
-                uint8_t tmpBuf[17];
-                // SSD1306_SETSTARTLINE
-                tmpBuf[0] = 0x40;
-                // data
-                for (uint8_t j = 0; j < 16; j++) {
-                        tmpBuf[j+1] = buffer[i];
-                        i++;
-                }
-                i--;
-
-                ret_code_t ret;
-                ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, tmpBuf, sizeof(tmpBuf), false);
-                APP_ERROR_CHECK(ret);
-        }
-
-        // if (use_i2c) {
-        //     static uint8_t control = 0x40;
-        //     nrf_drv_twi_tx(&m_twi_master, _i2caddr, &control, 1, true);
-        //     nrf_drv_twi_tx(&m_twi_master, _i2caddr, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8), false);
-        // }
-        // else {
-        //     _HI_CS();
-        //     _HI_DC();
-        //     _LO_CS();
-        //     for (uint16_t i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++) {
-        //         UNUSED_VARIABLE(spi_transfer(&buffer[i], 1));
-        //     }
-        //     _HI_CS();
-        // }
+  for (y = 0; y < iLines; y++) {
+    oledSetPosition(0, y); // set to (0,Y)
+    oledWriteDataBlock(&buffer[k], iCols*16); // fill with data byte
+    k += 128;
+  } // for y
 }
+
+
+//   ret_code_t ret;
+
+// #define COLUMNADDR 0x21
+// #define PAGEADDR 0x22
+// #define SETSTARTLINE 0x40
+
+//   ssd1306_command(COLUMNADDR);
+//   ssd1306_command(0x00);
+//   ssd1306_command(0x7F);
+
+//   ssd1306_command(PAGEADDR);
+//   ssd1306_command(0x0);
+//   ssd1306_command(0x7);
+
+//   ssd1306_command(SETSTARTLINE | 0x00);
+  
+//   for (uint16_t i = 0; i < ((128 * 64) / 8); ) {
+
+//     uint8_t data_display[17];
+//     data_display[0] = 0x40;
+//     for (uint8_t x = 1; x < 17; x++) {
+//       data_display[x] = buffer[i++];
+//     }
+
+//     ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data_display, sizeof(data_display), false);
+//     UNUSED_VARIABLE(ret);
+//   }
+// }
+
+//   uint16_t k = 0;
+//   for (uint8_t page = 0; page < SH1106_MAX_PAGE_COUNT; page++)
+//   {
+//     uint8_t page_array[3] = {
+//       0xb0 + page,
+//       0x02,
+//       0x10
+//     };
+//     ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, page_array, 3, false);
+//     UNUSED_VARIABLE(ret);
+
+// 		// ssd1306_command(SH1106_SET_PAGE_ADDRESS + page);
+//     // ssd1306_command(0x02); // low column start address
+//     // ssd1306_command(0x10); // high column start address
+
+//     for (uint16_t i = 0; i < (SH1106_LCDWIDTH*SH1106_LCDHEIGHT/8); ) {
+
+//       uint8_t data_display[17];
+//       data_display[0] = 0x40;
+//       for (uint8_t x = 1; x < 17; x++) {
+//         data_display[x] = buffer[k++];
+//       }
+//       i += 16;
+
+//       ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data_display, sizeof(data_display), false);
+//       UNUSED_VARIABLE(ret);
+//     }
+//   }
+// }
+
+
+
+
+
+
+
+// //SCREEN PIXEL SIZE
+// #define SH1106_I2C_OLED_MAX_COLUMN					127u
+// #define SH1106_I2C_OLED_MAX_PAGE					7u
+// //CONTROL BYTES
+// #define SH1106_I2C_CONTROL_BYTE_CMD_SINGLE			0x80
+// #define SH1106_I2C_CONTROL_BYTE_CMD_STREAM			0x00
+// #define SH1106_I2C_CONTROL_BYTE_DATA_SINGLE			0xC0
+// #define SH1106_I2C_CONTROL_BYTE_DATA_STREAM			0x40
+// //FUNDAMENTAL COMMANDS (DATASHEET PG 29)
+// #define SH1106_I2C_CMD_SET_COLUMN_LOWER_4			0x00
+// #define SH1106_I2C_CMD_SET_COLUMN_UPPER_4			0x10
+// #define SH1106_I2C_CMD_SET_CHARGE_PUMP_VOLTAGE		0x30
+// #define SH1106_I2C_CMD_SET_DISPLAY_START_LINE		0x40
+// #define SH1106_I2C_CMD_SET_CONTRAST_CONTROL_MODE	0x81
+// #define SH1106_I2C_CMD_SET_SEGMENT_REMAP			0xA0
+// #define SH1106_I2C_CMD_SET_ENTIRE_DISPLAY_OFF		0xA5
+// #define SH1106_I2C_CMD_SET_ENTIRE_DISPLAY_ON		0xA4
+// #define SH1106_I2C_CMD_SET_DISPLAY_NORMAL			0xA6
+// #define SH1106_I2C_CMD_SET_DISPLAY_REVERSED			0xA7
+// #define SH1106_I2C_CMD_SET_MULTIPLEX_RATIO			0xA8
+// #define SH1106_I2C_CMD_SET_DC_DC_MODE				0xAD
+// #define SH1106_I2C_CMD_SET_DISPLAY_ON				0xAF
+// #define SH1106_I2C_CMD_SET_DISPLAY_OFF				0xAE
+// #define SH1106_I2C_CMD_SET_PAGE_ADDRESS				0xB0
+// #define SH1106_I2C_CMD_SET_COMMON_SCAN_DIRECTION	0xC0
+// #define SH1106_I2C_CMD_SET_DISPLAY_OFFSET_MODE		0xD3
+// #define SH1106_I2C_CMD_SET_OSCILLATOR_FREQUENCY		0xD5
+// #define SH1106_I2C_CMD_SET_DISCHARGE_PRECHARGE		0xD9
+// #define SH1106_I2C_CMD_COMMON_PADS_HARDWARE_CONFIG	0xDA
+// #define SH1106_I2C_CMD_COMMON_PADS_OUTPUT_VOLTAGE	0xDB
+// #define SH1106_I2C_CMD_SET_READ_MODIFY_WRITE		0xE0
+// #define SH1106_I2C_CMD_SET_READ_MODIFY_WRITE_END	0xEE
+// #define SH1106_I2C_CMD_NOP			
+
+// //https://github.com/ankitmcgill/OLED_SH1106_I2C/blob/master/SH1106_I2C.c
+
+//   uint16_t counter = 0;
+// 	uint16_t x = 0;
+// 	uint16_t y = 0;
+//   uint16_t j = 0;
+
+// 	for (y = 0; y < (SH1106_I2C_OLED_MAX_PAGE + 1); y++)
+// 	{
+//     ret_code_t ret;
+//     uint8_t data_send[4];
+//     data_send[0] = SH1106_I2C_CONTROL_BYTE_CMD_STREAM;
+//     data_send[1] = SH1106_I2C_CMD_SET_PAGE_ADDRESS | y;
+//     data_send[2] = 0x02;
+//     data_send[3] = 0x01;
+//     ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, data_send, sizeof(data_send), false);
+//     UNUSED_VARIABLE(ret);
+
+//     uint8_t display_data_send[((128 * 64) / 8) + 1];
+// 		for (x = 0; x < ((128 * 64) / 8); x++)
+// 		{
+//       display_data_send[0] = SH1106_I2C_CONTROL_BYTE_DATA_STREAM;
+//       for (uint16_t i = 0; i < ((128 * 64) / 8); i++)
+//       {
+//         display_data_send[i + 1] = buffer[j++];
+//       }
+
+//       for (uint16_t l = 0; l < 16; l++)
+//       {
+//         ret_code_t ret;     
+//         ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, display_data_send, sizeof(display_data_send), false);
+//         APP_ERROR_CHECK(ret);
+//       }
+
+
+//       ret_code_t ret;     
+//       ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, display_data_send, sizeof(display_data_send), false);
+//       APP_ERROR_CHECK(ret);
+// 			counter++;
+// 		}
+// 	}
+// }
 
 // clear everything
 void ssd1306_clear_display(void)
 {
-        memset(buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+  memset(buffer, 0xf0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 }
-
-
 
 void ssd1306_draw_fast_hline(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
@@ -983,7 +1161,7 @@ void ssd1306_draw_circle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
                 ssd1306_draw_pixel(x0 - x, y0 + y, color);
                 ssd1306_draw_pixel(x0 + x, y0 - y, color);
                 ssd1306_draw_pixel(x0 - x, y0 - y, color);
-                ssdssd1306_clear_display1306_draw_pixel(x0 + y, y0 + x, color);
+                ssd1306_draw_pixel(x0 + y, y0 + x, color);
                 ssd1306_draw_pixel(x0 - y, y0 + x, color);
                 ssd1306_draw_pixel(x0 + y, y0 - x, color);
                 ssd1306_draw_pixel(x0 - y, y0 - x, color);

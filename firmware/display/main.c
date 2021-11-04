@@ -1833,8 +1833,8 @@ int main(void)
     NVIC_SystemReset(); //reboot into bootloader
   }
 
-  ble_init();
-  ant_setup();
+  // ble_init();
+  // ant_setup();
   uart_init();
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
@@ -1871,8 +1871,8 @@ int main(void)
 
       mainscreen_idle();
 
-      ble_send_periodic_data();
-      ble_update_configurations_data();
+      // ble_send_periodic_data();
+      // ble_update_configurations_data();
       motor_power_manage();
 
     //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
