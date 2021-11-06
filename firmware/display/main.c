@@ -4,7 +4,7 @@
  * Copyright (C) Casainho, 2020
  *
  * Released under the GPL License, Version 3
- * 
+ *
  */
 
 #include <stdio.h>
@@ -176,8 +176,8 @@ static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID; /**< Handle of the curr
 
 /**< Universally unique service identifiers. */
 static ble_uuid_t m_adv_uuids[] =
-{
-  {TSDZ2_UUID_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN},
+    {
+        {TSDZ2_UUID_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN},
 };
 
 /**@brief Clear bond information from persistent storage.
@@ -193,7 +193,7 @@ static void delete_bonds(void)
 }
 
 /**@brief Function for starting advertising.
-*/
+ */
 static void advertising_start(bool erase_bonds)
 {
   if (erase_bonds == true)
@@ -307,19 +307,19 @@ static void ble_evt_handler(ble_evt_t const *p_ble_evt, void *p_context)
 void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
 {
   nrf_pwr_mgmt_feed();
-  //set the assist level
+  // set the assist level
   p_profile->common.travel_mode_state = (mp_ui_vars->ui8_assist_level << 3);
   p_profile->page_16.travel_mode = p_profile->common.travel_mode_state;
-  //common gear state is used for motor state control
-  // use front gear setting to transfer motor state information to the remote:
-  // the two bits are used as follows:
-  // 00 - motor off (MOTOR_INIT_OFF (0))
-  // 01  - motor ready (MOTOR_INIT_READY (1))
-  // 10  - motor not ready (MOTOR_INIT_GET_MOTOR_ALIVE-2, MOTOR_INIT_WAIT_MOTOR_ALIVE-3)
-  // 11  - signal to turn motor on/off (3)
-  // higher bits are used to indicated motor start up errors (MOTOR_INIT_ERROR_ALIVE -4, MOTOR_INIT_ERROR_GET_FIRMWARE_VERSION-8,
-  //       MOTOR_INIT_ERROR_FIRMWARE_VERSION-10,MOTOR_INIT_ERROR_SET_CONFIGURATIONS-14)
-  //set up the common gear state byte
+  // common gear state is used for motor state control
+  //  use front gear setting to transfer motor state information to the remote:
+  //  the two bits are used as follows:
+  //  00 - motor off (MOTOR_INIT_OFF (0))
+  //  01  - motor ready (MOTOR_INIT_READY (1))
+  //  10  - motor not ready (MOTOR_INIT_GET_MOTOR_ALIVE-2, MOTOR_INIT_WAIT_MOTOR_ALIVE-3)
+  //  11  - signal to turn motor on/off (3)
+  //  higher bits are used to indicated motor start up errors (MOTOR_INIT_ERROR_ALIVE -4, MOTOR_INIT_ERROR_GET_FIRMWARE_VERSION-8,
+  //        MOTOR_INIT_ERROR_FIRMWARE_VERSION-10,MOTOR_INIT_ERROR_SET_CONFIGURATIONS-14)
+  // set up the common gear state byte
   if (g_motor_init_state < 4)         // no errors
     p_profile->common.gear_state = 0; // clear any error states
 
@@ -327,7 +327,7 @@ void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
   {
   case MOTOR_INIT_OFF:
 
-    //first two bits are front gear
+    // first two bits are front gear
     p_profile->common.gear_state = (p_profile->common.gear_state & 0x7C) + 0;
     break;
 
@@ -342,7 +342,7 @@ void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
     // note gear state value 3 is used to turn on/off the motor; above 3 are error states
   case MOTOR_INIT_ERROR_ALIVE:
     p_profile->common.gear_state = (4 | (p_profile->common.gear_state & 0x03));
-    //p_profile->page_16.current_rear_gear = 1;
+    // p_profile->page_16.current_rear_gear = 1;
     break;
   case MOTOR_INIT_ERROR_GET_FIRMWARE_VERSION:
     p_profile->common.gear_state = (8 | (p_profile->common.gear_state & 0x03));
@@ -350,7 +350,7 @@ void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
     break;
   case MOTOR_INIT_ERROR_FIRMWARE_VERSION:
     p_profile->common.gear_state = (12 | (p_profile->common.gear_state & 0x03));
-   // p_profile->page_16.current_rear_gear = 3;
+    // p_profile->page_16.current_rear_gear = 3;
     break;
   case MOTOR_INIT_ERROR_SET_CONFIGURATIONS:
     p_profile->common.gear_state = (16 | (p_profile->common.gear_state & 0x03));
@@ -360,44 +360,44 @@ void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
   default:
     break;
   }
-  //set variables for ANT transmission in order of connectIQ fields
-  // 1. lev speed
+  // set variables for ANT transmission in order of connectIQ fields
+  //  1. lev speed
   p_profile->common.lev_speed = ui_vars.ui16_wheel_speed_x10 / 10;
 
-  //2.  assist level
+  // 2.  assist level
   p_profile->common.travel_mode_state |= (mp_ui_vars->ui8_assist_level << 3) & 0x38;
 
   // 3. lights
-  //set by the remote control page 16 command
-  //p_profile->common.system_state = p_profile->common.system_state && 0xf0; //lights off
-  p_profile->common.system_state = 0x00; //lights off
+  // set by the remote control page 16 command
+  // p_profile->common.system_state = p_profile->common.system_state && 0xf0; //lights off
+  p_profile->common.system_state = 0x00; // lights off
   p_profile->common.system_state |= (mp_ui_vars->ui8_lights << 3);
 
-  //4. state of charge
+  // 4. state of charge
   p_profile->page_3.battery_soc = ui8_g_battery_soc;
 
   // 5. battery voltage
-  //battery voltage for ANT_LEV is 0.25V/bit
+  // battery voltage for ANT_LEV is 0.25V/bit
   p_profile->page_4.battery_voltage = (ui_vars.ui16_battery_voltage_filtered_x10) / 2.5;
 
-  //6. odometer
-  //3 bytes -0.01km/bit max value 167772.15km
-  //p_profile->common.odometer = ui_vars.ui32_odometer_x10 / 100;
+  // 6. odometer
+  // 3 bytes -0.01km/bit max value 167772.15km
+  // p_profile->common.odometer = ui_vars.ui32_odometer_x10 / 100;
   p_profile->common.odometer = 0; // not yet implemented
 
-  //7. remaining range
-  //1 km/bit, max value 4095km
-  // p_profile->page_2.remaining_range = ui_vars.battery_energy_km_value_x100 / 100;
+  // 7. remaining range
+  // 1 km/bit, max value 4095km
+  //  p_profile->page_2.remaining_range = ui_vars.battery_energy_km_value_x100 / 100;
   p_profile->page_2.remaining_range = 0; // not yet implemented
 
-  //8. motor temperature
-  //one byte, bits 4-6
-  //000 unknown
-  //001  cold
-  //010 cold/warm
-  //011 warm
-  //100 warm/hot
-  //101 hot
+  // 8. motor temperature
+  // one byte, bits 4-6
+  // 000 unknown
+  // 001  cold
+  // 010 cold/warm
+  // 011 warm
+  // 100 warm/hot
+  // 101 hot
 
   uint8_t temp = ui_vars.ui8_motor_temperature;
   uint8_t temp_max = ui_vars.ui8_motor_temperature_max_value_to_limit;
@@ -416,8 +416,8 @@ void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
 
   p_profile->page_1.temperature_state = lev_temp;
 
-  //9. fuel consumption
-  //max value 0.1 wh/km per bit, max value=409.5 Wh/km
+  // 9. fuel consumption
+  // max value 0.1 wh/km per bit, max value=409.5 Wh/km
   p_profile->page_4.fuel_consumption = 0; // not yet implemented
 
   switch (event)
@@ -490,7 +490,7 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
 
     if (p_profile->page_16.light)
     {
-      //light mode activated
+      // light mode activated
     }
     else
     {
@@ -516,8 +516,8 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
     }
     if (p_profile->page_16.current_rear_gear == 0)
     {
-      //this state should clear both brakes and walk mode
-     
+      // this state should clear both brakes and walk mode
+
       // disable walk mode
       if (ui_vars.ui8_walk_assist == 1)
       {
@@ -528,7 +528,7 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
       // nrf_gpio_port_out_set(NRF_P0, 1UL << BRAKE__PIN);
       led_sequence_cancel_play_until();
     }
-    
+
     if (p_profile->page_16.current_front_gear == 3)
     {
 
@@ -571,55 +571,55 @@ void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
   }
 }
 
-void ant_generic_evt_handler(ant_evt_t * p_ant_evt, void * p_context)
+void ant_generic_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
 {
-    uint8_t payload[8];
-    uint32_t err_code;
+  uint8_t payload[8];
+  uint32_t err_code;
 
-    switch (p_ant_evt->event)
+  switch (p_ant_evt->event)
+  {
+  // ANT broadcast success.
+  // Increment the counter and send a new broadcast.
+  case EVENT_TX:
+    switch (p_ant_evt->channel)
     {
-        // ANT broadcast success.
-        // Increment the counter and send a new broadcast.
-        case EVENT_TX:
-          switch (p_ant_evt->channel)
-          {
-            case 1:
-              payload[0] = 1;
-              payload[1] = ui_vars.ui8_assist_level & 0x3F;
-              break;
+    case 1:
+      payload[0] = 1;
+      payload[1] = ui_vars.ui8_assist_level & 0x3F;
+      break;
 
-            case 2:
-              payload[0] = 2;
-              payload[1] = ui8_g_battery_soc;
-              break;
+    case 2:
+      payload[0] = 2;
+      payload[1] = ui8_g_battery_soc;
+      break;
 
-            case 3:
-              payload[0] = 3;
-              payload[1] = (uint8_t) (ui_vars.ui16_battery_power_filtered_ui & 0xff);
-              payload[2] = (uint8_t) (ui_vars.ui16_battery_power_filtered_ui >> 8);
-              break;
+    case 3:
+      payload[0] = 3;
+      payload[1] = (uint8_t)(ui_vars.ui16_battery_power_filtered_ui & 0xff);
+      payload[2] = (uint8_t)(ui_vars.ui16_battery_power_filtered_ui >> 8);
+      break;
 
-            default:
-              return;
-              break;
-          }
-
-          // Broadcast the data.
-          err_code = sd_ant_broadcast_message_tx(p_ant_evt->channel,
-                                                  ANT_STANDARD_DATA_PAYLOAD_SIZE,
-                                                  payload);
-          APP_ERROR_CHECK(err_code);
-
-          break;
-
-        case EVENT_CHANNEL_COLLISION:
-            err_code = 0;
-            APP_ERROR_CHECK(err_code);
-          break;
-
-        default:
-            break;
+    default:
+      return;
+      break;
     }
+
+    // Broadcast the data.
+    err_code = sd_ant_broadcast_message_tx(p_ant_evt->channel,
+                                           ANT_STANDARD_DATA_PAYLOAD_SIZE,
+                                           payload);
+    APP_ERROR_CHECK(err_code);
+
+    break;
+
+  case EVENT_CHANNEL_COLLISION:
+    err_code = 0;
+    APP_ERROR_CHECK(err_code);
+    break;
+
+  default:
+    break;
+  }
 }
 
 NRF_SDH_ANT_OBSERVER(m_ant_observer_generic, APP_ANT_OBSERVER_PRIO, ant_generic_evt_handler, NULL);
@@ -658,17 +658,17 @@ static void ant_setup(void)
   err_code = sd_ant_network_address_set(1, array);
   APP_ERROR_CHECK(err_code);
 
-  // add ANT communications for the Garmin data fields 
+  // add ANT communications for the Garmin data fields
   ant_channel_config_t t_channel_config = {
-    .channel_number    = 1,
-    .channel_type      = CHANNEL_TYPE_MASTER,
-    .ext_assign        = 0x00,
-    .rf_freq           = 48,
-    .transmission_type = 5,
-    .device_type       = 0x7b,
-    .device_number     = 65136,
-    .channel_period    = 16384,
-    .network_number    = 1,
+      .channel_number = 1,
+      .channel_type = CHANNEL_TYPE_MASTER,
+      .ext_assign = 0x00,
+      .rf_freq = 48,
+      .transmission_type = 5,
+      .device_type = 0x7b,
+      .device_number = 65136,
+      .channel_period = 16384,
+      .network_number = 1,
   };
 
   for (uint8_t i = 0; i < 3; i++)
@@ -792,8 +792,8 @@ static void gatt_init(void)
   ret_code_t err_code = nrf_ble_gatt_init(&m_gatt, NULL);
   APP_ERROR_CHECK(err_code);
 
-  //err_code = nrf_ble_gatt_att_mtu_periph_set(&m_gatt, NRF_SDH_BLE_GATT_MAX_MTU_SIZE);
-  //APP_ERROR_CHECK(err_code);
+  // err_code = nrf_ble_gatt_att_mtu_periph_set(&m_gatt, NRF_SDH_BLE_GATT_MAX_MTU_SIZE);
+  // APP_ERROR_CHECK(err_code);
 }
 
 /**@brief Function for handling Queued Write Module errors.
@@ -1581,45 +1581,46 @@ void motor_power_manage(void)
 
   switch (m_motor_state)
   {
-    case MOTOR_STATE_OFF_START:
-      motor_power_enable(false);
-      counter = 20; // 1 second
-      m_motor_state = MOTOR_STATE_OFF_WAIT;
-      break;
+  case MOTOR_STATE_OFF_START:
+    motor_power_enable(false);
+    counter = 20; // 1 second
+    m_motor_state = MOTOR_STATE_OFF_WAIT;
+    break;
 
-    case MOTOR_STATE_OFF_WAIT:
-      if (counter > 0) counter--;
-      if (counter == 0)
+  case MOTOR_STATE_OFF_WAIT:
+    if (counter > 0)
+      counter--;
+    if (counter == 0)
+    {
+      // reset state variables
+      if (g_motor_init_state != MOTOR_INIT_OFF)
       {
-        // reset state variables
-        if (g_motor_init_state != MOTOR_INIT_OFF) 
-        {
-          led_sequence_play(LED_EVENT_MOTOR_OFF);
-          led_sequence_play(LED_EVENT_WAIT_1S);
-          disp_soc(ui8_g_battery_soc/10);
-        }
-        uart_reset_rx_buffer();
-        g_motor_init_state = MOTOR_INIT_OFF;
-        g_motor_init_state_conf = MOTOR_INIT_CONFIG_SEND_CONFIG;
-        ui8_g_motor_init_status = MOTOR_INIT_STATUS_RESET;
-
-        m_motor_state = MOTOR_STATE_OFF;
+        led_sequence_play(LED_EVENT_MOTOR_OFF);
+        led_sequence_play(LED_EVENT_WAIT_1S);
+        disp_soc(ui8_g_battery_soc / 10);
       }
-      break;
+      uart_reset_rx_buffer();
+      g_motor_init_state = MOTOR_INIT_OFF;
+      g_motor_init_state_conf = MOTOR_INIT_CONFIG_SEND_CONFIG;
+      ui8_g_motor_init_status = MOTOR_INIT_STATUS_RESET;
 
-    case MOTOR_STATE_OFF:
-      // do nothing
-      break;
+      m_motor_state = MOTOR_STATE_OFF;
+    }
+    break;
 
-    case MOTOR_STATE_ON_START:
-      motor_power_enable(true);
-      g_motor_init_state = MOTOR_INIT_GET_MOTOR_ALIVE;
-      m_motor_state = MOTOR_STATE_ON;
-      break;
+  case MOTOR_STATE_OFF:
+    // do nothing
+    break;
 
-    case MOTOR_STATE_ON:
-      // do nothing
-      break;
+  case MOTOR_STATE_ON_START:
+    motor_power_enable(true);
+    g_motor_init_state = MOTOR_INIT_GET_MOTOR_ALIVE;
+    m_motor_state = MOTOR_STATE_ON;
+    break;
+
+  case MOTOR_STATE_ON:
+    // do nothing
+    break;
   }
 }
 
@@ -1629,7 +1630,7 @@ void motor_power_manage(void)
 
 //   if (events & ONOFFDOWN_LONG_CLICK)
 //   {
-//     if (ui_vars.ui8_street_mode_function_enabled && ui_vars.ui8_street_mode_hotkey_enabled) 
+//     if (ui_vars.ui8_street_mode_function_enabled && ui_vars.ui8_street_mode_hotkey_enabled)
 //     {
 //       if (ui_vars.ui8_street_mode_enabled)
 //       {
@@ -1657,12 +1658,12 @@ void motor_power_manage(void)
 //     // long up to turn on headlights
 //     if (events & UP_LONG_CLICK) {
 //       ui_vars.ui8_lights = !ui_vars.ui8_lights;
-//       if (ui_vars.ui8_lights) 
+//       if (ui_vars.ui8_lights)
 //       {
 //         led_set_global_brightness(1); // When lights are on - assume it's dark and make the LEDs dimmer
 //         led_sequence_play(LED_EVENT_LIGHTS_ON);
 //       }
-//         else 
+//         else
 //       {
 //         led_set_global_brightness(7); // Lights are off - assume it's daylight - let's have the brightest LEDs
 //         led_sequence_play(LED_EVENT_LIGHTS_OFF);
@@ -1721,18 +1722,25 @@ void motor_power_manage(void)
 // 	return handled;
 // }
 
-void walk_assist_state(void) {
-// kevinh - note on the sw102 we show WALK in the box normally used for BRAKE display - the display code is handled there now
-  if (ui_vars.ui8_walk_assist_feature_enabled) {
+void walk_assist_state(void)
+{
+  // kevinh - note on the sw102 we show WALK in the box normally used for BRAKE display - the display code is handled there now
+  if (ui_vars.ui8_walk_assist_feature_enabled)
+  {
     // if down button is still pressed
-    if (ui_vars.ui8_walk_assist && buttons_get_down_state()) {
+    if (ui_vars.ui8_walk_assist && buttons_get_down_state())
+    {
       ui8_walk_assist_timeout = 2; // 0.2 seconds
-    } else if (buttons_get_down_state() == 0 && --ui8_walk_assist_timeout == 0) {
+    }
+    else if (buttons_get_down_state() == 0 && --ui8_walk_assist_timeout == 0)
+    {
       led_sequence_cancel_play_until();
       ui_vars.ui8_walk_assist = 0;
       ui8_walk_assist_state_process_locally = 0;
     }
-  } else {
+  }
+  else
+  {
     ui_vars.ui8_walk_assist = 0;
     ui8_walk_assist_state_process_locally = 0;
   }
@@ -1741,20 +1749,22 @@ void walk_assist_state(void) {
 void brakeLights(void)
 {
 
- if (ui8_braking_led_state != ui_vars.ui8_braking)
- {
-   ui8_braking_led_state = ui_vars.ui8_braking;
+  if (ui8_braking_led_state != ui_vars.ui8_braking)
+  {
+    ui8_braking_led_state = ui_vars.ui8_braking;
 
-   if (ui8_braking_led_state == 1) led_sequence_play_now(LED_EVENT_BRAKE_ON);
-    else led_sequence_play_now(LED_EVENT_BRAKE_OFF);
+    if (ui8_braking_led_state == 1)
+      led_sequence_play_now(LED_EVENT_BRAKE_ON);
+    else
+      led_sequence_play_now(LED_EVENT_BRAKE_OFF);
 
-  // Todo - add code to replicate brake light signal on NRF pin...
- }
+    // Todo - add code to replicate brake light signal on NRF pin...
+  }
 }
 
 void system_power_off(uint8_t updateDistanceOdo)
 {
-  (void) updateDistanceOdo; // for future implementation ??
+  (void)updateDistanceOdo; // for future implementation ??
 
   display_off();
 
@@ -1801,12 +1811,12 @@ void system_power_off(uint8_t updateDistanceOdo)
 
 static uint8_t payload_unchanged(uint8_t *old, uint8_t *new, uint8_t len)
 {
-	if (memcmp(old, new, len) == 0)
-		return 1;
+  if (memcmp(old, new, len) == 0)
+    return 1;
 
-	memcpy(old, new, len);
+  memcpy(old, new, len);
 
-	return 0;
+  return 0;
 }
 
 int main(void)
@@ -1818,19 +1828,19 @@ int main(void)
   init_app_timers();
   eeprom_init();
 
-  //below is what I had to do to get NVIC_SystemReset() not to hangup.
-  //the s340 sd if what is preventing the restart into the bootloader, so it is important to reset before bluetooth starts.
-  //basically, the user changes the ANT_ID to 0x99 , the firmware reboots as normal and we catch the change here before bluetooth starts
-  //it now works in debug mode!
-  if (mp_ui_vars->ui8_enter_bootloader) //check to see if reboot into the bootloader is needed
+  // below is what I had to do to get NVIC_SystemReset() not to hangup.
+  // the s340 sd if what is preventing the restart into the bootloader, so it is important to reset before bluetooth starts.
+  // basically, the user changes the ANT_ID to 0x99 , the firmware reboots as normal and we catch the change here before bluetooth starts
+  // it now works in debug mode!
+  if (mp_ui_vars->ui8_enter_bootloader) // check to see if reboot into the bootloader is needed
   {
     mp_ui_vars->ui8_enter_bootloader = 0;
-    nrf_power_gpregret_set(BOOTLOADER_DFU_START); //set the dfu register
-    bsp_board_led_on(LED_B__PIN); // Indicate about to enter bootloader
-    nrf_delay_ms(1000);                           //wait for write to complete
+    nrf_power_gpregret_set(BOOTLOADER_DFU_START); // set the dfu register
+    bsp_board_led_on(LED_B__PIN);                 // Indicate about to enter bootloader
+    nrf_delay_ms(1000);                           // wait for write to complete
     eeprom_write_variables();
-    nrf_delay_ms(3000); //wait for write to complete
-    NVIC_SystemReset(); //reboot into bootloader
+    nrf_delay_ms(3000); // wait for write to complete
+    NVIC_SystemReset(); // reboot into bootloader
   }
 
   // ble_init();
@@ -1838,14 +1848,14 @@ int main(void)
   uart_init();
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
-  //ui_vars.ui8_street_mode_function_enabled = 1;
+  // ui_vars.ui8_street_mode_function_enabled = 1;
 
   // setup this member variable ui8_m_ant_device_id
   ui8_m_ant_device_id = mp_ui_vars->ui8_ant_device_id;
   uint32_t ui32_rt_last_run_time = 0;
   uint32_t ui32_dfucheck_last_run_time = 0;
   uint8_t ui8_ble_connected_shown = 0;
-  
+
   led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
 
   // init the display
@@ -1853,7 +1863,8 @@ int main(void)
   screen_init();
 
   // show the first screen: boot screen
-  screenShow(&bootScreen);
+  // screenShow(&bootScreen);
+  screenShow(&mainScreen1);
 
   while (1)
   {
@@ -1875,17 +1886,17 @@ int main(void)
       // ble_update_configurations_data();
       motor_power_manage();
 
-    //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
+      //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
 
-    //   streetMode();
-    //   brakeLights();
+      //   streetMode();
+      //   brakeLights();
 
       if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && (!ui8_ble_connected_shown))
       {
         ui8_ble_connected_shown = 1;
         led_sequence_play(LED_EVENT_BLUETOOTH_CONNECT);
       }
-      
+
       if ((m_conn_handle == BLE_CONN_HANDLE_INVALID) && (ui8_ble_connected_shown))
       {
         ui8_ble_connected_shown = 0;
@@ -1893,12 +1904,12 @@ int main(void)
       }
     }
 
-      // every 1 second
+    // every 1 second
     ui32_time_now = get_time_base_counter_1ms();
     if ((ui32_time_now - ui32_dfucheck_last_run_time) >= 1000)
     {
       ui32_dfucheck_last_run_time = ui32_time_now;
-      //see if DFU reboot is needed
+      // see if DFU reboot is needed
 
       // see if there was a change to the ANT ID
       if (ui8_m_ant_device_id != mp_ui_vars->ui8_ant_device_id)

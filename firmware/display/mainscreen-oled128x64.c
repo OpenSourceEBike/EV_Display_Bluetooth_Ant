@@ -47,7 +47,7 @@ static void mainScreenOnEnter() {
 
 #define BATTERY_BAR \
 { \
-    .x = 1, .y = 2, \
+    .x = 0, .y = 2, \
     .width = -1, .height = -1, \
     .field = &batteryField, \
 }, \
@@ -309,9 +309,9 @@ void mainScreenOnDirtyClean(void) {
     street_mode_color = C_WHITE;
   }
 
-  UG_DrawLine(0, 0, 63, 0, street_mode_color);
-  UG_DrawLine(0, 0, 0, 61, street_mode_color);
-  UG_DrawLine(63, 0, 63, 61, street_mode_color);
+  // UG_DrawLine(0, 0, 63, 0, street_mode_color);
+  // UG_DrawLine(0, 0, 0, 61, street_mode_color);
+  // UG_DrawLine(63, 0, 63, 61, street_mode_color);
 }
 
 void secondMainScreenOnDirtyClean(void) {
