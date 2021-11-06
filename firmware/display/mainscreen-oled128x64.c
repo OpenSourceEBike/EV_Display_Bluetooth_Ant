@@ -47,13 +47,13 @@ static void mainScreenOnEnter() {
 
 #define BATTERY_BAR \
 { \
-    .x = 0, .y = 2, \
+    .x = 0, .y = 0, \
     .width = -1, .height = -1, \
     .field = &batteryField, \
 }, \
 { \
-  .x = 27, .y = 1, \
-  .width = 36, .height = -1, \
+  .x = 63 - ((3 * 8) + 2), .y = 0, \
+  .width = 0, .height = -1, \
   .align_x = AlignRight, \
   .font = &MEDIUM_TEXT_FONT, \
   .field = &socField \

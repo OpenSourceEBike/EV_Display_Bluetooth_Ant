@@ -2,7 +2,7 @@
 #include "screen.h"
 
 #define BATTERY_SOC_START_X 0
-#define BATTERY_SOC_START_Y 2
+#define BATTERY_SOC_START_Y 0
 #define BATTERY_SOC_WITH    25
 #define BATTERY_SOC_HEIGHT  11
 
@@ -37,20 +37,20 @@ bool renderBattery(FieldLayout *layout)
     ui32_x1 = BATTERY_SOC_START_X + 2;
     ui32_y1 = BATTERY_SOC_START_Y + 2;
     ui32_x2 = ui32_x1 + (battery_bars * 2) - 1;
-    ui32_y2 = ui32_y1 + 7 - 1;
+    ui32_y2 = ui32_y1 + 8 - 1;
     UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
   } else if (battery_bars >= 10) {
     ui32_x1 = BATTERY_SOC_START_X + 2;
     ui32_y1 = BATTERY_SOC_START_Y + 2;
     ui32_x2 = ui32_x1 + (9 * 2) - 1;
-    ui32_y2 = ui32_y1 + 7 - 1;
+    ui32_y2 = ui32_y1 + 8 - 1;
     UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
     ui32_x1 = BATTERY_SOC_START_X + 18 + 2;
-    ui32_y1 = BATTERY_SOC_START_Y + 2 + 2;
+    ui32_y1 = BATTERY_SOC_START_Y + 3 + 2;
     ui32_x2 = ui32_x1 + 2;
-    ui32_y2 = ui32_y1 + 2;
+    ui32_y2 = ui32_y1 + 1;
     UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
   }
 
@@ -74,6 +74,7 @@ void batteryClearSymbol(void)
   ui32_y2 = ui32_y1 + height;
   UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_BLACK);
 
+  // draw lines of empty battery
   ui32_x1 = BATTERY_SOC_START_X;
   ui32_y1 = BATTERY_SOC_START_Y;
   ui32_x2 = ui32_x1 + 21;
@@ -83,7 +84,7 @@ void batteryClearSymbol(void)
   ui32_x1 = ui32_x2;
   ui32_y1 = ui32_y2;
   ui32_x2 = ui32_x1;
-  ui32_y2 = ui32_y1 + 2;
+  ui32_y2 = ui32_y1 + 3;
   UG_DrawLine(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
   ui32_x1 = ui32_x2;
@@ -95,7 +96,7 @@ void batteryClearSymbol(void)
   ui32_x1 = ui32_x2;
   ui32_y1 = ui32_y2;
   ui32_x2 = ui32_x1;
-  ui32_y2 = ui32_y1 + 6;
+  ui32_y2 = ui32_y1 + 5;
   UG_DrawLine(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
   ui32_x1 = ui32_x2;
@@ -107,7 +108,7 @@ void batteryClearSymbol(void)
   ui32_x1 = ui32_x2;
   ui32_y1 = ui32_y2;
   ui32_x2 = ui32_x1;
-  ui32_y2 = ui32_y1 + 2;
+  ui32_y2 = ui32_y1 + 3;
   UG_DrawLine(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 
   ui32_x1 = ui32_x2;
@@ -119,6 +120,6 @@ void batteryClearSymbol(void)
   ui32_x1 = ui32_x2;
   ui32_y1 = ui32_y2;
   ui32_x2 = ui32_x1;
-  ui32_y2 = ui32_y1 - 9;
+  ui32_y2 = ui32_y1 - 10;
   UG_DrawLine(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_WHITE);
 }
