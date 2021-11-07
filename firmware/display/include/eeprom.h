@@ -11,7 +11,7 @@
 
 #include "state.h"
 
-#define CONFIGURATIONS_VERSION 0xA6
+#define CONFIGURATIONS_VERSION 0xA7
 
 // EEPROM memory variables default values
 #define DEFAULT_VALUE_ASSIST_LEVEL                                  0
@@ -118,6 +118,7 @@
 #define DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_7               284
 #define DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_WEIGHT_8            105
 #define DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_8               300
+#define DEFAULT_BATTERY_SOC_ENABLE                                  1 // show percentage
 
 #define DEFAULT_ANT_LEV_ID                                          1
 #define DEFAULT_ANT_LEV_ENABLE                                      0

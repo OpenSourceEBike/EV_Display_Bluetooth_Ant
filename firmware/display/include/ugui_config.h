@@ -30,6 +30,7 @@
 #define SCREEN_HEIGHT 128
 
 // Standard default font selections used most of the time
+#define  MICRO_TEXT_FONT              FONT_5X8
 #define  SMALL_TEXT_FONT              FONT_5X12
 #define  MEDIUM_TEXT_FONT             FONT_8X14
 #define  REGULAR_TEXT_FONT            FONT_5X12

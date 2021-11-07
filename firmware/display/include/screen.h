@@ -471,6 +471,7 @@ typedef struct FieldLayout {
 	Field *field; // The field to render in this location
 
 	const UG_FONT *font; // If this field requires a font, use this.  Or if NULL auto select the biggest font that can hold the string
+  const UG_FONT *label_font;
 
 	uint32_t old_editable; // a cache value only used for editable fields, used to compare against previous values and redraw if needed.
 

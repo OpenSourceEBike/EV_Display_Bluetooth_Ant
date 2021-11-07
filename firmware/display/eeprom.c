@@ -149,6 +149,7 @@ const configurations_t m_configurations_defaults = {
   .ui8_torque_sensor_filter = DEFAULT_TORQUE_SENSOR_FILTER,
   .ui8_torque_sensor_adc_threshold = DEFAULT_TORQUE_SENSOR_ADC_THRESHOLD,
   .ui8_coast_brake_enable = DEFAULT_COAST_BRAKE_ENABLE,
+  .ui8_battery_soc_enable = DEFAULT_BATTERY_SOC_ENABLE,
 
   .ui8_ant_device_id = DEFAULT_ANT_LEV_ID,
   .ui8_enter_bootloader = 0,

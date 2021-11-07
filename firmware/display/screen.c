@@ -1223,6 +1223,10 @@ static bool renderEditable(FieldLayout *layout) {
 		return true;
 	}
 
+  // set label font
+  UG_FONT* label_font = editable_label_font;
+  if (layout->label_font) label_font = layout->label_font; // use specified font otherwise the default one
+
 	// Show the label (if showing the conventional way - i.e. small and off to the top left.
 	if (showLabel) {
 		UG_SetBackcolor(C_TRANSPARENT); // always draw labels with transparency, because they might slightly overlap the border
@@ -1231,7 +1235,7 @@ static bool renderEditable(FieldLayout *layout) {
 		int label_inset_x = 0, label_inset_y = 0; // Move to be a public constant or even a LayoutField member if useful
 
 		putAligned(layout, layout->label_align_x, layout->label_align_y,
-				label_inset_x, label_inset_y, editable_label_font,
+				label_inset_x, label_inset_y, layout->label_font,
 				field->editable.label);
 	}
 
@@ -1252,9 +1256,9 @@ static bool renderEditable(FieldLayout *layout) {
 		if (showLabel) {
 			if (!showLabelAtTop) {
 				if (isTwoRows) // put the value on the second line (if the screen is narrow)
-					y += editable_label_font->char_height;
+					y += label_font->char_height;
 			} else {
-				y += (editable_label_font->char_height); // put value just beneath label
+				y += (label_font->char_height); // put value just beneath label
 				align_y = AlignTop;
 			}
 		}
