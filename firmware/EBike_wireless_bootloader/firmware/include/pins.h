@@ -18,11 +18,7 @@
 typedef enum {
     PLUS__PIN  = 5,
     MINUS__PIN  = 6,
-    // ENTER__PIN = 7,
-    STANDBY__PIN = 8,
-    // BOOTLOADER__PIN = 18,
-    // BUTTON_PIN_ELEMENTS = 5 // must be updated when added or removed an element
-    BUTTON_PIN_ELEMENTS = 3 // must be updated when added or removed an element
+    BUTTON_PIN_ELEMENTS = 2 // must be updated when added or removed an element
 } button_pins_t;
 #endif
 // NRF52840 NORDIC Dongle
@@ -31,11 +27,7 @@ typedef enum {
 typedef enum {
     PLUS__PIN  = 13,
     MINUS__PIN  = 15,
-    // ENTER__PIN = 17,
-    STANDBY__PIN = 20,
-    // BOOTLOADER__PIN= 19,
-    // BUTTON_PIN_ELEMENTS = 5 // must be updated when added or removed an element
-    BUTTON_PIN_ELEMENTS = 3 // must be updated when added or removed an element
+    BUTTON_PIN_ELEMENTS = 2 // must be updated when added or removed an element
 } button_pins_t;
 #endif
 

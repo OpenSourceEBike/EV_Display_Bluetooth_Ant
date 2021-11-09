@@ -202,11 +202,6 @@ static bool gpio_init(void)
     
   bootloader_pin_pressed = check_pin_and_enable_interrupt(PLUS__PIN);
   bootloader_pin_pressed |= check_pin_and_enable_interrupt(MINUS__PIN);
-  bootloader_pin_pressed |= check_pin_and_enable_interrupt(STANDBY__PIN);
-
-  // user do not have access to the following pins, so do not use them
-  // bootloader_pin_pressed |= check_pin_and_enable_interrupt(ENTER__PIN);
-  // bootloader_pin_pressed |= check_pin_and_enable_interrupt(BUTTON_1);
 
   return bootloader_pin_pressed;
 }
@@ -215,11 +210,8 @@ static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
 {
   if (int_type == NRF_DRV_RTC_INT_COMPARE0)
   {
-    if (((read_pin(PLUS__PIN) == 0) &&
-        (read_pin(MINUS__PIN) == 0) &&
-        // (read_pin(ENTER__PIN) == 0) &&
-        (read_pin(STANDBY__PIN) == 0)))
-        // || (read_pin(BUTTON_1) == 0))
+    if ((read_pin(PLUS__PIN) == 0) &&
+        (read_pin(MINUS__PIN) == 0))
     {
       g_start_bootloader = true;
     }
@@ -264,6 +256,12 @@ int main(void)
   ret_code_t ret_val;
   bool bootloader_pin_pressed = false;
 
+  /* Hold Power immediately, otherwise bootloader processing may get interrupted if the user releases the power button too quickly.
+   * This effect is more pronounced if the firmware is small enough to trigger dual-bank DFU mode. */
+  // nrf_gpio_cfg_input(BUTTON_PWR__PIN, NRF_GPIO_PIN_NOPULL);
+  // nrf_gpio_cfg_output(SYSTEM_POWER_HOLD__PIN);
+  // nrf_gpio_pin_set(SYSTEM_POWER_HOLD__PIN);
+
   leds_init(); //turn on the red led
 
   // check if bootloader start flag was set before previous reset
@@ -299,12 +297,6 @@ int main(void)
       nrf_drv_gpiote_in_event_disable(PLUS__PIN);
       nrf_drv_gpiote_in_uninit(MINUS__PIN);
       nrf_drv_gpiote_in_event_disable(MINUS__PIN);
-      // nrf_drv_gpiote_in_uninit(ENTER__PIN);
-      // nrf_drv_gpiote_in_event_disable(ENTER__PIN);
-      nrf_drv_gpiote_in_uninit(STANDBY__PIN);
-      nrf_drv_gpiote_in_event_disable(STANDBY__PIN);
-      // nrf_drv_gpiote_in_uninit(BUTTON_1);
-      // nrf_drv_gpiote_in_event_disable(BUTTON_1);
 
       // RTC uninit because it will be used by the softdevice
       rtc_uninit();
