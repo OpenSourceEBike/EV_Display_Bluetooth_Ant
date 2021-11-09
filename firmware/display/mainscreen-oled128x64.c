@@ -64,17 +64,17 @@ static void mainScreenOnEnter() {
 //
 
 #define MAIN_SCREEN_WHEELSPEED_X                  1
-#define MAIN_SCREEN_WHEELSPEED_Y                  19
+#define MAIN_SCREEN_WHEELSPEED_Y                  18
 #define MAIN_SCREEN_WHEELSPEED_WIDTH              62
 #define MAIN_SCREEN_WHEELSPEED_HEIGHT             40
 
 #define MAIN_SCREEN_WHEELSPEED_ALTERNATE_X        1
-#define MAIN_SCREEN_WHEELSPEED_ALTERNATE_Y        21
+#define MAIN_SCREEN_WHEELSPEED_ALTERNATE_Y        20
 #define MAIN_SCREEN_WHEELSPEED_ALTERNATE_WIDTH    62
 #define MAIN_SCREEN_WHEELSPEED_ALTERNATE_HEIGHT   34
 
 #define MAIN_SCREEN_CUSTOM_1_X                    1
-#define MAIN_SCREEN_CUSTOM_1_Y                    62
+#define MAIN_SCREEN_CUSTOM_1_Y                    61
 #define MAIN_SCREEN_CUSTOM_1_WIDTH                62
 #define MAIN_SCREEN_CUSTOM_1_HEIGHT               25
 
@@ -308,12 +308,12 @@ void mainScreenOnDirtyClean(void) {
   batteryClearSymbol();
   batteryField.rw->dirty = true;
 
-  UG_DrawLine(0, 61, 63, 61, C_WHITE);
-  UG_DrawLine(0, 91, 63, 91, C_WHITE);
+  UG_DrawLine(0, 59, 63, 59, C_WHITE);
+  UG_DrawLine(0, 90, 63, 90, C_WHITE);
   UG_DrawLine(0, 121, 63, 121, C_WHITE);
 
-  UG_DrawLine(0, 62, 0, 120, C_WHITE);
-  UG_DrawLine(63, 62, 63, 120, C_WHITE);
+  UG_DrawLine(0, 60, 0, 120, C_WHITE);
+  UG_DrawLine(63, 60, 63, 120, C_WHITE);
 
   // find if the next lines should be draw or not (white color to draw them)
   UG_COLOR street_mode_color = C_BLACK;

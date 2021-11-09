@@ -84,10 +84,10 @@ bool wd_failure_detected;
 //
 Field socField = FIELD_DRAWTEXT_RW();
 Field timeField = FIELD_DRAWTEXT_RW();
-Field assistLevelField = FIELD_READONLY_UINT("assist", &ui_vars.ui8_assist_level, "", false);
-Field wheelSpeedIntegerField = FIELD_READONLY_UINT("speed", &ui8_m_wheel_speed_integer, "kph", false);
+Field assistLevelField = FIELD_READONLY_UINT("ASSIST", &ui_vars.ui8_assist_level, "", false);
+Field wheelSpeedIntegerField = FIELD_READONLY_UINT("SPEED", &ui8_m_wheel_speed_integer, "kph", false);
 Field wheelSpeedDecimalField = FIELD_READONLY_UINT("", &ui8_m_wheel_speed_decimal, "kph", false);
-Field wheelSpeedField = FIELD_READONLY_UINT("speed", &ui_vars.ui16_wheel_speed_x10, "kph", true, .div_digits = 1);
+Field wheelSpeedField = FIELD_READONLY_UINT("SPEED", &ui_vars.ui16_wheel_speed_x10, "kph", true, .div_digits = 1);
 
 // Note: this field is special, the string it is pointing to must be in RAM so we can change it later
 Field upTimeField = FIELD_READONLY_STRING(_S("up time", "up time"), (char [MAX_TIMESTR_LEN]){ 0 });
@@ -104,19 +104,19 @@ Field tripBTimeField = FIELD_READONLY_STRING(_S("B trip time", "B trip tim"), (c
 Field tripBAvgSpeedField = FIELD_READONLY_UINT(_S("B avg speed", "B avgspeed"), &ui_vars.ui16_trip_b_avg_speed_x10, "kph", true, .div_digits = 1);
 Field tripBMaxSpeedField = FIELD_READONLY_UINT(_S("B max speed", "B maxspeed"), &ui_vars.ui16_trip_b_max_speed_x10, "kph", true, .div_digits = 1);
 
-Field odoField = FIELD_READONLY_UINT("odometer", &ui_vars.ui32_odometer_x10, "km", false, .div_digits = 1);
-Field cadenceField = FIELD_READONLY_UINT("cadence", &ui_vars.ui8_pedal_cadence_filtered, "rpm", true, .div_digits = 0);
-Field humanPowerField = FIELD_READONLY_UINT(_S("human power", "human powr"), &ui16_m_pedal_power_filtered, "W", true, .div_digits = 0);
-Field batteryPowerField = FIELD_READONLY_UINT(_S("motor power", "motor powr"), &ui16_m_battery_power_filtered, "W", true, .div_digits = 0);
+Field odoField = FIELD_READONLY_UINT("ODOMETER", &ui_vars.ui32_odometer_x10, "km", false, .div_digits = 1);
+Field cadenceField = FIELD_READONLY_UINT("CADENCE", &ui_vars.ui8_pedal_cadence_filtered, "rpm", true, .div_digits = 0);
+Field humanPowerField = FIELD_READONLY_UINT(_S("human power", "HUMAN POWR"), &ui16_m_pedal_power_filtered, "W", true, .div_digits = 0);
+Field batteryPowerField = FIELD_READONLY_UINT(_S("motor power", "MOTOR POWR"), &ui16_m_battery_power_filtered, "W", true, .div_digits = 0);
 Field fieldAlternate = FIELD_READONLY_UINT((char [MAX_ALTERNATE_USAGE_STR_LEN]){ 0 }, &ui16_m_alternate_field_value, "", 0, 2500, .div_digits = 0,);
-Field batteryVoltageField = FIELD_READONLY_UINT(_S("batt voltage", "bat volts"), &ui_vars.ui16_battery_voltage_filtered_x10, "", true, .div_digits = 1);
-Field batteryCurrentField = FIELD_READONLY_UINT(_S("batt current", "bat curren"), &ui16_m_battery_current_filtered_x10, "", true, .div_digits = 1);
-Field motorCurrentField = FIELD_READONLY_UINT(_S("motor current", "mot curren"), &ui16_m_motor_current_filtered_x10, "", true, .div_digits = 1);
-Field batterySOCField = FIELD_READONLY_UINT(_S("battery SOC", "bat SOC"), &ui8_g_battery_soc, "%", true, .div_digits = 0);
-Field motorTempField = FIELD_READONLY_UINT(_S("motor temp", "mot temp"), &ui_vars.ui8_motor_temperature, "C", true, .div_digits = 0);
-Field motorErpsField = FIELD_READONLY_UINT(_S("motor speed", "mot speed"), &ui_vars.ui16_motor_speed_erps, "", true, .div_digits = 0);
-Field pwmDutyField = FIELD_READONLY_UINT(_S("motor pwm", "mot pwm"), &ui_vars.ui8_duty_cycle, "", true, .div_digits = 0);
-Field motorFOCField = FIELD_READONLY_UINT(_S("motor foc", "mot foc"), &ui_vars.ui8_foc_angle, "", true, .div_digits = 0);
+Field batteryVoltageField = FIELD_READONLY_UINT(_S("batt voltage", "BAT VOLTS"), &ui_vars.ui16_battery_voltage_filtered_x10, "", true, .div_digits = 1);
+Field batteryCurrentField = FIELD_READONLY_UINT(_S("batt current", "BAT CURREN"), &ui16_m_battery_current_filtered_x10, "", true, .div_digits = 1);
+Field motorCurrentField = FIELD_READONLY_UINT(_S("motor current", "BAT CURREN"), &ui16_m_motor_current_filtered_x10, "", true, .div_digits = 1);
+Field batterySOCField = FIELD_READONLY_UINT(_S("battery SOC", "BAT SOC"), &ui8_g_battery_soc, "%", true, .div_digits = 0);
+Field motorTempField = FIELD_READONLY_UINT(_S("motor temp", "MOT TEMP"), &ui_vars.ui8_motor_temperature, "C", true, .div_digits = 0);
+Field motorErpsField = FIELD_READONLY_UINT(_S("motor speed", "MOT SPEED"), &ui_vars.ui16_motor_speed_erps, "", true, .div_digits = 0);
+Field pwmDutyField = FIELD_READONLY_UINT(_S("motor pwm", "MOT PWM"), &ui_vars.ui8_duty_cycle, "", true, .div_digits = 0);
+Field motorFOCField = FIELD_READONLY_UINT(_S("motor foc", "MOT FOC"), &ui_vars.ui8_foc_angle, "", true, .div_digits = 0);
 Field batteryPowerUsageField = FIELD_READONLY_UINT((char [MAX_BATTERY_POWER_USAGE_STR_LEN]){ 0 }, &ui_vars.battery_energy_km_value_x100, "kph", true, .div_digits = 2);
 
 
