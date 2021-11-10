@@ -22,7 +22,7 @@ bool renderBattery(FieldLayout *layout)
   ui32_x1 = BATTERY_SOC_START_X + 2;
   ui32_y1 = BATTERY_SOC_START_Y + 2;
   ui32_x2 = ui32_x1 + 18 - 1;
-  ui32_y2 = ui32_y1 + 7 - 1;
+  ui32_y2 = ui32_y1 + 8 - 1;
   UG_FillFrame(ui32_x1, ui32_y1, ui32_x2, ui32_y2, C_BLACK);
 
   ui32_x1 = BATTERY_SOC_START_X + 18 + 2;
