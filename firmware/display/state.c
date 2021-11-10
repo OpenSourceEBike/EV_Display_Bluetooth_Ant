@@ -924,7 +924,6 @@ void rt_processing(void)
   // once motor is initialized, this should take almost no processing time
   motor_init();
 
-  batteryPower();
   calc_battery_resistance();
 
   /************************************************************************************************/

@@ -38,7 +38,6 @@ static uint8_t ui8_walk_assist_timeout = 0;
 
 uint16_t ui16_m_battery_current_filtered_x10;
 uint16_t ui16_m_motor_current_filtered_x10;
-uint16_t ui16_m_battery_power_filtered;
 uint16_t ui16_m_pedal_power_filtered;
 
 uint8_t g_showNextScreenIndex = 0;
@@ -107,7 +106,7 @@ Field tripBMaxSpeedField = FIELD_READONLY_UINT(_S("B max speed", "B maxspeed"), 
 Field odoField = FIELD_READONLY_UINT("ODOMETER", &ui_vars.ui32_odometer_x10, "km", false, .div_digits = 1);
 Field cadenceField = FIELD_READONLY_UINT("CADENCE", &ui_vars.ui8_pedal_cadence_filtered, "rpm", true, .div_digits = 0);
 Field humanPowerField = FIELD_READONLY_UINT(_S("human power", "HUMAN POWR"), &ui16_m_pedal_power_filtered, "W", true, .div_digits = 0);
-Field batteryPowerField = FIELD_READONLY_UINT(_S("motor power", "MOTOR POWR"), &ui16_m_battery_power_filtered, "W", true, .div_digits = 0);
+Field batteryPowerField = FIELD_READONLY_UINT(_S("motor power", "MOTOR POWR"), &ui_vars.ui16_battery_power_filtered_ui, "W", true, .div_digits = 0);
 Field fieldAlternate = FIELD_READONLY_UINT((char [MAX_ALTERNATE_USAGE_STR_LEN]){ 0 }, &ui16_m_alternate_field_value, "", 0, 2500, .div_digits = 0,);
 Field batteryVoltageField = FIELD_READONLY_UINT(_S("batt voltage", "BAT VOLTS"), &ui_vars.ui16_battery_voltage_filtered_x10, "", true, .div_digits = 1);
 Field batteryCurrentField = FIELD_READONLY_UINT(_S("batt current", "BAT CURREN"), &ui16_m_battery_current_filtered_x10, "", true, .div_digits = 1);
@@ -152,30 +151,6 @@ Field *customizables[] = {
 		&batteryPowerUsageField, // 22
 		NULL
 };
-
-// We currently don't have any graphs in the SW102, so leave them here until then
-// kevinh: I think the following could be probably shared with the defs above (no need to copy and compute twice).  Also high chance of introducing bugs
-// only in one place.
-// Though I'm not sure why you need l2 vs l3 vars in this case.
-Field wheelSpeedFieldGraph = FIELD_READONLY_UINT("speed", &rt_vars.ui16_wheel_speed_x10, "km", false, .div_digits = 1);
-Field tripDistanceFieldGraph = FIELD_READONLY_UINT("trip distance", &rt_vars.ui32_trip_a_distance_x1000, "km", false, .div_digits = 1);
-Field odoFieldGraph = FIELD_READONLY_UINT("odometer", &rt_vars.ui32_odometer_x10, "km", false, .div_digits = 1);
-Field cadenceFieldGraph = FIELD_READONLY_UINT("cadence", &rt_vars.ui8_pedal_cadence_filtered, "", false);
-Field humanPowerFieldGraph = FIELD_READONLY_UINT("human power", &rt_vars.ui16_pedal_power_filtered, "", false);
-Field batteryPowerFieldGraph = FIELD_READONLY_UINT("motor power", &rt_vars.ui16_battery_power_filtered, "", false);
-Field batteryVoltageFieldGraph = FIELD_READONLY_UINT("battery voltage", &rt_vars.ui16_battery_voltage_filtered_x10, "", false, .div_digits = 1);
-Field batteryCurrentFieldGraph = FIELD_READONLY_UINT("battery current", &ui16_m_battery_current_filtered_x10, "", false, .div_digits = 1);
-Field motorCurrentFieldGraph = FIELD_READONLY_UINT("motor current", &ui16_m_motor_current_filtered_x10, "", false, .div_digits = 1);
-Field batterySOCFieldGraph = FIELD_READONLY_UINT("battery SOC", &ui8_g_battery_soc, "", false);
-Field motorTempFieldGraph = FIELD_READONLY_UINT("motor temperature", &rt_vars.ui8_motor_temperature, "C", false);
-Field motorErpsFieldGraph = FIELD_READONLY_UINT("motor speed", &rt_vars.ui16_motor_speed_erps, "", false);
-Field pwmDutyFieldGraph = FIELD_READONLY_UINT("pwm duty-cycle", &rt_vars.ui8_duty_cycle, "", false);
-Field motorFOCFieldGraph = FIELD_READONLY_UINT("motor foc", &rt_vars.ui8_foc_angle, "", false);
-
-// Note: this field label is special, the string it is pointing to must be in RAM so we can change it later
-Field batteryPowerUsageFieldGraph = FIELD_READONLY_UINT((char [MAX_BATTERY_POWER_USAGE_STR_LEN]){ 0 }, &rt_vars.battery_energy_h_km.ui32_value_x10, "kph", false, .div_digits = 1);
-
-Field *activeGraphs = NULL; // set only once graph data is safe to read
 
 // Note: field_selectors[0] is used on the 850C for the graphs selector
 Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizables),

@@ -77,7 +77,7 @@ uint8_t ui8_braking_led_state = 0;
 
 // uint16_t ui16_m_battery_current_filtered_x10;
 // uint16_t ui16_m_motor_current_filtered_x10;
-// uint16_t ui16_m_battery_power_filtered;
+// uint16_t ui16_m_battery_power_filtered
 // uint16_t ui16_m_pedal_power_filtered;
 
 typedef enum
