@@ -82,7 +82,7 @@ void display_init(void)
   ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
   ssd1306_clear_display();
   ssd1306_display();
-  set_rotation(1); // makes vertical
+  set_rotation(3); // makes vertical
 
   // Setup uGUI library
   UG_Init(&gui, ssd1306_draw_pixel, display_show, 64, 128); // Pixel set function
