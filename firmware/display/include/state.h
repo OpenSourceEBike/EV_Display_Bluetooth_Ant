@@ -89,7 +89,7 @@ typedef struct rt_vars_struct {
 	uint16_t ui16_pedal_power_filtered;
 	uint8_t ui8_pedal_cadence_filtered;
 	uint16_t ui16_battery_voltage_soc_x10;
-	uint32_t ui32_wh_sum_x5;
+	uint64_t ui64_wh_sum_x5;
 	uint32_t ui32_wh_sum_counter;
 	uint32_t ui32_wh_x10;
 	uint32_t ui32_wheel_speed_sensor_tick_counter_offset;
@@ -101,6 +101,7 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_units_type;
 	uint32_t ui32_wh_x10_offset;
 	uint32_t ui32_wh_x10_100_percent;
+  uint32_t ui32_wh_x10_remain;
 	uint8_t ui8_target_max_battery_power_div25;
 	uint8_t ui8_battery_max_current;
 	uint8_t ui8_motor_max_current;
@@ -218,7 +219,7 @@ typedef struct ui_vars_struct {
 	uint16_t ui16_pedal_power;
 	uint8_t ui8_pedal_cadence_filtered;
 	uint16_t ui16_battery_voltage_soc_x10;
-	uint32_t ui32_wh_sum_x5;
+	uint64_t ui64_wh_sum_x5;
 	uint32_t ui32_wh_sum_counter;
 	uint32_t ui32_wh_x10;
 
@@ -229,6 +230,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_units_type;
 	uint32_t ui32_wh_x10_offset;
 	uint32_t ui32_wh_x10_100_percent;
+  uint32_t ui32_wh_x10_remain;
 	uint8_t ui8_battery_soc_enable;
 	uint8_t ui8_target_max_battery_power_div25;
 	uint8_t ui8_battery_max_current;

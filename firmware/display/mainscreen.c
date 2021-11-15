@@ -107,6 +107,8 @@ Field odoField = FIELD_READONLY_UINT("ODOMETER", &ui_vars.ui32_odometer_x10, "km
 Field cadenceField = FIELD_READONLY_UINT("CADENCE", &ui_vars.ui8_pedal_cadence_filtered, "rpm", true, .div_digits = 0);
 Field humanPowerField = FIELD_READONLY_UINT(_S("human power", "HUMAN POWR"), &ui16_m_pedal_power_filtered, "W", true, .div_digits = 0);
 Field batteryPowerField = FIELD_READONLY_UINT(_S("motor power", "MOTOR POWR"), &ui_vars.ui16_battery_power_filtered_ui, "W", true, .div_digits = 0);
+Field batteryPowerUsedField = FIELD_READONLY_UINT("POW USED", &ui_vars.ui32_wh_x10, "kWh", true, .div_digits = 1);
+Field batteryPowerRemainField = FIELD_READONLY_UINT("POW REMA", &ui_vars.ui32_wh_x10_remain, "kWh", true, .div_digits = 1);
 Field fieldAlternate = FIELD_READONLY_UINT((char [MAX_ALTERNATE_USAGE_STR_LEN]){ 0 }, &ui16_m_alternate_field_value, "", 0, 2500, .div_digits = 0,);
 Field batteryVoltageField = FIELD_READONLY_UINT(_S("batt voltage", "BAT VOLTS"), &ui_vars.ui16_battery_voltage_filtered_x10, "", true, .div_digits = 1);
 Field batteryCurrentField = FIELD_READONLY_UINT(_S("batt current", "BAT CURREN"), &ui16_m_battery_current_filtered_x10, "", true, .div_digits = 1);
@@ -149,6 +151,8 @@ Field *customizables[] = {
 		&pwmDutyField, // 20
 		&motorFOCField, // 21
 		&batteryPowerUsageField, // 22
+    &batteryPowerUsedField, // 23
+    &batteryPowerRemainField, // 24
 		NULL
 };
 

@@ -284,7 +284,7 @@ void copy_rt_ui_vars(void) {
 	ui_vars.ui16_battery_power = rt_vars.ui16_battery_power_filtered;
 	ui_vars.ui16_pedal_power = rt_vars.ui16_pedal_power_filtered;
 	ui_vars.ui16_battery_voltage_soc_x10 = rt_vars.ui16_battery_voltage_soc_x10;
-	ui_vars.ui32_wh_sum_x5 = rt_vars.ui32_wh_sum_x5;
+	ui_vars.ui64_wh_sum_x5 = rt_vars.ui64_wh_sum_x5;
 	ui_vars.ui32_wh_sum_counter = rt_vars.ui32_wh_sum_counter;
 	ui_vars.ui32_wh_x10 = rt_vars.ui32_wh_x10;
 	ui_vars.ui8_braking = rt_vars.ui8_braking;
@@ -308,6 +308,8 @@ void copy_rt_ui_vars(void) {
 	// ui_vars.ui32_odometer_x10 = rt_vars.ui32_odometer_x10;
 	ui_vars.battery_energy_km_value_x100 = rt_vars.battery_energy_h_km.ui32_value_x100;
   ui_vars.ui16_adc_battery_current = rt_vars.ui16_adc_battery_current;
+
+  ui_vars.ui32_wh_x10_remain = rt_vars.ui32_wh_x10_remain;
 
   rt_vars.ui32_wh_x10_100_percent = ui_vars.ui32_wh_x10_100_percent;
 	rt_vars.ui32_wh_x10_offset = ui_vars.ui32_wh_x10_offset;
@@ -651,27 +653,27 @@ void rt_calc_battery_voltage_soc(void) {
 
 void rt_calc_wh(void) {
 	static uint8_t ui8_1s_timer_counter = 0;
-	uint32_t ui32_temp = 0;
 
 	if (m_reset_wh_flag == false) {
-    if (rt_vars.ui16_full_battery_power_filtered_x50 > 0) {
-      rt_vars.ui32_wh_sum_x5 += rt_vars.ui16_full_battery_power_filtered_x50 / 10;
-      rt_vars.ui32_wh_sum_counter++;
-    }
+    rt_vars.ui64_wh_sum_x5 += rt_vars.ui16_full_battery_power_filtered_x50 / 10;
+    rt_vars.ui32_wh_sum_counter++;
 
     // calc at 1s rate
     if (++ui8_1s_timer_counter >= 20) {
       ui8_1s_timer_counter = 0;
 
-      // avoid zero division
-      if (rt_vars.ui32_wh_sum_counter != 0) {
-        ui32_temp = rt_vars.ui32_wh_sum_counter / 18;
-        ui32_temp = (ui32_temp
-            * (rt_vars.ui32_wh_sum_x5 / rt_vars.ui32_wh_sum_counter))
-            / 500;
-      }
+      // 3600 seconds is 1h
+      // 20 measurements per seconds
+      uint32_t ui32_hour_fraction_x3600 = rt_vars.ui32_wh_sum_counter / 20;
+      uint32_t ui32_wh_x10 =(rt_vars.ui64_wh_sum_x5 /
+         ((3600 / 2) / ui32_hour_fraction_x3600))
+        / rt_vars.ui32_wh_sum_counter;
+      rt_vars.ui32_wh_x10 = rt_vars.ui32_wh_x10_offset + ui32_wh_x10;
 
-      rt_vars.ui32_wh_x10 = rt_vars.ui32_wh_x10_offset + ui32_temp;
+      // update the wh remain value 
+      if (rt_vars.ui32_wh_x10_100_percent > rt_vars.ui32_wh_x10) {
+         rt_vars.ui32_wh_x10_remain = rt_vars.ui32_wh_x10_100_percent - rt_vars.ui32_wh_x10;
+      }
     }
 	}
 }
@@ -680,8 +682,8 @@ void reset_wh(void) {
   m_reset_wh_flag = true;
   ui_vars.ui32_wh_x10_offset = 0;
   rt_vars.ui32_wh_x10_offset = 0;
-  rt_vars.ui32_wh_sum_x5 = 0;
-  ui_vars.ui32_wh_sum_x5 = 0;
+  rt_vars.ui64_wh_sum_x5 = 0;
+  ui_vars.ui64_wh_sum_x5 = 0;
   rt_vars.ui32_wh_sum_counter = 0;
   ui_vars.ui32_wh_sum_counter = 0;
   m_reset_wh_flag = false;
