@@ -1885,8 +1885,8 @@ int main(void)
 
       mainscreen_idle();
 
-      ble_send_periodic_data();
-      ble_update_configurations_data();
+      // ble_send_periodic_data();
+      // ble_update_configurations_data();
       motor_power_manage();
 
       //   if (ui8_walk_assist_state_process_locally) walk_assist_state();

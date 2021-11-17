@@ -2236,14 +2236,14 @@ void fieldPrintf(Field *field, const char *fmt, ...) {
 }
 
 void update_battery_power_usage_label(void) {
-  static const char str_km[] = "Wh/km";
-  static const char str_mi[] = "Wh/mi";
+  static const char str_km[] = "WH/KM";
+  static const char str_mi[] = "WH/MI";
   
   if(ui_vars.ui8_units_type == 0) {
-    updateReadOnlyLabelStr(&batteryPowerField, str_km);
+    updateReadOnlyLabelStr(&batteryPowerPerKmField, str_km);
   }
   else {
-    updateReadOnlyLabelStr(&batteryPowerField, str_mi);
+    updateReadOnlyLabelStr(&batteryPowerPerKmField, str_mi);
   }
 }
 

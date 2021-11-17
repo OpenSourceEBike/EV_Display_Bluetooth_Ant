@@ -451,6 +451,7 @@ void eeprom_write_variables(void) {
 			ui_vars->ui16_battery_voltage_reset_wh_counter_x10;
 	m_configurations.ui8_system_power_off_time_minutes =
 			ui_vars->ui8_system_power_off_time_minutes;
+	m_configurations.ui16_battery_pack_resistance_x1000 = ui_vars->ui16_battery_pack_resistance_x1000;
 	m_configurations.ui32_odometer_x10 = ui_vars->ui32_odometer_x10;
 	m_configurations.ui8_walk_assist_feature_enabled =
 			ui_vars->ui8_walk_assist_feature_enabled;

@@ -4,7 +4,7 @@
 #include "common.h"
 // #include "button.h"
 
-#define DEVELOPMENT
+// #define DEVELOPMENT
 
 #define SW102 // our display is similar to SW102 OLED 128x64
 // #define DISPLAY_SSD1306
