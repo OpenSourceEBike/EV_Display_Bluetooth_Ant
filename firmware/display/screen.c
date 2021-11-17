@@ -68,8 +68,6 @@ static const FieldRenderFn renderers[];
 static bool blinkChanged;
 static bool blinkOn;
 
-static uint32_t screenUpdateCounter;
-
 void update_battery_power_usage_label(void);
 
 /**
@@ -592,6 +590,9 @@ bool screenConvertFarenheit = false;
 // Set to true if we should automatically convert kg -> lb
 bool screenConvertPounds = false;
 
+// Set to true if we should automatically convert Wh/km -> Wh/mi
+bool screenConvertWhPerMiles = false;
+
 // Get the numeric value of an editable number, properly handling different possible byte encodings
 // if withConversion, convert from SI units if necessary
 static int32_t getEditableNumber(Field *field, bool withConversion) {
@@ -625,6 +626,9 @@ static int32_t getEditableNumber(Field *field, bool withConversion) {
 
     if (screenConvertPounds && strcmp(units, "kg") == 0)
       num = (num * 220) / 100;
+  
+    if (screenConvertWhPerMiles && strcasecmp(units, "Wh/km") == 0)
+      num = (num * 161) / 100; // mul by 1.609 for Wh/km->Wh/mi
   }
 
   return num;
@@ -657,6 +661,14 @@ int32_t convertUnits(int32_t val, ConvertUnitsType type) {
     case ConvertFromImperial_mass:
       val = (val * 100) / 220;
       break;
+	  
+    case ConvertToImperial_consumption:
+      val = (val * 161) / 100; // mul by 1.609 for Kw/km->/Kw/mi
+      break;
+
+    case ConvertFromImperial_consumption:
+      val = (val * 100) / 161; // div by 1.609 for Kw/km->Kw/mi
+      break;
   }
 
   return val;
@@ -676,6 +688,9 @@ int32_t convertToImperialIfNeeded(Field *field, int32_t num) {
   if (screenConvertPounds && strcmp(units, "kg") == 0)
     num = convertUnits(num, ConvertToImperial_mass);
 
+  if (screenConvertWhPerMiles && strcmp(units, "Wh/km") == 0)
+    num = convertUnits(num, ConvertToImperial_consumption);
+
   return num;
 }
 
@@ -693,6 +708,9 @@ int32_t convertFromImperialIfNeeded(Field *field, int32_t num) {
   if (screenConvertPounds && strcmp(units, "kg") == 0)
     num = convertUnits(num, ConvertFromImperial_mass);
 
+  if (screenConvertWhPerMiles && strcmp(units, "Kw/km") == 0)
+    num = convertUnits(num, ConvertFromImperial_consumption);
+
   return num;
 }
 
@@ -703,13 +721,16 @@ static void setEditableNumber(Field *field, uint32_t v, bool withConversion) {
 		if (screenConvertMiles
 				&& (strcasecmp(units, "kph") == 0
 						|| strcasecmp(units, "km") == 0))
-      v = convertUnits(v, ConvertFromImperial_speed);
+			v = convertUnits(v, ConvertFromImperial_speed);
 
 		if (screenConvertFarenheit && strcmp(units, "C") == 0)
-		  v = convertUnits(v, ConvertFromImperial_temperature);
+			v = convertUnits(v, ConvertFromImperial_temperature);
 
-    if (screenConvertPounds && strcmp(units, "kg") == 0)
-      v = convertUnits(v, ConvertFromImperial_mass);
+		if (screenConvertPounds && strcmp(units, "kg") == 0)
+			v = convertUnits(v, ConvertFromImperial_mass);
+		
+		if (screenConvertWhPerMiles && strcmp(units, "Wh/km") == 0)
+			v = convertUnits(v, ConvertFromImperial_consumption);
 	}
 
 	switch (field->editable.size) {
@@ -808,10 +829,15 @@ static const char* getUnits(Field *field) {
       return "lb";
   }
 
+  if (screenConvertWhPerMiles) {
+    if (strcmp(units, "Wh/km") == 0)
+      return "Wh/mi";
+  }
+  
 	return units;
 }
 
-/// Given an editible extract its value as a string (max len MAX_FIELD_LEN)
+/// Given an editable extract its value as a string (max len MAX_FIELD_LEN)
 static void getEditableString(Field *field, int32_t num, char *outbuf) {
 	switch (field->editable.typ) {
 	case ReadOnlyStr:
@@ -1140,7 +1166,7 @@ static bool renderEditable(FieldLayout *layout) {
 
 	// If we are customizing this value, we don't check for changes of the value because that causes glitches in the display with extra
 	// redraws
-	bool valueChanged = (num != layout->old_editable && !isCustomizing) ||
+	bool valueChanged = (num != field->rw->editable.old_editable && !isCustomizing) ||
 	    field->rw->visibility == FieldTransitionVisible;
 
 	// update right now this state as it is not used later then here
@@ -1160,9 +1186,9 @@ static bool renderEditable(FieldLayout *layout) {
 	bool showValue = !forceLabels && (valueChanged || dirty || needBlink || forceLabelsChanged); // default to not drawing the value
 	if (showValue) {
 		char oldvaluestr[MAX_FIELD_LEN];
-		getEditableString(field, layout->old_editable, oldvaluestr);
+		getEditableString(field, field->rw->editable.old_editable, oldvaluestr);
 
-		layout->old_editable = num;
+		field->rw->editable.old_editable = num;
 
 		getEditableString(field, num, valuestr);
 		if ((strlen(valuestr) != strlen(oldvaluestr)) ||
@@ -1235,7 +1261,7 @@ static bool renderEditable(FieldLayout *layout) {
 		int label_inset_x = 0, label_inset_y = 0; // Move to be a public constant or even a LayoutField member if useful
 
 		putAligned(layout, layout->label_align_x, layout->label_align_y,
-				label_inset_x, label_inset_y, layout->label_font,
+				label_inset_x, label_inset_y, label_font,
 				field->editable.label);
 	}
 
@@ -1946,7 +1972,7 @@ static bool onPressScrollable(buttons_events_t events) {
 		}
 	}
 
-// click power button to exit out of menus
+// click button to exit out of menus
 	if (!handled && (events & SCREENCLICK_EXIT_SCROLLABLE)) {
 		handled = exitScrollable(); // if we were top scrollable don't claim we handled this press (let rest of app do it)
 	}
@@ -2076,23 +2102,8 @@ static bool onPressCustomizing(buttons_events_t events) {
 		return true;
 	}
 
-  // Customize the X axis
-  if (events & UPDOWN_LONG_CLICK) {
-    if (g_CustomizingGraphXAxis) {
-      g_curCustomizingField = g_curCustomizingFieldBackup;
-      g_CustomizingGraphXAxis->rw->dirty = true;
-      g_CustomizingGraphXAxis = NULL;
-    } else {
-      g_CustomizingGraphXAxis = g_curCustomizingField->customizable.choices[*g_curCustomizingField->customizable.selector];
-      g_CustomizingGraphXAxis->rw->dirty = true;
-      g_curCustomizingFieldBackup = g_curCustomizingField;
-      g_curCustomizingField = NULL;
-    }
 
-    return true;
-  }
-
-// click power button to exit out of menus
+  // click power button to exit out of menus
 	if (events & SCREENCLICK_STOP_CUSTOMIZING) {
     Field *oldSelected = g_curCustomizingField->customizable.choices[*g_curCustomizingField->customizable.selector];
     oldSelected->rw->dirty = true; // force a redraw (to remove any turds)
@@ -2119,7 +2130,7 @@ bool screenOnPress(buttons_events_t events) {
 	if (!handled)
 		handled |= onPressScrollable(events);
 
-	if (!handled)
+	if ((!handled) && (!ui_vars.ui8_assist_level))
 		handled |= onPressCustomizing(events);
 
 	if (!handled && curScreen && curScreen->onPress)
@@ -2165,18 +2176,30 @@ void screenUpdate() {
 
 	bool didDraw = false; // we only render to hardware if something changed
 
-	// Every 300ms toggle any blinking animations
-	screenUpdateCounter++;
-	blinkChanged = (screenUpdateCounter
-			% (BLINK_INTERVAL_MS / UPDATE_INTERVAL_MS) == 0);
-	if (blinkChanged) {
-		blinkOn = !blinkOn;
-	}
+	// Every xxx ms toggle any blinking animations
+	static uint32_t screenUpdateCounterBlinkOn = 0;
+  static uint32_t screenUpdateCounterBlinkOff = 0;
+
+  blinkChanged = false; // reset every cycle
+  if (blinkOn == false) {
+    screenUpdateCounterBlinkOn++;
+    if (screenUpdateCounterBlinkOn >= (BLINK_OFF_INTERVAL_MS / UPDATE_INTERVAL_MS)) {
+      screenUpdateCounterBlinkOn = 0;
+      blinkChanged = true;
+      blinkOn = true;
+    }
+  } else {
+    screenUpdateCounterBlinkOff++;
+    if (screenUpdateCounterBlinkOff >= (BLINK_ON_INTERVAL_MS / UPDATE_INTERVAL_MS)) {
+      screenUpdateCounterBlinkOff = 0;
+      blinkChanged = true;
+      blinkOn = false;
+    }
+  }
 
 	if (screenDirty) {
 		// clear screen (to prevent turds from old screen staying around)
 		UG_FillScreen(C_BLACK);
-    display_show();
 		didDraw = true;
 
 		if (curScreen->onDirtyClean)
@@ -2212,244 +2235,27 @@ void fieldPrintf(Field *field, const char *fmt, ...) {
 	va_end(argp);
 }
 
-void updateGraphData(uint8_t index, uint16_t sumDivisor) {
-  int32_t filtered;
-
-  // for now, reference the graphs global to find all possible data sources
-  extern Field *activeGraphs;
-
-  for (int i = 0; activeGraphs->customizable.choices[i]; i++) {
-    Field *f = activeGraphs->customizable.choices[i];
-    GraphData *graphData = f->rw->graph.data[index];
-    assert(graphData); // better be !NULL by now or we screwed up
-
-    // filter
-    switch (f->graph.filter) {
-      case FilterSquare:
-        filtered = (graphData->sum * 2) / sumDivisor;
-        break;
-
-      case FilterDefault:
-      default:
-        filtered = graphData->sum / sumDivisor;
-        break;
-    }
-    graphData->sum = 0;
-
-    // Now add the point to the graph point array
-    // add the point
-    graphData->points[graphData->end_valid] = filtered;
-    graphData->end_valid = (graphData->end_valid + 1) % GRAPH_MAX_POINTS; // inc ptr with wrap
-
-    // discard old point if needed and find new max/mins
-    bool overfull = graphData->start_valid == graphData->end_valid;
-    if (overfull) {
-      // find new max, if the value we will remove is equal to current max
-      if (graphData->points[graphData->start_valid] == graphData->max_val_bck) {
-        // find the max
-        int32_t max = 0;
-        for (uint16_t i = 0; i < GRAPH_MAX_POINTS; i++) {
-           if (graphData->points[i] > max)
-             max = graphData->points[i];
-        }
-        graphData->max_val_bck = max;
-
-        // find new min, if the value we will remove is equal to current min
-      } else if (graphData->points[graphData->start_valid] == graphData->min_val_bck) {
-        // find the min
-        int32_t min = graphData->points[0];
-        for (uint16_t i = 0; i < GRAPH_MAX_POINTS; i++) {
-           if (graphData->points[i] < min)
-             min = graphData->points[i];
-        }
-        graphData->min_val_bck = min;
-      }
-
-      graphData->start_valid = (graphData->start_valid + 1) % GRAPH_MAX_POINTS;
-
-      // store reference x axis scale
-      switch (index) {
-        case GRAPH_X_AXIS_SCALE_15M:
-          g_xAxisReferenceScale |= 1;
-          break;
-
-        case GRAPH_X_AXIS_SCALE_1H:
-          g_xAxisReferenceScale |= 2;
-          break;
-      }
-
-      // increase X axis scale when graph is full
-      if (f->rw->graph.x_axis_scale_config == GRAPH_X_AXIS_SCALE_AUTO) {
-        // use reference scale for the auto mode
-        // bits of g_xAxisReferenceScale are set dependind on reference the scale
-        if (g_xAxisReferenceScale & 2) {
-          if (f->rw->graph.x_axis_scale != GRAPH_X_AXIS_SCALE_4H) {
-            f->rw->graph.x_axis_scale = GRAPH_X_AXIS_SCALE_4H;
-            g_changeXAxisTrigger = true;
-          }
-        }
-        else if (g_xAxisReferenceScale & 1) {
-          if (f->rw->graph.x_axis_scale != GRAPH_X_AXIS_SCALE_1H) {
-            f->rw->graph.x_axis_scale = GRAPH_X_AXIS_SCALE_1H;
-            g_changeXAxisTrigger = true;
-          }
-        }
-      }
-    }
-
-    // set one max and min values at very first time
-    if (graphData->first_time_set_default_values_maxmin == 0) {
-      graphData->first_time_set_default_values_maxmin = true;
-      graphData->max_val_bck = filtered;
-      graphData->min_val_bck = filtered;
-    }
-
-    // update invariants
-    if (filtered > graphData->max_val_bck)
-      graphData->max_val_bck = filtered;
-
-    if (filtered < graphData->min_val_bck)
-      graphData->min_val_bck = filtered;
-
-    if (f->graph.graph_vars->auto_max_min == GRAPH_AUTO_MAX_MIN_AUTO) {
-      graphData->max_val = graphData->max_val_bck;
-      graphData->min_val = graphData->min_val_bck;
-    } else {
-      // see if real max and mins are over predefined values and if so, override
-      if (graphData->max_val_bck > f->graph.graph_vars->max)
-        graphData->max_val = graphData->max_val_bck;
-      else
-        graphData->max_val = f->graph.graph_vars->max;
-
-      if (graphData->min_val_bck < f->graph.graph_vars->min)
-        graphData->min_val = graphData->min_val_bck;
-      else
-        graphData->min_val = f->graph.graph_vars->min;
-    }
-  }
-}
-void rt_graph_process(void) {
-#ifndef SW102
-  static int numGraphs = 0;
-  static uint32_t counter_1 = 0;
-  static uint16_t counter_2[3] = {0, 0 , 0};
-
-  // for now, reference the graphs global to find all possible data sources
-  extern Field *activeGraphs;
-
-  // start update graphs only after a startup delay to avoid wrong values of the variables
-  if (activeGraphs) {
-    // track the number of data process cycles
-    counter_1++;
-    counter_2[0]++;
-    counter_2[1]++;
-    counter_2[2]++;
-
-    // keep summing every 100ms
-    for (int i = 0; activeGraphs->customizable.choices[i]; i++) {
-    	Field *f = activeGraphs->customizable.choices[i];
-    	assert(f->variant == FieldGraph);
-
-    	// Select a data pool from our cache
-    	if(!f->rw->graph.data[0]) {
-        assert(numGraphs < VARS_SIZE);
-        f->rw->graph.data[0] = &g_graphData[numGraphs][0];
-        f->rw->graph.data[1] = &g_graphData[numGraphs][1];
-        f->rw->graph.data[2] = &g_graphData[numGraphs][2];
-        numGraphs++;
-    	}
-
-    	Field *fieldGraphEditable = f->graph.source; // get the backing data source for this graph
-
-    	int32_t target = getEditableNumber(fieldGraphEditable, true);
-    	f->rw->graph.data[0]->sum += target;
-    	f->rw->graph.data[1]->sum += target;
-    	f->rw->graph.data[2]->sum += target;
-    }
-
-    // @casainho if you define something like NUM_TIMESCALES 3 (see my comment in screen.h), you don't need to do this copypasta and can instead just have one bit of code
-    // inside of a loop.  Which also has the nice property of letting you at compile time change the number of possible timescales and everything will just work.
-
-    // now calculate the filtered value for each new point and add to graph data array
-    uint32_t update_graph_data;
-    update_graph_data = (counter_1 % (GRAPH_DATA_0_INTERVAL_MS / REALTIME_INTERVAL_MS) == 0);
-    if (update_graph_data) {
-      updateGraphData(0, counter_2[0]);
-      counter_2[0] = 0;
-
-      // signal that UI can now update the graph and so access his data (should have plenty of time to access the data)
-      g_graphs_ui_update[0] = true;
-    }
-
-    update_graph_data = (counter_1 % (GRAPH_DATA_1_INTERVAL_MS / REALTIME_INTERVAL_MS) == 0);
-    if (update_graph_data) {
-      updateGraphData(1, counter_2[1]);
-      counter_2[1] = 0;
-
-      // signal that UI can now update the graph and so access his data (should have plenty of time to access the data)
-      g_graphs_ui_update[1] = true;
-    }
-
-    update_graph_data = (counter_1 % (GRAPH_DATA_2_INTERVAL_MS / REALTIME_INTERVAL_MS) == 0);
-    if (update_graph_data) {
-      updateGraphData(2, counter_2[2]);
-      counter_2[2] = 0;
-
-      // signal that UI can now update the graph and so access his data (should have plenty of time to access the data)
-      g_graphs_ui_update[2] = true;
-    }
-  }
-#endif
-}
-
-void graph_init(void) {
-#ifndef SW102
-  // Init graphs to empty
-  for (int i = 0; i < VARS_SIZE; i++) {
-    for (int j = 0; j < 3; j++) {
-      g_graphData[i][j].max_val = INT32_MIN;
-      g_graphData[i][j].min_val = INT32_MAX;
-      g_graphData[i][j].start_valid = 0;
-      g_graphData[i][j].end_valid = 0;
-    }
-  }
-#endif
-}
-
 void update_battery_power_usage_label(void) {
   static const char str_km[] = "Wh/km";
   static const char str_mi[] = "Wh/mi";
-
+  
   if(ui_vars.ui8_units_type == 0) {
-    updateReadOnlyLabelStr(&batteryPowerUsageField, str_km);
-#ifndef SW102
-    updateReadOnlyLabelStr(&batteryPowerUsageFieldGraph, str_km);
-#endif
+    updateReadOnlyLabelStr(&batteryPowerField, str_km);
   }
   else {
-    updateReadOnlyLabelStr(&batteryPowerUsageField, str_mi);
-#ifndef SW102
-    updateReadOnlyLabelStr(&batteryPowerUsageFieldGraph, str_mi);
-#endif
+    updateReadOnlyLabelStr(&batteryPowerField, str_mi);
   }
 }
 
 void screen_init(void) {
-  graph_init();
-
   update_battery_power_usage_label();
 
   ui_vars.ui8_throttle_virtual = 0;
-
-#ifndef SW102
-  assistLevelField.rw->visibility = FieldVisible;
-#else
   wheelSpeedIntegerField.rw->visibility = FieldVisible;
-#endif
   fieldAlternate.rw->visibility = FieldNotVisible;
 
   ui_vars.ui16_street_mode_power_limit = ui_vars.ui8_street_mode_power_limit_div25 * 25;
-
+  
   if (ui_vars.ui8_street_mode_function_enabled)
   {
     // check to see if should be enable at startup
@@ -2463,10 +2269,6 @@ void screen_init(void) {
   wheelSpeedField.rw->editable.number.auto_thresholds = &g_vars[VarsWheelSpeed].auto_thresholds;
   wheelSpeedField.rw->editable.number.config_warn_threshold = &g_vars[VarsWheelSpeed].config_warn_threshold;
   wheelSpeedField.rw->editable.number.config_error_threshold = &g_vars[VarsWheelSpeed].config_error_threshold;
-
-  tripADistanceField.rw->editable.number.auto_thresholds = &g_vars[VarsTripDistance].auto_thresholds;
-  tripADistanceField.rw->editable.number.config_warn_threshold = &g_vars[VarsTripDistance].config_warn_threshold;
-  tripADistanceField.rw->editable.number.config_error_threshold = &g_vars[VarsTripDistance].config_error_threshold;
 
   odoField.rw->editable.number.auto_thresholds = &g_vars[VarsOdometer].auto_thresholds;
   odoField.rw->editable.number.config_warn_threshold = &g_vars[VarsOdometer].config_warn_threshold;

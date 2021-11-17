@@ -290,20 +290,20 @@ void copy_rt_ui_vars(void) {
 	ui_vars.ui8_braking = rt_vars.ui8_braking;
 	ui_vars.ui8_foc_angle = (((uint16_t) rt_vars.ui8_foc_angle) * 14) / 10; // each units is equal to 1.4 degrees ((360 degrees / 256) = 1.4)
 
-  ui_vars.ui32_trip_a_last_update_time = rt_vars.ui32_trip_a_last_update_time;
-  ui_vars.ui32_trip_b_last_update_time = rt_vars.ui32_trip_b_last_update_time;
+  // ui_vars.ui32_trip_a_last_update_time = rt_vars.ui32_trip_a_last_update_time;
+  // ui_vars.ui32_trip_b_last_update_time = rt_vars.ui32_trip_b_last_update_time;
 
-	ui_vars.ui32_trip_a_distance_x1000 = rt_vars.ui32_trip_a_distance_x1000;
-  ui_vars.ui32_trip_a_distance_x100 = rt_vars.ui32_trip_a_distance_x1000 / 10;  
-  ui_vars.ui32_trip_a_time = rt_vars.ui32_trip_a_time;
-  ui_vars.ui16_trip_a_avg_speed_x10 = rt_vars.ui16_trip_a_avg_speed_x10;
-  ui_vars.ui16_trip_a_max_speed_x10 = rt_vars.ui16_trip_a_max_speed_x10;
+	// ui_vars.ui32_trip_a_distance_x1000 = rt_vars.ui32_trip_a_distance_x1000;
+  // ui_vars.ui32_trip_a_distance_x100 = rt_vars.ui32_trip_a_distance_x1000 / 10;  
+  // ui_vars.ui32_trip_a_time = rt_vars.ui32_trip_a_time;
+  // ui_vars.ui16_trip_a_avg_speed_x10 = rt_vars.ui16_trip_a_avg_speed_x10;
+  // ui_vars.ui16_trip_a_max_speed_x10 = rt_vars.ui16_trip_a_max_speed_x10;
 
-  ui_vars.ui32_trip_b_distance_x1000 = rt_vars.ui32_trip_b_distance_x1000;
-  ui_vars.ui32_trip_b_distance_x100 = rt_vars.ui32_trip_b_distance_x1000 / 10;
-  ui_vars.ui32_trip_b_time = rt_vars.ui32_trip_b_time;
-  ui_vars.ui16_trip_b_avg_speed_x10 = rt_vars.ui16_trip_b_avg_speed_x10;
-  ui_vars.ui16_trip_b_max_speed_x10 = rt_vars.ui16_trip_b_max_speed_x10;
+  // ui_vars.ui32_trip_b_distance_x1000 = rt_vars.ui32_trip_b_distance_x1000;
+  // ui_vars.ui32_trip_b_distance_x100 = rt_vars.ui32_trip_b_distance_x1000 / 10;
+  // ui_vars.ui32_trip_b_time = rt_vars.ui32_trip_b_time;
+  // ui_vars.ui16_trip_b_avg_speed_x10 = rt_vars.ui16_trip_b_avg_speed_x10;
+  // ui_vars.ui16_trip_b_max_speed_x10 = rt_vars.ui16_trip_b_max_speed_x10;
 
 	// ui_vars.ui32_odometer_x10 = rt_vars.ui32_odometer_x10;
 	ui_vars.battery_energy_km_value_x100 = rt_vars.battery_energy_h_km.ui32_value_x100;
@@ -825,63 +825,63 @@ static void rt_low_pass_filter_pedal_cadence(void) {
 	}
 }
 
-static void rt_calc_trips(void) {
-  static uint8_t ui8_1s_timer_counter = 0;
-  static uint8_t ui8_3s_timer_counter = 0;
-  static uint32_t ui32_wheel_speed_sensor_tick_counter_offset = 0;
+// static void rt_calc_trips(void) {
+//   static uint8_t ui8_1s_timer_counter = 0;
+//   static uint8_t ui8_3s_timer_counter = 0;
+//   static uint32_t ui32_wheel_speed_sensor_tick_counter_offset = 0;
   
-  // used to determine if trip avg speed values have to be calculated :
-  // - on first time this function is called ; so set by dfault to 1
-  // - then every 1 meter traveled
-  static uint8_t ui8_calc_avg_speed_flag = 1;
+//   // used to determine if trip avg speed values have to be calculated :
+//   // - on first time this function is called ; so set by dfault to 1
+//   // - then every 1 meter traveled
+//   static uint8_t ui8_calc_avg_speed_flag = 1;
 
-  // calculate how many revolutions since last reset ...
-  uint32_t wheel_ticks = rt_vars.ui32_wheel_speed_sensor_tick_counter
-      - ui32_wheel_speed_sensor_tick_counter_offset;
+//   // calculate how many revolutions since last reset ...
+//   uint32_t wheel_ticks = rt_vars.ui32_wheel_speed_sensor_tick_counter
+//       - ui32_wheel_speed_sensor_tick_counter_offset;
 
-  // ... and convert to distance traveled
-  uint32_t ui32_temp = wheel_ticks * ((uint32_t) rt_vars.ui16_wheel_perimeter);
+//   // ... and convert to distance traveled
+//   uint32_t ui32_temp = wheel_ticks * ((uint32_t) rt_vars.ui16_wheel_perimeter);
 
-  // if traveled distance is more than 1 wheel turn update trip variables and reset
-  if (wheel_ticks >= 1) { 
+//   // if traveled distance is more than 1 wheel turn update trip variables and reset
+//   if (wheel_ticks >= 1) { 
  
-    ui8_calc_avg_speed_flag = 1;
+//     ui8_calc_avg_speed_flag = 1;
 
-    // update all trip distance variables
-    rt_vars.ui32_trip_a_distance_x1000 += (ui32_temp / 1000);
-    rt_vars.ui32_trip_b_distance_x1000 += (ui32_temp / 1000);
+//     // update all trip distance variables
+//     rt_vars.ui32_trip_a_distance_x1000 += (ui32_temp / 1000);
+//     rt_vars.ui32_trip_b_distance_x1000 += (ui32_temp / 1000);
 
-    // update trip A max speed
-    if (rt_vars.ui16_wheel_speed_x10 > rt_vars.ui16_trip_a_max_speed_x10)
-      rt_vars.ui16_trip_a_max_speed_x10 = rt_vars.ui16_wheel_speed_x10;
+//     // update trip A max speed
+//     if (rt_vars.ui16_wheel_speed_x10 > rt_vars.ui16_trip_a_max_speed_x10)
+//       rt_vars.ui16_trip_a_max_speed_x10 = rt_vars.ui16_wheel_speed_x10;
 
-    // update trip B max speed
-    if (rt_vars.ui16_wheel_speed_x10 > rt_vars.ui16_trip_b_max_speed_x10)
-      rt_vars.ui16_trip_b_max_speed_x10 = rt_vars.ui16_wheel_speed_x10;
+//     // update trip B max speed
+//     if (rt_vars.ui16_wheel_speed_x10 > rt_vars.ui16_trip_b_max_speed_x10)
+//       rt_vars.ui16_trip_b_max_speed_x10 = rt_vars.ui16_wheel_speed_x10;
     
-    // reset the always incrementing value (up to motor controller power reset) by setting the offset to current value
-    ui32_wheel_speed_sensor_tick_counter_offset =	rt_vars.ui32_wheel_speed_sensor_tick_counter;
-  }
+//     // reset the always incrementing value (up to motor controller power reset) by setting the offset to current value
+//     ui32_wheel_speed_sensor_tick_counter_offset =	rt_vars.ui32_wheel_speed_sensor_tick_counter;
+//   }
 
-  // calculate trip A and B average speeds (every 3s)
-  if (ui8_calc_avg_speed_flag == 1 && ++ui8_3s_timer_counter >= 60) {
-    rt_vars.ui16_trip_a_avg_speed_x10 = (rt_vars.ui32_trip_a_distance_x1000 * 36) / rt_vars.ui32_trip_a_time;
-    rt_vars.ui16_trip_b_avg_speed_x10 = (rt_vars.ui32_trip_b_distance_x1000 * 36) / rt_vars.ui32_trip_b_time;
+//   // calculate trip A and B average speeds (every 3s)
+//   if (ui8_calc_avg_speed_flag == 1 && ++ui8_3s_timer_counter >= 60) {
+//     rt_vars.ui16_trip_a_avg_speed_x10 = (rt_vars.ui32_trip_a_distance_x1000 * 36) / rt_vars.ui32_trip_a_time;
+//     rt_vars.ui16_trip_b_avg_speed_x10 = (rt_vars.ui32_trip_b_distance_x1000 * 36) / rt_vars.ui32_trip_b_time;
     
-    // reset 3s timer counter and flag
-    ui8_calc_avg_speed_flag = 0;    
-    ui8_3s_timer_counter = 0;
-  }
+//     // reset 3s timer counter and flag
+//     ui8_calc_avg_speed_flag = 0;    
+//     ui8_3s_timer_counter = 0;
+//   }
 
-  // at 1s rate : update all trip time variables if wheel is turning
-  if (++ui8_1s_timer_counter >= 20) {
-    if (rt_vars.ui16_wheel_speed_x10 > 0) {
-      rt_vars.ui32_trip_a_time += 1;
-      rt_vars.ui32_trip_b_time += 1;
-    }
-    ui8_1s_timer_counter = 0;
-  }
-}
+//   // at 1s rate : update all trip time variables if wheel is turning
+//   if (++ui8_1s_timer_counter >= 20) {
+//     if (rt_vars.ui16_wheel_speed_x10 > 0) {
+//       rt_vars.ui32_trip_a_time += 1;
+//       rt_vars.ui32_trip_b_time += 1;
+//     }
+//     ui8_1s_timer_counter = 0;
+//   }
+// }
 
 void rt_calc_battery_soc(void) {
   static uint32_t ui32_counter = 0;
@@ -935,7 +935,7 @@ void rt_processing(void)
   rt_low_pass_filter_pedal_cadence();
   rt_calc_battery_voltage_soc();
   rt_calc_odometer();
-  rt_calc_trips();
+  // rt_calc_trips();
   rt_calc_wh();
   rt_calc_battery_soc();
   /************************************************************************************************/

@@ -24,9 +24,8 @@
 #include "state.h"
 #include "timer.h"
 #include "rtc.h"
-#ifdef SW102
 #include "peer_manager.h"
-#endif
+#include "configscreen.h"
 
 // only used on SW102, to count timeout to override the wheel speed value with assist level value
 static uint16_t m_assist_level_change_timeout = 0;
@@ -54,7 +53,7 @@ void time(void);
 void wheel_speed(void);
 void battery_soc(void);
 void up_time(void);
-void trip_time(void);
+// void trip_time(void);
 void updateTripTime(uint32_t tripTime, Field *field);
 void wheel_speed(void);
 void showNextScreen();
@@ -89,36 +88,36 @@ Field wheelSpeedDecimalField = FIELD_READONLY_UINT("", &ui8_m_wheel_speed_decima
 Field wheelSpeedField = FIELD_READONLY_UINT("SPEED", &ui_vars.ui16_wheel_speed_x10, "kph", true, .div_digits = 1);
 
 // Note: this field is special, the string it is pointing to must be in RAM so we can change it later
-Field upTimeField = FIELD_READONLY_STRING(_S("up time", "up time"), (char [MAX_TIMESTR_LEN]){ 0 });
+Field upTimeField = FIELD_READONLY_STRING(_S("up time", "UP TIME"), (char [MAX_TIMESTR_LEN]){ 0 });
 
-Field tripADistanceField = FIELD_READONLY_UINT(_S("A trip dist", "A trip dis"), &ui_vars.ui32_trip_a_distance_x100, "km", false, .div_digits = 2);
-// Note: this field is special, the string it is pointing to must be in RAM so we can change it later
-Field tripATimeField = FIELD_READONLY_STRING(_S("A trip time", "A trip tim"), (char [MAX_TIMESTR_LEN]){ 0 });
-Field tripAAvgSpeedField = FIELD_READONLY_UINT(_S("A avg speed", "A avgspeed"), &ui_vars.ui16_trip_a_avg_speed_x10, "kph", true, .div_digits = 1);
-Field tripAMaxSpeedField = FIELD_READONLY_UINT(_S("A max speed", "A maxspeed"), &ui_vars.ui16_trip_a_max_speed_x10, "kph", true, .div_digits = 1);
+// Field tripADistanceField = FIELD_READONLY_UINT(_S("A trip dist", "A trip dis"), &ui_vars.ui32_trip_a_distance_x100, "km", false, .div_digits = 2);
+// // Note: this field is special, the string it is pointing to must be in RAM so we can change it later
+// Field tripATimeField = FIELD_READONLY_STRING(_S("A trip time", "A trip tim"), (char [MAX_TIMESTR_LEN]){ 0 });
+// Field tripAAvgSpeedField = FIELD_READONLY_UINT(_S("A avg speed", "A avgspeed"), &ui_vars.ui16_trip_a_avg_speed_x10, "kph", true, .div_digits = 1);
+// Field tripAMaxSpeedField = FIELD_READONLY_UINT(_S("A max speed", "A maxspeed"), &ui_vars.ui16_trip_a_max_speed_x10, "kph", true, .div_digits = 1);
 
-Field tripBDistanceField = FIELD_READONLY_UINT(_S("B trip dist", "B trip dis"), &ui_vars.ui32_trip_b_distance_x100, "km", false, .div_digits = 2);
-// Note: this field is special, the string it is pointing to must be in RAM so we can change it later
-Field tripBTimeField = FIELD_READONLY_STRING(_S("B trip time", "B trip tim"), (char [MAX_TIMESTR_LEN]){ 0 });
-Field tripBAvgSpeedField = FIELD_READONLY_UINT(_S("B avg speed", "B avgspeed"), &ui_vars.ui16_trip_b_avg_speed_x10, "kph", true, .div_digits = 1);
-Field tripBMaxSpeedField = FIELD_READONLY_UINT(_S("B max speed", "B maxspeed"), &ui_vars.ui16_trip_b_max_speed_x10, "kph", true, .div_digits = 1);
+// Field tripBDistanceField = FIELD_READONLY_UINT(_S("B trip dist", "B trip dis"), &ui_vars.ui32_trip_b_distance_x100, "km", false, .div_digits = 2);
+// // Note: this field is special, the string it is pointing to must be in RAM so we can change it later
+// Field tripBTimeField = FIELD_READONLY_STRING(_S("B trip time", "B trip tim"), (char [MAX_TIMESTR_LEN]){ 0 });
+// Field tripBAvgSpeedField = FIELD_READONLY_UINT(_S("B avg speed", "B avgspeed"), &ui_vars.ui16_trip_b_avg_speed_x10, "kph", true, .div_digits = 1);
+// Field tripBMaxSpeedField = FIELD_READONLY_UINT(_S("B max speed", "B maxspeed"), &ui_vars.ui16_trip_b_max_speed_x10, "kph", true, .div_digits = 1);
 
 Field odoField = FIELD_READONLY_UINT("ODOMETER", &ui_vars.ui32_odometer_x10, "km", false, .div_digits = 1);
 Field cadenceField = FIELD_READONLY_UINT("CADENCE", &ui_vars.ui8_pedal_cadence_filtered, "rpm", true, .div_digits = 0);
 Field humanPowerField = FIELD_READONLY_UINT(_S("human power", "HUMAN POWR"), &ui16_m_pedal_power_filtered, "W", true, .div_digits = 0);
 Field batteryPowerField = FIELD_READONLY_UINT(_S("motor power", "MOTOR POWR"), &ui_vars.ui16_battery_power_filtered_ui, "W", true, .div_digits = 0);
-Field batteryPowerUsedField = FIELD_READONLY_UINT("POW USED", &ui_vars.ui32_wh_x10, "kWh", true, .div_digits = 1);
-Field batteryPowerRemainField = FIELD_READONLY_UINT("POW REMA", &ui_vars.ui32_wh_x10_remain, "kWh", true, .div_digits = 1);
+Field batteryPowerUsedField = FIELD_READONLY_UINT("POWER USED", &ui_vars.ui32_wh_x10, "kWh", true, .div_digits = 1);
+Field batteryPowerRemainField = FIELD_READONLY_UINT("POW REMAIN", &ui_vars.ui32_wh_x10_remain, "kWh", false, .div_digits = 1);
 Field fieldAlternate = FIELD_READONLY_UINT((char [MAX_ALTERNATE_USAGE_STR_LEN]){ 0 }, &ui16_m_alternate_field_value, "", 0, 2500, .div_digits = 0,);
 Field batteryVoltageField = FIELD_READONLY_UINT(_S("batt voltage", "BAT VOLTS"), &ui_vars.ui16_battery_voltage_filtered_x10, "", true, .div_digits = 1);
 Field batteryCurrentField = FIELD_READONLY_UINT(_S("batt current", "BAT CURREN"), &ui16_m_battery_current_filtered_x10, "", true, .div_digits = 1);
-Field motorCurrentField = FIELD_READONLY_UINT(_S("motor current", "BAT CURREN"), &ui16_m_motor_current_filtered_x10, "", true, .div_digits = 1);
+Field motorCurrentField = FIELD_READONLY_UINT(_S("motor current", "MOT CURREN"), &ui16_m_motor_current_filtered_x10, "", true, .div_digits = 1);
 Field batterySOCField = FIELD_READONLY_UINT(_S("battery SOC", "BAT SOC"), &ui8_g_battery_soc, "%", true, .div_digits = 0);
 Field motorTempField = FIELD_READONLY_UINT(_S("motor temp", "MOT TEMP"), &ui_vars.ui8_motor_temperature, "C", true, .div_digits = 0);
 Field motorErpsField = FIELD_READONLY_UINT(_S("motor speed", "MOT SPEED"), &ui_vars.ui16_motor_speed_erps, "", true, .div_digits = 0);
 Field pwmDutyField = FIELD_READONLY_UINT(_S("motor pwm", "MOT PWM"), &ui_vars.ui8_duty_cycle, "", true, .div_digits = 0);
 Field motorFOCField = FIELD_READONLY_UINT(_S("motor foc", "MOT FOC"), &ui_vars.ui8_foc_angle, "", true, .div_digits = 0);
-Field batteryPowerUsageField = FIELD_READONLY_UINT((char [MAX_BATTERY_POWER_USAGE_STR_LEN]){ 0 }, &ui_vars.battery_energy_km_value_x100, "kph", true, .div_digits = 2);
+Field batteryPowerPerKmField = FIELD_READONLY_UINT((char [MAX_BATTERY_POWER_USAGE_STR_LEN]){ 0 }, &ui_vars.battery_energy_km_value_x100, "kph", true, .div_digits = 2);
 
 
 Field warnField = FIELD_CUSTOM(renderWarning);
@@ -130,30 +129,31 @@ Field warnField = FIELD_CUSTOM(renderWarning);
 Field *customizables[] = {
     &upTimeField, // 0
     &odoField, // 1
-    &tripADistanceField, // 2
-    &tripATimeField, // 3
-    &tripAAvgSpeedField, // 4
-    &tripAMaxSpeedField, // 5
-    &tripBDistanceField, // 6
-    &tripBTimeField, // 7
-    &tripBMaxSpeedField, // 8
-    &tripBAvgSpeedField, // 9
-    &wheelSpeedField, // 10
-    &cadenceField, // 11
-		&humanPowerField, // 12
-		&batteryPowerField, // 13
-    &batteryVoltageField, // 14
-    &batteryCurrentField, // 15
-    &motorCurrentField, // 16
-    &batterySOCField, // 17
-		&motorTempField, // 18
-    &motorErpsField, // 19
-		&pwmDutyField, // 20
-		&motorFOCField, // 21
-		&batteryPowerUsageField, // 22
-    &batteryPowerUsedField, // 23
-    &batteryPowerRemainField, // 24
+    &wheelSpeedField, // 2
+    &cadenceField, // 3
+		&humanPowerField, // 4
+		&batteryPowerField, // 5
+    &batteryVoltageField, // 6
+    &batteryCurrentField, // 7
+    &motorCurrentField, // 8
+    &batterySOCField, // 9
+		&motorTempField, // 10
+    &motorErpsField, // 11
+		&pwmDutyField, // 12
+		&motorFOCField, // 13
+		&batteryPowerPerKmField, // 14
+    &batteryPowerUsedField, // 15
+    &batteryPowerRemainField, // 16
 		NULL
+
+    // &tripADistanceField, // 2
+    // &tripATimeField, // 3
+    // &tripAAvgSpeedField, // 4
+    // &tripAMaxSpeedField, // 5
+    // &tripBDistanceField, // 6
+    // &tripBTimeField, // 7
+    // &tripBMaxSpeedField, // 8
+    // &tripBAvgSpeedField, // 9
 };
 
 // Note: field_selectors[0] is used on the 850C for the graphs selector
@@ -165,7 +165,7 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
 
 
-Field bootHeading = FIELD_DRAWTEXT_RO(_S("OpenSource EBike", "OS-EBike")),
+Field bootHeading = FIELD_DRAWTEXT_RO(_S("OpenSource EBike", "OS Display")),
    bootURL_1 = FIELD_DRAWTEXT_RO(_S("www.github.com/", "Keep pedal")),
    bootURL_2 = FIELD_DRAWTEXT_RO(_S("OpenSource-EBike-Firmware", "free")),
 
@@ -472,7 +472,7 @@ void lcd_main_screen(void) {
 	battery_display();
 	warnings();
   up_time();
-	trip_time();
+	// trip_time();
 	wheel_speed();
 }
 
@@ -567,7 +567,6 @@ void mainscreen_clock(void) {
   DisplayResetToDefaults();
   TripMemoriesReset();
   DisplayResetBluetoothPeers();
-  batteryTotalWh();
   batteryCurrent();
   batteryResistance();
   motorCurrent();
@@ -592,10 +591,10 @@ void up_time(void) {
 	}
 }
 
-void trip_time(void){
-  updateTripTime(ui_vars.ui32_trip_a_time, &tripATimeField);
-  updateTripTime(ui_vars.ui32_trip_b_time, &tripBTimeField);
-}
+// void trip_time(void){
+//   updateTripTime(ui_vars.ui32_trip_a_time, &tripATimeField);
+//   updateTripTime(ui_vars.ui32_trip_b_time, &tripBTimeField);
+// }
 
 void updateTripTime(uint32_t tripTime, Field *field) {
   char timestr[MAX_TIMESTR_LEN]; // 12:13
@@ -759,11 +758,18 @@ bool appwide_onpress(buttons_events_t events)
     return true;
   }
 
-  // if ((events & SCREENCLICK_NEXT_SCREEN) &&
-  //     (g_motor_init_state == MOTOR_INIT_READY)) {
-
-          if ((events & SCREENCLICK_NEXT_SCREEN)) {
+#ifdef DEVELOPMENT
+  if ((events & SCREENCLICK_NEXT_SCREEN)) {
+#else
+  if ((events & SCREENCLICK_NEXT_SCREEN) &&
+  (g_motor_init_state == MOTOR_INIT_READY)) {
+#endif
     showNextScreen();
+    return true;
+  }
+
+  if (events & SCREENCLICK_ENTER_CONFIGURATIONS) {
+    screenShow(&configScreen);
     return true;
   }
 
@@ -812,11 +818,6 @@ void mainscreen_idle() {
 
 	handle_buttons();
 	mainscreen_clock(); // This is _after_ handle_buttons so if a button was pressed this tick, we immediately update the GUI
-}
-
-void batteryTotalWh(void) {
-
-  // ui32_g_configuration_wh_100_percent = ui_vars.ui32_wh_x10_100_percent / 10;
 }
 
 void onSetConfigurationBatteryTotalWh(uint32_t v) {
@@ -998,6 +999,6 @@ void pedalPower(void) {
 }
 
 void onSetConfigurationBatterySOCUsedWh(uint32_t v) {
-  // reset_wh();
-  // ui_vars.ui32_wh_x10_offset = v;
+  reset_wh();
+  ui_vars.ui32_wh_x10_offset = v;
 }

@@ -141,6 +141,8 @@ typedef enum {
   ConvertFromImperial_temperature,
   ConvertToImperial_mass,
   ConvertFromImperial_mass,
+  ConvertToImperial_consumption,
+  ConvertFromImperial_consumption,
 } ConvertUnitsType;
 
 // max points for hold up to 3 differents records of each variables, possible 15 minutes, 1 hour and 4 hours
@@ -160,13 +162,11 @@ typedef enum {
 #define GRAPH_GRAPH_LABEL_OFFSET 12
 
 // Assumed period of screenUpdate invoke
-#define UPDATE_INTERVAL_MS 100
-
-// Real time period
-#define REALTIME_INTERVAL_MS 100
+#define UPDATE_INTERVAL_MS 50
 
 // How often to toggle blink animations
-#define BLINK_INTERVAL_MS  300
+#define BLINK_ON_INTERVAL_MS  500
+#define BLINK_OFF_INTERVAL_MS  100
 
 typedef enum {
   GRAPH_AUTO_MAX_MIN_AUTO = 0,
@@ -268,6 +268,8 @@ typedef struct {
     } scrollable;
 
     struct {
+      uint32_t old_editable; // a cache value only used for editable fields, used to compare against previous values and redraw if needed.
+
       struct {
         field_threshold_t *auto_thresholds; // if warn and error thresholds should have automatic values, manual or be disabled
         UG_COLOR previous_color;
@@ -472,9 +474,6 @@ typedef struct FieldLayout {
 
 	const UG_FONT *font; // If this field requires a font, use this.  Or if NULL auto select the biggest font that can hold the string
   const UG_FONT *label_font;
-
-	uint32_t old_editable; // a cache value only used for editable fields, used to compare against previous values and redraw if needed.
-
 } FieldLayout;
 
 /** Called when a press has occured, return true if this function has handled the event (and therefore it should be cleared)
@@ -545,7 +544,6 @@ void updateTimeStr(uint8_t hours, uint8_t minutes, Field *field);
 bool renderDrawTextCommon(FieldLayout *layout, const char *msg);
 
 void screen_init(void);
-void rt_graph_process(void);
 
 int32_t convertUnits(int32_t val, ConvertUnitsType type);
 
@@ -579,9 +577,9 @@ extern volatile bool g_graphs_ui_update[3];
 #define SCREENFN_FORCE_LABELS buttons_get_m_state()
 #define SCREENCLICK_START_EDIT ONOFF_CLICK
 #define SCREENCLICK_STOP_EDIT ONOFF_CLICK
-#define SCREENCLICK_EXIT_SCROLLABLE ONOFF_CLICK
+#define SCREENCLICK_EXIT_SCROLLABLE ONOFF_LONG_CLICK
 #define SCREENCLICK_NEXT_SCREEN ONOFF_CLICK
-#define SCREENCLICK_ENTER_CONFIGURATIONS ONOFFUPDOWN_LONG_CLICK
+#define SCREENCLICK_ENTER_CONFIGURATIONS UPDOWN_LONG_CLICK
 #define SCREENCLICK_START_CUSTOMIZING ONOFF_CLICK_LONG_CLICK
 #define SCREENCLICK_STOP_CUSTOMIZING ONOFF_LONG_CLICK
 #define SCREENCLICK_ALTERNATE_FIELD_START ONOFFUP_LONG_CLICK

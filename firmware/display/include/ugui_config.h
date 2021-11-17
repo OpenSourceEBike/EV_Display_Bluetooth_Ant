@@ -19,7 +19,6 @@
 /* Enable needed fonts here */
 #define USE_FONT_CURSORS // Used for selection marker
 
-#ifdef SW102
 #define  USE_MY_FONT_8X12
 #define  USE_MY_FONT_NUM_10X16
 #define  USE_MY_FONT_NUM_24X40
@@ -48,50 +47,6 @@
 #define C_ERROR						C_WHITE
 
 #define LABEL_COLOR C_WHITE
-
-#else
-
-#define  USE_MY_FONT_BATTERY // temp merge hack FIXME, stop using battery font on 850C
-
-#define USE_FONT_10X16
-#define USE_FONT_12X20
-#define USE_FONT_16X26
-#define USE_FONT_24X40
-#define USE_FONT_32X53
-#define USE_FONT_45X72
-#define USE_FONT_61X99
-
-#define SCREEN_WIDTH 320 // FIXME - merge with DISPLAY_WIDTH
-#define SCREEN_HEIGHT 480
-
-// Standard default font selections used most of the time
-
-#define  SMALL_TEXT_FONT              FONT_10X16
-#define  REGULAR_TEXT_FONT            FONT_16X26
-
-#define  TITLE_TEXT_FONT              FONT_16X26
-#define  MEDIUM_NUMBERS_TEXT_FONT     FONT_24X40
-#define  BIG_NUMBERS_TEXT_FONT        FONT_45X72
-#define  HUGE_NUMBERS_TEXT_FONT       FONT_61X99
-
-#define  CONFIGURATIONS_TEXT_FONT     FONT_12X20
-
-// The default is for editables to be two rows tall, with the data value on the second row
-// define this as 1 if you want them to be one row tall (because you have a wide enough screen)
-#define EDITABLE_NUM_ROWS 1
-
-// The default is C_WHITE, redefine if you want something else
-#define EDITABLE_CURSOR_COLOR       C_ORANGE_RED
-
-#define HEADING_BACKGROUND 			C_DARK_BLUE
-#define HEADING_BORDER				(BorderNone)
-
-#define C_WARNING	 				C_YELLOW
-#define C_ERROR						C_RED
-
-#define LABEL_COLOR MAIN_SCREEN_FIELD_LABELS_COLOR
-
-#endif
 
 //#define  USE_FONT_4X6
 #define  USE_FONT_5X8

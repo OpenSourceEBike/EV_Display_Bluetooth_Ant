@@ -58,6 +58,7 @@
 #include "ugui.h"
 #include "screen.h"
 #include "mainscreen.h"
+#include "configscreen.h"
 
 UG_GUI gui;
 
@@ -1748,7 +1749,6 @@ void walk_assist_state(void)
 
 void brakeLights(void)
 {
-
   if (ui8_braking_led_state != ui_vars.ui8_braking)
   {
     ui8_braking_led_state = ui_vars.ui8_braking;
@@ -1863,8 +1863,11 @@ int main(void)
   screen_init();
 
   // show the first screen: boot screen
-  // screenShow(&bootScreen);
+#ifndef DEVELOPMENT
+  screenShow(&bootScreen);
+#else
   screenShow(&mainScreen1);
+#endif
 
   while (1)
   {
@@ -1882,14 +1885,14 @@ int main(void)
 
       mainscreen_idle();
 
-      // ble_send_periodic_data();
-      // ble_update_configurations_data();
+      ble_send_periodic_data();
+      ble_update_configurations_data();
       motor_power_manage();
 
       //   if (ui8_walk_assist_state_process_locally) walk_assist_state();
 
       //   streetMode();
-      //   brakeLights();
+      brakeLights();
 
       if ((m_conn_handle != BLE_CONN_HANDLE_INVALID) && (!ui8_ble_connected_shown))
       {

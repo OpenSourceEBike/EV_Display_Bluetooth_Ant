@@ -14,6 +14,11 @@ bool renderBattery(FieldLayout *layout)
 
   if (ui8_g_battery_soc > 0) {
     battery_bars = ui8_g_battery_soc / 10;
+
+    // exception: make 10 bars while SOC >= 95%
+    if (ui8_g_battery_soc > 94)
+      battery_bars = 10;
+      
   } else {
     battery_bars = 0;
   }

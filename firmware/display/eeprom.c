@@ -155,14 +155,14 @@ const configurations_t m_configurations_defaults = {
   .ui8_enter_bootloader = 0,
 
   .field_selectors = {
-    12, // human power
-    13, // motor power
+    6, // batteryVoltageField
+    16, // batteryPowerRemainField
 
-    0, // up time
-    2, // trip distance
+    0, // upTimeField
+    5, // motor power
 
-    13, // motor power
-    20, // PWM
+    4, // humanPowerField
+    5, // motor power
   },
   .showNextScreenIndex = 0,
 };

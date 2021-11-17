@@ -29,7 +29,6 @@ static uint32_t ui32_down_button_state_counter = 0;
 static uint32_t ui32_up_button_state = 0;
 static uint32_t ui32_up_button_state_counter = 0;
 static uint32_t ui32_m_button_state = 0;
-static uint32_t ui32_m_button_state_counter = 0;
 static uint32_t ui32_m_clear_event = 0;
 buttons_events_t buttons_events = 0;
 
