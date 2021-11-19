@@ -90,7 +90,7 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_pedal_cadence_filtered;
 	uint16_t ui16_battery_voltage_soc_x10;
 	uint64_t ui64_wh_sum_x5;
-	uint32_t ui32_wh_sum_counter;
+	uint64_t ui64_wh_sum_counter;
 	uint32_t ui32_wh_x10;
 	uint32_t ui32_wheel_speed_sensor_tick_counter_offset;
 
@@ -220,7 +220,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_pedal_cadence_filtered;
 	uint16_t ui16_battery_voltage_soc_x10;
 	uint64_t ui64_wh_sum_x5;
-	uint32_t ui32_wh_sum_counter;
+	uint64_t ui64_wh_sum_counter;
 	uint32_t ui32_wh_x10;
 
 	uint8_t ui8_assist_level;

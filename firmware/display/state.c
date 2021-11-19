@@ -285,7 +285,7 @@ void copy_rt_ui_vars(void) {
 	ui_vars.ui16_pedal_power = rt_vars.ui16_pedal_power_filtered;
 	ui_vars.ui16_battery_voltage_soc_x10 = rt_vars.ui16_battery_voltage_soc_x10;
 	ui_vars.ui64_wh_sum_x5 = rt_vars.ui64_wh_sum_x5;
-	ui_vars.ui32_wh_sum_counter = rt_vars.ui32_wh_sum_counter;
+	ui_vars.ui64_wh_sum_counter = rt_vars.ui64_wh_sum_counter;
 	ui_vars.ui32_wh_x10 = rt_vars.ui32_wh_x10;
 	ui_vars.ui8_braking = rt_vars.ui8_braking;
 	ui_vars.ui8_foc_angle = (((uint16_t) rt_vars.ui8_foc_angle) * 14) / 10; // each units is equal to 1.4 degrees ((360 degrees / 256) = 1.4)
@@ -655,20 +655,25 @@ void rt_calc_wh(void) {
 	static uint8_t ui8_1s_timer_counter = 0;
 
 	if (m_reset_wh_flag == false) {
+    // keep summing and track number of times 
     rt_vars.ui64_wh_sum_x5 += rt_vars.ui16_full_battery_power_filtered_x50 / 10;
-    rt_vars.ui32_wh_sum_counter++;
+    rt_vars.ui64_wh_sum_counter++;
 
     // calc at 1s rate
     if (++ui8_1s_timer_counter >= 20) {
       ui8_1s_timer_counter = 0;
 
-      // 3600 seconds is 1h
-      // 20 measurements per seconds
-      uint32_t ui32_hour_fraction_x3600 = rt_vars.ui32_wh_sum_counter / 20;
-      uint32_t ui32_wh_x10 =(rt_vars.ui64_wh_sum_x5 /
-         ((3600 / 2) / ui32_hour_fraction_x3600))
-        / rt_vars.ui32_wh_sum_counter;
-      rt_vars.ui32_wh_x10 = rt_vars.ui32_wh_x10_offset + ui32_wh_x10;
+      // average = (wh_sum / sum_counter) is the average value
+      // wh = average * (3600 / seconds_passed)
+      double d_average_x5;
+      if (rt_vars.ui64_wh_sum_x5 > rt_vars.ui64_wh_sum_counter) {
+        d_average_x5 = rt_vars.ui64_wh_sum_x5 / rt_vars.ui64_wh_sum_counter;
+      } else {
+        d_average_x5 = 0;
+      }
+
+      double d_hour_fraction_div2 = ((float) rt_vars.ui64_wh_sum_counter) / (36000.0);
+      rt_vars.ui32_wh_x10 = rt_vars.ui32_wh_x10_offset + (d_average_x5 * d_hour_fraction_div2);
 
       // update the wh remain value 
       if (rt_vars.ui32_wh_x10_100_percent > rt_vars.ui32_wh_x10) {
@@ -684,8 +689,8 @@ void reset_wh(void) {
   rt_vars.ui32_wh_x10_offset = 0;
   rt_vars.ui64_wh_sum_x5 = 0;
   ui_vars.ui64_wh_sum_x5 = 0;
-  rt_vars.ui32_wh_sum_counter = 0;
-  ui_vars.ui32_wh_sum_counter = 0;
+  rt_vars.ui64_wh_sum_counter = 0;
+  ui_vars.ui64_wh_sum_counter = 0;
   m_reset_wh_flag = false;
 }
 

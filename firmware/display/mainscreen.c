@@ -165,12 +165,11 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
 
 
-Field bootHeading = FIELD_DRAWTEXT_RO(_S("OpenSource EBike", "OS Display")),
-   bootURL_1 = FIELD_DRAWTEXT_RO(_S("www.github.com/", "Keep pedal")),
-   bootURL_2 = FIELD_DRAWTEXT_RO(_S("OpenSource-EBike-Firmware", "free")),
+Field bootHeading = FIELD_DRAWTEXT_RO("OS Display"),
+   bootURL_1 = FIELD_DRAWTEXT_RO("Keep pedal"),
+   bootURL_2 = FIELD_DRAWTEXT_RO("free"),
 
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
-   bootStatus1 = FIELD_DRAWTEXT_RO(_S("Keep pedals free and wait", "free pedal")),
    bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
 
 static void bootScreenOnPreUpdate() {
@@ -183,7 +182,7 @@ static void bootScreenOnPreUpdate() {
       } else {
         if ((g_motor_init_state == MOTOR_INIT_WAIT_GOT_CONFIGURATIONS_OK) ||
             (g_motor_init_state == MOTOR_INIT_READY)) {
-          fieldPrintf(&bootStatus2, _S("TSDZ2 firmware: %u.%u.%u", "%u.%u.%u"),
+          fieldPrintf(&bootStatus2, "%u.%u.%u",
           g_tsdz2_firmware_version.major,
           g_tsdz2_firmware_version.minor,
           g_tsdz2_firmware_version.patch);
