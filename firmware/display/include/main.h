@@ -6,9 +6,17 @@
 
 // #define DEVELOPMENT
 
-#define SW102 // our display is similar to SW102 OLED 128x64
-// #define DISPLAY_SSD1306
-#define DISPLAY_SH1106
+#define DISPLAY_SSD1306  // 0.96 inches OLED
+// #define DISPLAY_SH1106 // 1.3 inches OLED
+
+#define DISPLAY_SPI
+// #define DISPLAY_I2C
+
+#ifdef DISPLAY_SPI
+#define DISPLAY_USE_RESET_PIN
+// #define DISPLAY_USE_SELECT_PIN
+#endif
+
 
 /* Typedef of unions for handy access of single bytes */
 /* Access bytewise: U16 var; var.byte[x] = z; */

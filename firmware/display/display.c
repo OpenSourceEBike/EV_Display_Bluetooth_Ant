@@ -13,8 +13,16 @@
 #include "SSD1306.h"
 #include "ugui.h"
 
-#define SSD1306_CONFIG_SCL_PIN NRF_GPIO_PIN_MAP(1,10) 
-#define SSD1306_CONFIG_SDA_PIN NRF_GPIO_PIN_MAP(1,13)
+// I2C pins
+#define DISPLAY_CONFIG_SCL_PIN NRF_GPIO_PIN_MAP(1,10) 
+#define DISPLAY_CONFIG_SDA_PIN NRF_GPIO_PIN_MAP(1,13)
+
+// SPI pins
+#define DISPLAY_CONFIG_CLK_PIN NRF_GPIO_PIN_MAP(1,10)
+#define DISPLAY_CONFIG_MOSI_PIN NRF_GPIO_PIN_MAP(1,13)
+#define DISPLAY_CONFIG_RS_PIN NRF_GPIO_PIN_MAP(1,15)
+#define DISPLAY_CONFIG_DC_PIN NRF_GPIO_PIN_MAP(0,2)
+#define DISPLAY_CONFIG_CS_PIN 0xFF // not used
 
 /* uGUI instance from main */
 extern UG_GUI gui;
@@ -78,8 +86,21 @@ void display_off() {
 
 void display_init(void)
 {
-  ssd1306_init_i2c(SSD1306_CONFIG_SCL_PIN, SSD1306_CONFIG_SDA_PIN);
+#ifdef DISPLAY_I2C
+  ssd1306_init_i2c(DISPLAY_CONFIG_SCL_PIN, DISPLAY_CONFIG_SDA_PIN);
   ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
+#elif defined(DISPLAY_SPI)
+  ssd1306_init_spi(
+    DISPLAY_CONFIG_DC_PIN,
+    DISPLAY_CONFIG_RS_PIN,
+    DISPLAY_CONFIG_CS_PIN,
+    DISPLAY_CONFIG_CLK_PIN,
+    DISPLAY_CONFIG_MOSI_PIN);
+  ssd1306_begin(SSD1306_SWITCHCAPVCC, 0, true);
+#else
+#error MUST define DISPLAY_I2C or DISPLAY_SPI
+#endif
+
   ssd1306_clear_display();
   ssd1306_display();
   set_rotation(3); // makes vertical
@@ -94,7 +115,7 @@ void display_init(void)
 static int lcdBacklight = -1; // -1 means unset
 static int oldBacklight = -1;
 
-//SW102 version, we are an oled so if the user asks for lots of backlight we really want to dim instead
+// We are an oled so if the user asks for lots of backlight we really want to dim instead
 // Note: This routine might be called from an ISR, so do not do slow SPI operations (especially because
 // you might muck up other threads).  Instead just change the desired intensity and wait until the next
 // screen redraw.

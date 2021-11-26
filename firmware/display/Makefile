@@ -87,6 +87,9 @@ SRC_FILES += \
 	$(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c \
 	$(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uart.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uarte.c \
+  $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_spi.c \
+  $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_spi.c \
+  $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_spim.c \
 	$(SDK_ROOT)/components/libraries/atomic_flags/nrf_atflags.c \
 	$(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage.c \
 	$(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
@@ -151,7 +154,8 @@ SRC_FILES += \
 	$(PROJ_DIR)/mainscreen-oled128x64.c \
 	$(PROJ_DIR)/battery_gui.c \
 	$(PROJ_DIR)/rtc.c \
-	$(PROJ_DIR)/configscreen.c
+	$(PROJ_DIR)/configscreen.c \
+	$(PROJ_DIR)/spi.c
  
 # Include folders common to all targets
 INC_FOLDERS += \

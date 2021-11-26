@@ -56,7 +56,6 @@
 #include "ugui.h"
 #include "display.h"
 
-/* SW102 Extensions */
 static void (*p_refresh)( void ) = (void *)0;
 UG_U8 calledByParent, calledByUpdate;
 void _UG_Refresh( void );
