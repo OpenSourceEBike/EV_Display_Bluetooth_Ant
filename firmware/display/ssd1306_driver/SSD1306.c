@@ -7,7 +7,6 @@
 #include "nrf_delay.h"
 #include "nrf_gpio.h"
 #include "nrf_drv_twi.h"
-
 #include "nordic_common.h"
 #include "binary.h"
 #include "SSD1306.h"
@@ -217,8 +216,11 @@ void ssd1306_init_spi(uint32_t dc, uint32_t rs, uint32_t cs, uint32_t clk, uint3
   _cs = cs;
 
   nrf_gpio_cfg_output(dc);
+  nrf_gpio_pin_set(dc);
 #ifdef DISPLAY_USE_RESET_PIN
   nrf_gpio_cfg_output(rs);
+  nrf_gpio_pin_clear(rs); // hold in reset until initialization
+  nrf_delay_ms(1);
 #endif
 #ifdef DISPLAY_USE_SELECT_PIN
   nrf_gpio_cfg_output(cs);
@@ -247,7 +249,7 @@ void ssd1306_command(uint8_t c)
   _HI_CS();
   _LO_DC();
   _LO_CS();
-  UNUSED_VARIABLE(spi_transfer(&c, 1));
+  spi_transfer(&c, 1);
   _HI_CS();
 #else
 #error MUST define DISPLAY_I2C or DISPLAY_SPI
@@ -273,17 +275,13 @@ void ssd1306_begin(uint8_t vccstate, uint8_t i2caddr, bool reset)
   rotation  = 0;
 
   if (reset) {
-    // Setup reset pin direction (used by both SPI and I2C)
-    _HI_RS();
-    // VDD (3.3V) goes high at start, lets just chill for a ms
-    nrf_delay_ms(1);
-    // bring reset low
-    _LO_RS();
-    // wait 10ms
-    nrf_delay_ms(10);
+    // setup reset pin (used by both SPI and I2C)
     // bring out of reset
     _HI_RS();
-    // turn on VCC (9V?)
+    nrf_delay_ms(2);
+    _LO_RS();
+    nrf_delay_ms(10);
+    _HI_RS();
   }
 
 #if defined SSD1306_128_32
@@ -415,7 +413,7 @@ void ssd1306_begin(uint8_t vccstate, uint8_t i2caddr, bool reset)
   ssd1306_command(SSD1306_NORMALDISPLAY);             // 0xA6
 #endif
 
-  ssd1306_command(SSD1306_DISPLAYON);//--turn on oled panel
+  ssd1306_command(SSD1306_DISPLAYON); // turn on OLED panel
 }
 
 // the most basic function, set a single pixel
@@ -605,9 +603,17 @@ void ssd1306_display(void)
 #endif
 
 #ifdef DISPLAY_SPI
-  _HI_DC(); // data mode
-  uint32_t len = (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT) / 8;
-  UNUSED_VARIABLE(spi_transfer(buffer, len));
+  uint32_t buffer_index = 0;
+  for (uint8_t page = 0; page < 8; page++) {
+    ssd1306_command(0xB0 + page); // Set the current RAM page address.
+    ssd1306_command(0x00);
+    ssd1306_command(0x10);
+    
+    _HI_DC(); // data mode
+    spi_transfer(&buffer[buffer_index], 128);
+    buffer_index += 128;
+    nrf_delay_us(200); // needed otherwise the pixels on the OLED screen are not written correctly
+  }
 #elif defined(DISPLAY_I2C)
   for (uint16_t i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++)
   {
@@ -629,7 +635,6 @@ void ssd1306_display(void)
 #endif
 
 #elif defined(DISPLAY_SH1106)
-
   ssd1306_command(SSD1306_COLUMNADDR);
   ssd1306_command(0x00);
   ssd1306_command(0x7F);
@@ -638,6 +643,19 @@ void ssd1306_display(void)
   ssd1306_command(0x7);
   ssd1306_command(SSD1306_SETSTARTLINE | 0x00);
 
+#ifdef DISPLAY_SPI
+  uint32_t buffer_index = 0;
+  for (uint8_t page = 0; page < 8; page++) {
+    ssd1306_command(0xB0 + page); // Set the current RAM page address.
+    ssd1306_command(0x00);
+    ssd1306_command(0x10);
+    
+    _HI_DC(); // data mode
+    spi_transfer(&buffer[buffer_index], 128);
+    buffer_index += 128;
+    nrf_delay_us(200); // needed otherwise the pixels on the OLED screen are not written correctly
+  }
+#elif defined(DISPLAY_I2C)
   uint16_t k = 0;
   for (uint16_t y = 0; y < 8; y++) {
     uint16_t x = 2;
@@ -653,6 +671,10 @@ void ssd1306_display(void)
     UNUSED_VARIABLE(ret);
     k += 128;
   }
+#else
+#error MUST define DISPLAY_I2C or DISPLAY_SPI
+#endif
+
 #else
 #error DISPLAY_xxx must be defined
 #endif

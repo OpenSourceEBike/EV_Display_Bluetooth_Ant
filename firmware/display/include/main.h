@@ -4,7 +4,7 @@
 #include "common.h"
 // #include "button.h"
 
-// #define DEVELOPMENT
+#define DEVELOPMENT
 
 #define DISPLAY_SSD1306  // 0.96 inches OLED
 // #define DISPLAY_SH1106 // 1.3 inches OLED

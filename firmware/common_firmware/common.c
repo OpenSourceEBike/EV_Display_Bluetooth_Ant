@@ -38,7 +38,6 @@ calls sd_app_evt_wait() until timeout
 */
 void nrf_lp_delay_ms(int ms_delay)
 {
-
   uint32_t err_code;
   err_code = app_timer_start(lp_delay_timer, APP_TIMER_TICKS(ms_delay), NULL);
   APP_ERROR_CHECK(err_code);
@@ -48,9 +47,7 @@ void nrf_lp_delay_ms(int ms_delay)
     err_code = sd_app_evt_wait();
     APP_ERROR_CHECK(err_code);
   }
- }
-
-
+}
 
 void disp_soc(int soc)
 {
