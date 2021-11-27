@@ -796,9 +796,7 @@ void handle_buttons() {
 }
 
 void mainscreen_idle() {
-   
-  automatic_power_off_management();
-
+ 	automatic_power_off_management();
 	handle_buttons();
 	mainscreen_clock(); // This is _after_ handle_buttons so if a button was pressed this tick, we immediately update the GUI
 }
@@ -809,11 +807,10 @@ void onSetConfigurationBatteryTotalWh(uint32_t v) {
 }
 
 void DisplayResetToDefaults(void) {
-
-  // if (ui8_g_configuration_display_reset_to_defaults) {
-  //   ui8_g_configuration_display_reset_to_defaults = 0;
-  //   eeprom_init_defaults();
-  // }
+  if (ui8_g_configuration_display_reset_to_defaults) {
+    ui8_g_configuration_display_reset_to_defaults = 0;
+    eeprom_init_defaults();
+  }
 }
 
 void TripMemoriesReset(void) {

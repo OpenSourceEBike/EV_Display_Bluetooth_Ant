@@ -61,28 +61,28 @@ void set_lcd_backlight() {
 
 /// must be called from main() idle loop
 void automatic_power_off_management(void) {
-	// static uint32_t ui16_system_power_off_time_counter = 0;
+	static uint32_t ui16_system_power_off_time_counter = 0;
 
-	// if (ui_vars.ui8_system_power_off_time_minutes != 0) {
-	// 	// see if we should reset the automatic power off minutes counter
-	// 	if ((ui_vars.ui16_wheel_speed_x10 > 0) ||   // wheel speed > 0
-	// 			(ui_vars.ui8_battery_current_x5 > 0) || // battery current > 0
-	// 			(ui_vars.ui8_braking) ||                // braking
-	// 			buttons_get_events()) {                 // any button active
-	// 		ui16_system_power_off_time_counter = 0;
-	// 	} else {
-	// 		// increment the automatic power off ticks counter
-	// 		ui16_system_power_off_time_counter++;
+	if (ui_vars.ui8_system_power_off_time_minutes != 0) {
+		// see if we should reset the automatic power off minutes counter
+		if ((ui_vars.ui16_wheel_speed_x10 > 0) ||   // wheel speed > 0
+				(ui_vars.ui8_battery_current_x5 > 0) || // battery current > 0
+				(ui_vars.ui8_braking) ||                // braking
+				buttons_get_events()) {                 // any button active
+			ui16_system_power_off_time_counter = 0;
+		} else {
+			// increment the automatic power off ticks counter
+			ui16_system_power_off_time_counter++;
 
-	// 		// check if we should power off the LCD
-	// 		if (ui16_system_power_off_time_counter
-	// 				>= (ui_vars.ui8_system_power_off_time_minutes * 10 * 60)) { // have we passed our timeout?
-	// 			system_power_off(1);
-	// 		}
-	// 	}
-	// } else {
-	// 	ui16_system_power_off_time_counter = 0;
-	// }
+			// check if we should power off the LCD
+			if (ui16_system_power_off_time_counter
+					>= (ui_vars.ui8_system_power_off_time_minutes * 20 * 60)) { // have we passed our timeout?
+				system_power_off(1);
+			}
+		}
+	} else {
+		ui16_system_power_off_time_counter = 0;
+	}
 }
 
 void rt_send_tx_package(frame_type_t type) {

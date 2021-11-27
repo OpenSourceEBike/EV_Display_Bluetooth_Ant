@@ -284,6 +284,50 @@ void eeprom_init() {
   prepare_torque_sensor_calibration_table();
 }
 
+void eeprom_init_defaults(void) {
+  ret_code_t err_code;
+  
+  err_code = fds_record_find(CONFIG_FILE, CONFIG_REC_KEY, &m_desc_config, &m_tok_config);
+  // see if a record is found for config file
+  if (err_code == NRF_SUCCESS)
+  {
+    /* A config file is in flash. Let's update it. */
+    fds_flash_record_t config = {0};
+
+    /* Open the record and read its contents. */
+    err_code = fds_record_open(&m_desc_config, &config);
+    APP_ERROR_CHECK(err_code);
+
+    /* Copy the configuration from flash into m_dummy_cfg. */
+    memcpy(&m_configurations, config.p_data, sizeof(m_configurations));
+    
+    /* Close the record when done reading. */
+    err_code = fds_record_close(&m_desc_config);
+    APP_ERROR_CHECK(err_code);
+
+    // if eeprom is blank or configurations version is incorrect, RESET to default values
+    if (m_configurations.ui8_configurations_version != CONFIGURATIONS_VERSION)
+    {
+      memcpy(&m_configurations, &m_configurations_defaults,
+          sizeof(m_configurations_defaults));
+    }
+  }
+  else // no record is found for config file, set to default values
+  {
+    memcpy(&m_configurations, &m_configurations_defaults,
+        sizeof(m_configurations_defaults));
+
+    err_code = fds_record_write(&m_desc_config, &m_fds_configurations);
+    APP_ERROR_CHECK(err_code);
+  }
+  
+  eeprom_init_variables();
+  set_conversions();
+
+  // prepare torque_sensor_calibration_table as it will be used at begin to init the motor
+  prepare_torque_sensor_calibration_table();
+}
+
 void eeprom_init_variables(void) {
 	ui_vars_t *ui_vars = get_ui_vars();
 
