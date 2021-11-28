@@ -1,9 +1,9 @@
 PROJECT_NAME     := display_firmware
 TARGETS          := display_firmware
 
-APP_VER_MAJOR = 1
-APP_VER_MINOR = 0
-APP_VER_BUG = 0
+APP_VER_MAJOR = 0
+APP_VER_MINOR = 9
+APP_VER_BUG = 5
 
 ifdef DISPLAY_OLED_1.3_SPI
 $(warning )
