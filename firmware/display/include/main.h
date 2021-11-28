@@ -2,19 +2,17 @@
 
 #include <stdio.h>
 #include "common.h"
-// #include "button.h"
 
-#define DEVELOPMENT
+//#define DEVELOPMENT
 
-#define DISPLAY_SSD1306  // 0.96 inches OLED
-// #define DISPLAY_SH1106 // 1.3 inches OLED
-
-#define DISPLAY_SPI
-// #define DISPLAY_I2C
+#ifdef DEVELOPMENT
+  #define DISPLAY_SSD1306
+  #define DISPLAY_SPI
+#endif
 
 #ifdef DISPLAY_SPI
-#define DISPLAY_USE_RESET_PIN
-// #define DISPLAY_USE_SELECT_PIN
+  #define DISPLAY_USE_RESET_PIN
+  // #define DISPLAY_USE_SELECT_PIN
 #endif
 
 
