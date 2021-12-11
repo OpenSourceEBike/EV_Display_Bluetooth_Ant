@@ -1,9 +1,15 @@
 PROJECT_NAME     := display_firmware
 TARGETS          := display_firmware
 
-APP_VER_MAJOR = 0
-APP_VER_MINOR = 9
-APP_VER_BUG = 5
+# This is the user visible string for the version
+VERSION_STRING := 0.10.5
+
+# This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
+MOTOR_FIRMWARE_MAJOR := 1
+MOTOR_FIRMWARE_MINOR := 1
+
+APP_VER_MAJOR = 1
+APP_VER_MINOR = 0
 
 ifdef DISPLAY_OLED_1.3_SPI
 $(warning )
@@ -54,18 +60,11 @@ $(OUTPUT_DIRECTORY)/display_firmware.out: \
   LINKER_SCRIPT  := linker_script_nrf52.ld
 
 BOOTLOADER_DIR = $(PROJ_DIR)/../EBike_wireless_bootloader/firmware
-BOOTLOADER_HEX = $(BOOTLOADER_DIR)/_build/TSDZ2_bootloader_with_sd.hex
+BOOTLOADER_HEX = $(BOOTLOADER_DIR)/_build/bootloader.hex
 
 # The integer build number for this release, MUST BE INCREMENTED FOR EACH RELEASE SO BOOTLOADER WILL INSTALL
 # it is not user visible, but we must ensure it is monotonically increasing
 VERSION_NUM := 1
-
-# This is the user visible string for the version
-VERSION_STRING := 1.0.0
-
-# This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
-MOTOR_FIRMWARE_MAJOR := 1
-MOTOR_FIRMWARE_MINOR := 1
 
 CFLAGS += -DVERSION_STRING=\"$(VERSION_STRING)\" -DMOTOR_FIRMWARE_MAJOR=\"$(MOTOR_FIRMWARE_MAJOR)\" -DMOTOR_FIRMWARE_MINOR=\"$(MOTOR_FIRMWARE_MINOR)\"
 
@@ -372,7 +371,7 @@ bl_settings:
 	$(SREC_PATH)nrfutil settings generate --family NRF52840 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --bootloader-version 1 --bl-settings-version 2 $(OUTPUT_DIRECTORY)/bl_settings.hex
 
 OTA:
-	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).$(APP_VER_BUG) --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/firmware_ota-$(DISPLAY)-$(APP_VER_MAJOR).$(APP_VER_MINOR).$(APP_VER_BUG).zip
+	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/firmware_ota-$(DISPLAY)-$(VERSION_STRING).zip
 
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc

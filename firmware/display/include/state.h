@@ -4,7 +4,7 @@
 
 #pragma once
 
-#define ASSIST_LEVEL_NUMBER 7
+#define ASSIST_LEVEL_NUMBER 20
 
 // Possible values: 0, 1, 2, 3, 4, 5, 6
 // 0 equal to no filtering and no delay, higher values will increase filtering but will also add bigger delay
