@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "common.h"
 
-//#define DEVELOPMENT
+// #define DEVELOPMENT
 
 #ifdef DEVELOPMENT
   #define DISPLAY_SSD1306
