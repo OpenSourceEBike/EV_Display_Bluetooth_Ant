@@ -286,8 +286,6 @@ Wire Wire Line
 Wire Wire Line
 	9636 3084 11986 3084
 Wire Wire Line
-	11986 3084 11986 4464
-Wire Wire Line
 	8086 6074 7956 6074
 Wire Wire Line
 	7956 6074 7956 6574
@@ -313,17 +311,6 @@ NoConn ~ 10526 4314
 NoConn ~ 11626 4314
 Wire Wire Line
 	11986 4464 11776 4464
-$Comp
-L Wired_remote:Nordic_nRF52840_USB_Dongle U?
-U 1 1 6003704A
-P 11076 4814
-F 0 "U?" H 11076 4814 60  0001 C CNN
-F 1 "Nordic nRF52840 USB Dongle" H 11176 5739 60  0000 C CNN
-F 2 "" H 10926 4664 60  0000 C CNN
-F 3 "" H 10926 4664 60  0000 C CNN
-	1    11076 4814
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9566 4464 10376 4464
 Wire Wire Line
@@ -371,7 +358,6 @@ F 3 "" H 13616 5564 50  0001 C CNN
 	1    13616 5314
 	0    -1   -1   0   
 $EndComp
-NoConn ~ 11776 4664
 $Comp
 L power:GND #PWR?
 U 1 1 61686357
@@ -408,10 +394,6 @@ Wire Wire Line
 	12906 5464 12906 5534
 Wire Wire Line
 	13266 5364 12906 5364
-Wire Wire Line
-	12906 5364 12906 4564
-Wire Wire Line
-	11776 4564 12906 4564
 NoConn ~ 11776 5364
 Text GLabel 5214 7429 2    57   Input ~ 0
 TSDZ2_GND
@@ -455,4 +437,24 @@ Wire Wire Line
 	7956 7074 7956 7219
 Wire Notes Line
 	7737 5628 7732 7355
+Wire Wire Line
+	11986 3084 11986 4464
+Connection ~ 11986 4464
+Wire Wire Line
+	11986 4464 12906 4464
+Wire Wire Line
+	12906 5364 12906 4464
+NoConn ~ 11776 4664
+$Comp
+L Wired_remote:Nordic_nRF52840_USB_Dongle U?
+U 1 1 6003704A
+P 11076 4814
+F 0 "U?" H 11076 4814 60  0001 C CNN
+F 1 "Nordic nRF52840 USB Dongle" H 11176 5739 60  0000 C CNN
+F 2 "" H 10926 4664 60  0000 C CNN
+F 3 "" H 10926 4664 60  0000 C CNN
+	1    11076 4814
+	1    0    0    -1  
+$EndComp
+NoConn ~ 11776 4564
 $EndSCHEMATC

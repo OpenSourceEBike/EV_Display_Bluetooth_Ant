@@ -399,10 +399,6 @@ Wire Wire Line
 	12906 5464 12906 5534
 Wire Wire Line
 	13265 5364 12906 5364
-Wire Wire Line
-	12906 5364 12906 4564
-Wire Wire Line
-	11776 4564 12906 4564
 NoConn ~ 11776 5364
 Text GLabel 5214 7429 2    57   Input ~ 0
 TSDZ2_GND
@@ -476,4 +472,10 @@ Wire Wire Line
 	7956 7200 7956 7074
 Connection ~ 10296 5364
 Connection ~ 7956 7074
+Wire Wire Line
+	11986 4464 12906 4464
+Connection ~ 11986 4464
+Wire Wire Line
+	12906 5364 12906 4464
+NoConn ~ 11776 4564
 $EndSCHEMATC
