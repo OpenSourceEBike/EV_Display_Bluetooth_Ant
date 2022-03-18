@@ -94,6 +94,7 @@ motor_power_state_t m_motor_state = MOTOR_STATE_ON_START;
 
 #define MSEC_PER_TICK 10
 APP_TIMER_DEF(main_timer);
+APP_TIMER_DEF(ANT_Search_timer);
 #define MAIN_INTERVAL APP_TIMER_TICKS(MSEC_PER_TICK)
 volatile uint32_t main_ticks;
 uint32_t ui32_seconds_since_startup = 0;
@@ -718,11 +719,34 @@ static void lfclk_config(void)
   nrf_drv_clock_lfclk_request(NULL);
 }
 
+static void ANT_Search_timeout(void *p_context) // check every 400 ms
+{
+  UNUSED_PARAMETER(p_context);
+  // first see if ANT pairing is completed
+  uint8_t CTRL_Status;
+  ret_code_t err_code;
+
+  err_code = sd_ant_channel_status_get(CONTROLS_CHANNEL_NUM, &CTRL_Status);
+  APP_ERROR_CHECK(err_code);
+
+  if (CTRL_Status != (uint8_t)STATUS_SEARCHING_CHANNEL) // device is paired
+  {
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_stop(ANT_Search_timer);
+    APP_ERROR_CHECK(err_code);
+
+    searching_flag = false;
+  }
+}
+
 static void init_app_timers(void)
 {
   ret_code_t err_code;
 
   err_code = app_timer_init();
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&ANT_Search_timer, APP_TIMER_MODE_REPEATED, ANT_Search_timeout);
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&main_timer, APP_TIMER_MODE_REPEATED, main_timer_timeout);
@@ -743,18 +767,18 @@ static void ble_stack_init(void)
   err_code = nrf_sdh_enable_request();
   APP_ERROR_CHECK(err_code);
 
-  // Configure the BLE stack using the default settings.
-  // Fetch the start address of the application RAM.
-  uint32_t ram_start = 0;
-  err_code = nrf_sdh_ble_default_cfg_set(APP_BLE_CONN_CFG_TAG, &ram_start);
-  APP_ERROR_CHECK(err_code);
+  // // Configure the BLE stack using the default settings.
+  // // Fetch the start address of the application RAM.
+  // uint32_t ram_start = 0;
+  // err_code = nrf_sdh_ble_default_cfg_set(APP_BLE_CONN_CFG_TAG, &ram_start);
+  // APP_ERROR_CHECK(err_code);
 
-  // Enable BLE stack.
-  err_code = nrf_sdh_ble_enable(&ram_start);
-  APP_ERROR_CHECK(err_code);
+  // // Enable BLE stack.
+  // err_code = nrf_sdh_ble_enable(&ram_start);
+  // APP_ERROR_CHECK(err_code);
 
-  // Register a handler for BLE events.
-  NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
+  // // Register a handler for BLE events.
+  // NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
 }
 
 /**@brief Function for the GAP initialization.
@@ -1294,13 +1318,13 @@ static void peer_manager_init(void)
 void ble_init(void)
 {
   ble_stack_init();
-  gap_params_init();
-  gatt_init();
-  services_init();
-  advertising_init();
-  conn_params_init();
-  peer_manager_init();
-  advertising_start(true);
+  // gap_params_init();
+  // gatt_init();
+  // services_init();
+  // advertising_init();
+  // conn_params_init();
+  // peer_manager_init();
+  // advertising_start(true);
 }
 
 void eeprom_write_variables_and_reset(void)
@@ -1745,8 +1769,8 @@ int main(void)
     NVIC_SystemReset(); // reboot into bootloader
   }
 
-  // ble_init();
-  // ant_setup();
+  ble_init(); // inside only needed part for ANT
+  ant_setup();
   uart_init();
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest

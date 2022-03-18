@@ -892,21 +892,20 @@ void rt_calc_battery_soc(void) {
   static uint8_t ui8_counter = 0;
   static bool only_once = false;
 
-  // wait 5 seconds for motor controller battery voltage value stabilize
-  if ((++ui8_counter > (5 * 20)) &&
+  // wait 10 seconds for motor controller battery voltage value stabilize
+  if ((++ui8_counter > (10 * 20)) &&
     (ui8_g_motorVariablesStabilized == 0)) {
     ui8_g_motorVariablesStabilized = 1;
   }
 
-  if (ui8_g_motorVariablesStabilized && only_once == false) {
+  if (ui8_g_motorVariablesStabilized && (only_once == false)) {
     // only once after startup, otherwise this will keep running since
     // battery voltage varies a lot while the motor runs 
     only_once = true;
 
     // reset Wh value if battery voltage is over ui16_battery_voltage_reset_wh_counter_x10 (value configured by user)
     if (((uint32_t) ui_vars.ui16_adc_battery_voltage * ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000)
-        > ((uint32_t) ui_vars.ui16_battery_voltage_reset_wh_counter_x10
-            * 1000)) {
+        > ((uint32_t) ui_vars.ui16_battery_voltage_reset_wh_counter_x10 * 1000)) {
       reset_wh();
     }
   }
