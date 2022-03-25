@@ -1,0 +1,6 @@
+/home/cas/work/TSDZ2/ev_display_bluetooth_ant/hardware/kicad-symbols/CMakeFiles/install/local.dir
+/home/cas/work/TSDZ2/ev_display_bluetooth_ant/hardware/kicad-symbols/CMakeFiles/install.dir
+/home/cas/work/TSDZ2/ev_display_bluetooth_ant/hardware/kicad-symbols/CMakeFiles/list_install_components.dir
+/home/cas/work/TSDZ2/ev_display_bluetooth_ant/hardware/kicad-symbols/CMakeFiles/rebuild_cache.dir
+/home/cas/work/TSDZ2/ev_display_bluetooth_ant/hardware/kicad-symbols/CMakeFiles/edit_cache.dir
+/home/cas/work/TSDZ2/ev_display_bluetooth_ant/hardware/kicad-symbols/CMakeFiles/uninstall.dir

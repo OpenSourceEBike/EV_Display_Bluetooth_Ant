@@ -1,0 +1,19 @@
+image: python:latest
+  
+before_script:
+  - python -V
+  - git clone --depth 1 https://gitlab.com/kicad/libraries/kicad-library-utils $CI_BUILDS_DIR/kicad-library-utils
+
+symbols:
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - "*.kicad_sym"
+      - "sym-lib-table"
+  script:
+    - $CI_BUILDS_DIR/kicad-library-utils/klc-check/gitlabci/check_symbols.sh
+
+  artifacts:
+    reports:
+      metrics: metrics.txt

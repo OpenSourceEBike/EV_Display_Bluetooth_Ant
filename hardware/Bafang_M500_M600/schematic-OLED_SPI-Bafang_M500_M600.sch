@@ -1,0 +1,444 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A3 16535 11693
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text GLabel 6024 3689 0    57   Input ~ 0
+GND
+Text Notes 8395 4130 0    60   ~ 0
+wireless board
+Text Notes 6732 3326 0    60   ~ 0
+Generic DC-DC\nmin input allowed 60V
+$Comp
+L Wired_remote:Switch_SW_Push button_1
+U 1 1 5F4A3714
+P 5950 6415
+F 0 "button_1" H 5950 6615 50  0000 C CNN
+F 1 "UP" H 5950 6715 50  0000 C CNB
+F 2 "" H 5950 6615 50  0001 C CNN
+F 3 "~" H 5950 6615 50  0001 C CNN
+	1    5950 6415
+	1    0    0    -1  
+$EndComp
+$Comp
+L Wired_remote:Switch_SW_Push button_2
+U 1 1 5F4A3F33
+P 5950 6915
+F 0 "button_2" H 5950 7115 50  0000 C CNN
+F 1 "DOWN" H 5950 7215 50  0000 C CNB
+F 2 "" H 5950 7115 50  0001 C CNN
+F 3 "~" H 5950 7115 50  0001 C CNN
+	1    5950 6915
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	5401 5964 6601 5964
+Wire Notes Line
+	6601 5964 6605 7734
+Wire Notes Line
+	6605 7734 5405 7734
+Text Notes 5401 5914 0    79   ~ 0
+850C remote keypad
+Wire Notes Line
+	5401 5964 5405 7734
+$Comp
+L Wired_remote:Switch_SW_Push button_3
+U 1 1 5F4A4B3B
+P 5950 7415
+F 0 "button_3" H 5950 7615 50  0000 C CNN
+F 1 "POWER" H 5950 7715 50  0000 C CNB
+F 2 "" H 5950 7615 50  0001 C CNN
+F 3 "~" H 5950 7615 50  0001 C CNN
+	1    5950 7415
+	1    0    0    -1  
+$EndComp
+Text GLabel 6030 3489 0    57   Input ~ 0
+VBAT
+$Comp
+L Wired_remote-rescue:Generic_DC-DC-Wireless_eBike-Wireless_Ebike U?
+U 1 1 60103A2E
+P 7183 3589
+F 0 "U?" H 7183 3976 60  0001 C CNN
+F 1 "Generic DC-DC (min input allowed 60V, output 5V)" H 7133 3889 60  0001 C CNN
+F 2 "" H 7133 3589 60  0000 C CNN
+F 3 "" H 7133 3589 60  0000 C CNN
+	1    7183 3589
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7683 3689 7753 3689
+Wire Wire Line
+	7753 3689 7753 3739
+$Comp
+L power:GND #PWR?
+U 1 1 616B94AD
+P 7753 3739
+F 0 "#PWR?" H 7753 3489 50  0001 C CNN
+F 1 "GND" H 7758 3566 50  0000 C CNN
+F 2 "" H 7753 3739 50  0001 C CNN
+F 3 "" H 7753 3739 50  0001 C CNN
+	1    7753 3739
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6683 3689 6024 3689
+Wire Wire Line
+	5750 6415 5620 6415
+Wire Wire Line
+	5620 6415 5620 6915
+Wire Wire Line
+	5620 6915 5750 6915
+Wire Wire Line
+	5620 6915 5620 7415
+Wire Wire Line
+	5620 7415 5750 7415
+Connection ~ 5620 6915
+NoConn ~ 8040 5005
+NoConn ~ 8040 5505
+NoConn ~ 8040 5605
+NoConn ~ 8190 4655
+NoConn ~ 9290 4655
+$Comp
+L Wired_remote:Nordic_nRF52840_USB_Dongle U?
+U 1 1 6003704A
+P 8740 5155
+F 0 "U?" H 8740 5155 60  0001 C CNN
+F 1 "Nordic nRF52840 USB Dongle" H 8840 6080 60  0000 C CNN
+F 2 "" H 8590 5005 60  0000 C CNN
+F 3 "" H 8590 5005 60  0000 C CNN
+	1    8740 5155
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7230 4805 8040 4805
+Wire Wire Line
+	7350 4905 8040 4905
+Wire Wire Line
+	7460 5105 8040 5105
+Wire Wire Line
+	6150 6415 6330 6415
+Wire Wire Line
+	7350 4905 7350 6915
+Wire Wire Line
+	6150 6915 7350 6915
+Wire Wire Line
+	7230 6795 6330 6795
+Wire Wire Line
+	6330 6795 6330 6415
+Wire Wire Line
+	7230 4805 7230 6795
+Wire Notes Line
+	10930 3695 11940 3695
+Wire Notes Line
+	11940 3695 11932 4896
+Wire Notes Line
+	11933 4910 10932 4913
+Text Notes 10930 3645 0    79   ~ 0
+OLED display SPI\n128x64
+Wire Notes Line
+	10930 3695 10920 4912
+NoConn ~ 9440 5005
+$Comp
+L power:GND #PWR?
+U 1 1 61686357
+P 10743 4731
+F 0 "#PWR?" H 10743 4481 50  0001 C CNN
+F 1 "GND" H 10748 4558 50  0000 C CNN
+F 2 "" H 10743 4731 50  0001 C CNN
+F 3 "" H 10743 4731 50  0001 C CNN
+	1    10743 4731
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 616B5CEE
+P 7960 5775
+F 0 "#PWR?" H 7960 5525 50  0001 C CNN
+F 1 "GND" H 7965 5602 50  0000 C CNN
+F 2 "" H 7960 5775 50  0001 C CNN
+F 3 "" H 7960 5775 50  0001 C CNN
+	1    7960 5775
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8040 5705 7960 5705
+Wire Wire Line
+	7960 5705 7960 5775
+Wire Wire Line
+	11102 4661 10743 4661
+Wire Wire Line
+	10743 4661 10743 4731
+NoConn ~ 9440 5705
+$Comp
+L schematic-rescue:SSD1306-SPI-OLED NA
+U 1 1 61A59303
+P 11452 4361
+F 0 "NA" V 11501 4058 50  0001 R CNN
+F 1 "SSD1306-SPI-OLED" V 11945 4749 50  0000 R CNN
+F 2 "" H 11302 4611 50  0001 C CNN
+F 3 "" H 11302 4611 50  0001 C CNN
+	1    11452 4361
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6030 3489 6683 3489
+$Comp
+L Device:R R1
+U 1 1 62371842
+P 7115 7650
+F 0 "R1" H 7185 7696 50  0000 L CNN
+F 1 "150K" H 7185 7605 50  0000 L CNN
+F 2 "" V 7045 7650 50  0001 C CNN
+F 3 "~" H 7115 7650 50  0001 C CNN
+	1    7115 7650
+	1    0    0    -1  
+$EndComp
+Text GLabel 6018 4013 0    57   Input ~ 0
+CTRL
+Wire Wire Line
+	6018 4013 6478 4013
+Text Label 6478 4013 0    50   ~ 0
+CTRL
+Wire Wire Line
+	7460 5105 7462 7831
+$Comp
+L Diode:DZ2S033X0L D1
+U 1 1 62374D60
+P 7461 8021
+F 0 "D1" V 7415 8101 50  0000 L CNN
+F 1 "Zener 3.3V" V 7506 8101 50  0000 L CNN
+F 2 "Diode_SMD:D_SOD-523" H 7461 7846 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/content/data/SC/ds/ds4/DZ2S03300L_E.pdf" H 7461 8021 50  0001 C CNN
+	1    7461 8021
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7461 7871 7461 7831
+Wire Wire Line
+	7461 7831 7462 7831
+Connection ~ 7462 7831
+Wire Wire Line
+	7462 7831 7462 7832
+Wire Wire Line
+	7115 7500 7115 7415
+Text Label 7115 7256 1    50   ~ 0
+CTRL
+Connection ~ 7115 7415
+Wire Wire Line
+	7115 7415 7115 7256
+$Comp
+L Device:R R2
+U 1 1 62372474
+P 7115 8023
+F 0 "R2" H 7185 8069 50  0000 L CNN
+F 1 "6.8K" H 7185 7978 50  0000 L CNN
+F 2 "" V 7045 8023 50  0001 C CNN
+F 3 "~" H 7115 8023 50  0001 C CNN
+	1    7115 8023
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 623DE0F7
+P 7115 8243
+F 0 "#PWR?" H 7115 7993 50  0001 C CNN
+F 1 "GND" H 7120 8070 50  0000 C CNN
+F 2 "" H 7115 8243 50  0001 C CNN
+F 3 "" H 7115 8243 50  0001 C CNN
+	1    7115 8243
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7115 8173 7115 8210
+$Comp
+L power:GND #PWR?
+U 1 1 623E9AC4
+P 7461 8241
+F 0 "#PWR?" H 7461 7991 50  0001 C CNN
+F 1 "GND" H 7466 8068 50  0000 C CNN
+F 2 "" H 7461 8241 50  0001 C CNN
+F 3 "" H 7461 8241 50  0001 C CNN
+	1    7461 8241
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7461 8171 7461 8241
+Wire Wire Line
+	6150 7415 7115 7415
+Wire Wire Line
+	7115 7800 7115 7830
+Wire Wire Line
+	7461 7830 7115 7830
+Connection ~ 7115 7830
+Wire Wire Line
+	7115 7830 7115 7873
+Wire Wire Line
+	5620 7415 5620 7588
+Wire Wire Line
+	5620 7588 6932 7588
+Wire Wire Line
+	6932 7588 6933 8210
+Wire Wire Line
+	6933 8210 7115 8210
+Connection ~ 5620 7415
+Connection ~ 7115 8210
+Wire Wire Line
+	7115 8210 7115 8243
+Text GLabel 6012 4501 0    57   Input ~ 0
+CAN_L
+Text GLabel 6018 4301 0    57   Input ~ 0
+CAN_H
+Wire Wire Line
+	6478 4501 6012 4501
+Wire Wire Line
+	6018 4301 6478 4301
+Text Label 6478 4301 0    50   ~ 0
+CAN_H
+Text Label 6478 4501 0    50   ~ 0
+CAN_L
+Wire Notes Line
+	5415 3191 6278 3191
+Wire Notes Line
+	6278 3191 6278 4754
+Wire Notes Line
+	6278 4754 5415 4754
+Text Notes 5413 3140 0    79   ~ 0
+Bafang M500/M600\ndisplay connector
+Wire Notes Line
+	5415 3191 5415 4754
+Wire Wire Line
+	7683 3489 7898 3489
+Text Label 7898 3489 0    50   ~ 0
++5V
+NoConn ~ 8040 5405
+NoConn ~ 8040 5305
+NoConn ~ 8040 5205
+Wire Wire Line
+	9440 4805 9655 4805
+Text Label 9655 4805 0    50   ~ 0
++5V
+Wire Wire Line
+	9440 4905 9655 4905
+Text Label 9655 4905 0    50   ~ 0
++3.3V
+Wire Wire Line
+	9440 5505 9655 5505
+Text Label 9655 5505 0    50   ~ 0
+MOSI
+Wire Wire Line
+	9440 5605 9655 5605
+Text Label 9655 5605 0    50   ~ 0
+SCLK
+Wire Wire Line
+	9440 5305 9655 5305
+Text Label 9655 5305 0    50   ~ 0
+C_D
+Wire Wire Line
+	9440 5405 9655 5405
+Text Label 9655 5405 0    50   ~ 0
+MISO
+Wire Wire Line
+	9440 5105 9655 5105
+Text Label 9655 5105 0    50   ~ 0
+CS2
+Wire Wire Line
+	9440 5205 9655 5205
+Text Label 9655 5205 0    50   ~ 0
+CS1
+Wire Wire Line
+	11102 4461 10740 4461
+Text Label 10740 4461 2    50   ~ 0
+SCLK
+Wire Wire Line
+	11102 4361 10740 4361
+Text Label 10740 4361 2    50   ~ 0
+MOSI
+Wire Wire Line
+	11102 4161 10740 4161
+Text Label 10740 4161 2    50   ~ 0
+C_D
+Wire Wire Line
+	11102 4561 10740 4561
+Text Label 10740 4561 2    50   ~ 0
++5V
+NoConn ~ 11102 4261
+Wire Wire Line
+	11102 4061 10740 4061
+Text Label 10740 4061 2    50   ~ 0
+CS1
+Wire Notes Line
+	10832 5947 11842 5947
+Wire Notes Line
+	11842 5947 11834 7148
+Wire Notes Line
+	11835 7162 10834 7165
+Text Notes 10832 5897 0    79   ~ 0
+CANBUS module
+Wire Notes Line
+	10832 5947 10822 7164
+$Comp
+L canbus_module_mcp2515:CANBUS_module MCP2515
+U 1 1 62499AF1
+P 11346 6629
+F 0 "MCP2515" V 11911 6629 50  0000 C CNN
+F 1 "CANBUS_module" V 11820 6629 50  0000 C CNN
+F 2 "" H 11196 6879 50  0001 C CNN
+F 3 "" H 11196 6879 50  0001 C CNN
+	1    11346 6629
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	10996 6329 10634 6329
+Text Label 10634 6329 2    50   ~ 0
++3.3V
+Wire Wire Line
+	10996 6529 10634 6529
+Text Label 10634 6529 2    50   ~ 0
+CS2
+Wire Wire Line
+	10996 6629 10634 6629
+Text Label 10634 6629 2    50   ~ 0
+MISO
+Wire Wire Line
+	10996 6729 10634 6729
+Text Label 10634 6729 2    50   ~ 0
+MOSI
+Wire Wire Line
+	10996 6829 10634 6829
+Text Label 10634 6829 2    50   ~ 0
+SCLK
+Wire Wire Line
+	11696 6529 12058 6529
+Text Label 12058 6529 0    50   ~ 0
+CAN_H
+Wire Wire Line
+	11696 6729 12058 6729
+Text Label 12058 6729 0    50   ~ 0
+CAN_L
+Wire Wire Line
+	10257 6429 10996 6429
+$Comp
+L power:GND #PWR?
+U 1 1 624CB31B
+P 10257 6485
+F 0 "#PWR?" H 10257 6235 50  0001 C CNN
+F 1 "GND" H 10262 6312 50  0000 C CNN
+F 2 "" H 10257 6485 50  0001 C CNN
+F 3 "" H 10257 6485 50  0001 C CNN
+	1    10257 6485
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10257 6429 10257 6485
+NoConn ~ 10996 6929
+$EndSCHEMATC
