@@ -18,10 +18,10 @@ typedef struct
     uint8_t gear_state;
     uint16_t lev_speed;
     uint32_t odometer;
-} ant_lev_common_data_t;
+} antplus_lev_common_data_t;
 
 #define DEFAULT_ANT_LEV_COMMON_DATA() \
-    (ant_lev_common_data_t)      \
+    (antplus_lev_common_data_t)      \
     {                           \
         .travel_mode_state = 0x10,    \
         .system_state     = 0x8,    \

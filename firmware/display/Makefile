@@ -120,15 +120,18 @@ SRC_FILES += \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages/ant_common_page_70.c \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages/ant_common_page_80.c \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages/ant_common_page_81.c \
-  $(PROJ_DIR)/ant_lev/ant_lev.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_1.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_2.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_3.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_4.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_5.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_34.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_page_16.c \
-  $(PROJ_DIR)/ant_lev/pages/ant_lev_common_data.c \
+  $(PROJ_DIR)/antplus_lev/antplus_lev.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_1.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_2.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_3.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_4.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_5.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_34.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_page_16.c \
+  $(PROJ_DIR)/antplus_lev/pages/antplus_lev_common_data.c \
+  $(PROJ_DIR)/antplus_controls/antplus_controls.c \
+  $(PROJ_DIR)/antplus_controls/pages/antplus_controls_page_73.c \
+  $(PROJ_DIR)/antplus_controls/pages/antplus_controls_page_82.c \
   $(PROJ_DIR)/pins.c \
 	$(PROJ_DIR)/utils.c \
 	$(PROJ_DIR)/eeprom.c \
@@ -239,8 +242,10 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/ant_request_controller \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages \
 	$(PROJ_DIR)/include \
-  $(PROJ_DIR)/ant_lev \
-  $(PROJ_DIR)/ant_lev/pages \
+  $(PROJ_DIR)/antplus_lev \
+  $(PROJ_DIR)/antplus_lev/pages \
+  $(PROJ_DIR)/antplus_controls \
+  $(PROJ_DIR)/antplus_controls/pages \
 	$(PROJ_DIR)/ssd1306_driver \
 
 # Libraries common to all targets

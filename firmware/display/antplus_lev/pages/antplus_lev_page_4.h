@@ -17,10 +17,10 @@ typedef struct
     uint16_t fuel_consumption;
     uint8_t battery_voltage;
     uint16_t distance_on_current_charge;
-} ant_lev_page_4_data_t;
+} antplus_lev_page_4_data_t;
 
 #define DEFAULT_ANT_LEV_PAGE4() \
-    (ant_lev_page_4_data_t)      \
+    (antplus_lev_page_4_data_t)      \
     {                           \
         .charging_cycle_count = 0,    \
         .fuel_consumption     = 0,    \
@@ -28,7 +28,7 @@ typedef struct
         .distance_on_current_charge     = 0,    \
     }
 
-void ant_lev_page_4_encode(uint8_t                    * p_page_buffer,
-                           ant_lev_page_4_data_t const * p_page_data);
+void antplus_lev_page_4_encode(uint8_t                    * p_page_buffer,
+                           antplus_lev_page_4_data_t const * p_page_data);
 
 #endif

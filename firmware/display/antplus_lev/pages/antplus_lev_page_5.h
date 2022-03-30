@@ -15,16 +15,16 @@ typedef struct
 {
     uint8_t travel_modes_supported;
     uint16_t wheel_circumference;
-} ant_lev_page_5_data_t;
+} antplus_lev_page_5_data_t;
 
 #define DEFAULT_ANT_LEV_PAGE5() \
-    (ant_lev_page_5_data_t)      \
+    (antplus_lev_page_5_data_t)      \
     {                           \
         .travel_modes_supported = 0x38,    \
         .wheel_circumference     = 2050,    \
     }
 
-void ant_lev_page_5_encode(uint8_t                    * p_page_buffer,
-                           ant_lev_page_5_data_t const * p_page_data);
+void antplus_lev_page_5_encode(uint8_t                    * p_page_buffer,
+                           antplus_lev_page_5_data_t const * p_page_data);
 
 #endif

@@ -7,7 +7,7 @@
  */
 
 #include <stdint.h>
-#include "ant_lev_page_5.h"
+#include "antplus_lev_page_5.h"
 
 typedef struct
 {
@@ -18,12 +18,12 @@ typedef struct
     uint8_t reserved_2;
     uint8_t reserved_3;
     uint8_t reserved_4;
-} ant_lev_page_5_data_layout_t;
+} antplus_lev_page_5_data_layout_t;
 
-void ant_lev_page_5_encode(uint8_t                    * p_page_buffer,
-                           ant_lev_page_5_data_t const * p_page_data)
+void antplus_lev_page_5_encode(uint8_t                    * p_page_buffer,
+                           antplus_lev_page_5_data_t const * p_page_data)
 {
-    ant_lev_page_5_data_layout_t * p_outcoming_data = (ant_lev_page_5_data_layout_t *)p_page_buffer;
+    antplus_lev_page_5_data_layout_t * p_outcoming_data = (antplus_lev_page_5_data_layout_t *)p_page_buffer;
 
     p_outcoming_data->travel_modes_supported = p_page_data->travel_modes_supported;
     p_outcoming_data->wheel_circumference_lsb = ((uint8_t) p_page_data->wheel_circumference) & 0xff;

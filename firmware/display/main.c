@@ -36,7 +36,7 @@
 #include "ble_services.h"
 #include "nrf_sdh_ant.h"
 #include "ant_key_manager.h"
-#include "ant_lev.h"
+#include "antplus_lev.h"
 #include "pins.h"
 #include "uart.h"
 #include "nrf_drv_uart.h"
@@ -122,21 +122,21 @@ void rt_processing_start(void)
 #define ANTPLUS_NETWORK_NUM 0
 #define ANT_LEV_ANT_OBSERVER_PRIO 1
 
-void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event);
-void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event);
+void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event);
+void antplus_lev_evt_handler_post(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event);
 
-LEV_SENS_CHANNEL_CONFIG_DEF(m_ant_lev,
+LEV_SENS_CHANNEL_CONFIG_DEF(m_antplus_lev,
                             LEV_CHANNEL_NUM,
                             CHAN_ID_TRANS_TYPE,
                             CHAN_ID_DEV_NUM,
                             ANTPLUS_NETWORK_NUM);
-LEV_SENS_PROFILE_CONFIG_DEF(m_ant_lev,
-                            ant_lev_evt_handler_pre,
-                            ant_lev_evt_handler_post);
+LEV_SENS_PROFILE_CONFIG_DEF(m_antplus_lev,
+                            antplus_lev_evt_handler_pre,
+                            antplus_lev_evt_handler_post);
 
-static ant_lev_profile_t m_ant_lev;
+static antplus_lev_profile_t m_antplus_lev;
 
-NRF_SDH_ANT_OBSERVER(m_ant_observer, ANT_LEV_ANT_OBSERVER_PRIO, ant_lev_sens_evt_handler, &m_ant_lev);
+NRF_SDH_ANT_OBSERVER(m_ant_observer, ANT_LEV_ANT_OBSERVER_PRIO, antplus_lev_sens_evt_handler, &m_antplus_lev);
 
 #define DEVICE_NAME "TSDZ2_wireless" /**< Name of device. Will be included in the advertising data. */
 
@@ -305,7 +305,7 @@ static void ble_evt_handler(ble_evt_t const *p_ble_evt, void *p_context)
   }
 }
 
-void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
+void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event)
 {
   nrf_pwr_mgmt_feed();
   // set the assist level
@@ -463,7 +463,7 @@ void ant_lev_evt_handler_pre(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
   }
 }
 
-void ant_lev_evt_handler_post(ant_lev_profile_t *p_profile, ant_lev_evt_t event)
+void antplus_lev_evt_handler_post(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event)
 {
   nrf_pwr_mgmt_feed();
 
@@ -635,23 +635,23 @@ static void ant_setup(void)
   APP_ERROR_CHECK(err_code);
 
   ui_vars_t *p_ui_vars = get_ui_vars();
-  m_ant_lev_channel_lev_sens_config.device_number = p_ui_vars->ui8_ant_device_id;
+  m_antplus_lev_channel_lev_sens_config.device_number = p_ui_vars->ui8_ant_device_id;
 
-  err_code = ant_lev_sens_init(&m_ant_lev,
-                               &m_ant_lev_channel_lev_sens_config,
-                               LEV_SENS_PROFILE_CONFIG(m_ant_lev));
+  err_code = antplus_lev_sens_init(&m_antplus_lev,
+                               &m_antplus_lev_channel_lev_sens_config,
+                               LEV_SENS_PROFILE_CONFIG(m_antplus_lev));
   APP_ERROR_CHECK(err_code);
 
   // fill manufacturer's common data page.
-  m_ant_lev.page_80 = ANT_COMMON_page80(LEV_HW_REVISION,
+  m_antplus_lev.page_80 = ANT_COMMON_page80(LEV_HW_REVISION,
                                         LEV_MANUFACTURER_ID,
                                         LEV_MODEL_NUMBER);
   // fill product's common data page.
-  m_ant_lev.page_81 = ANT_COMMON_page81(LEV_SW_REVISION_MAJOR,
+  m_antplus_lev.page_81 = ANT_COMMON_page81(LEV_SW_REVISION_MAJOR,
                                         LEV_SW_REVISION_MINOR,
                                         LEV_SERIAL_NUMBER);
 
-  err_code = ant_lev_sens_open(&m_ant_lev);
+  err_code = antplus_lev_sens_open(&m_antplus_lev);
   APP_ERROR_CHECK(err_code);
 
   // now setup the ANT generic channels
@@ -1807,16 +1807,6 @@ void system_power_off(uint8_t updateDistanceOdo)
   // block here but we should not get here anyway
   while (1)
     ;
-}
-
-static uint8_t payload_unchanged(uint8_t *old, uint8_t *new, uint8_t len)
-{
-  if (memcmp(old, new, len) == 0)
-    return 1;
-
-  memcpy(old, new, len);
-
-  return 0;
 }
 
 int main(void)

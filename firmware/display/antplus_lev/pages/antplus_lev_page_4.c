@@ -7,7 +7,7 @@
  */
 
 #include <stdint.h>
-#include "ant_lev_page_4.h"
+#include "antplus_lev_page_4.h"
 
 typedef struct
 {
@@ -18,12 +18,12 @@ typedef struct
     uint8_t battery_voltage;
     uint8_t distance_on_current_charge_lsb;
     uint8_t distance_on_current_charge_msb;
-} ant_lev_page_4_data_layout_t;
+} antplus_lev_page_4_data_layout_t;
 
-void ant_lev_page_4_encode(uint8_t *p_page_buffer,
-                           ant_lev_page_4_data_t const *p_page_data)
+void antplus_lev_page_4_encode(uint8_t *p_page_buffer,
+                           antplus_lev_page_4_data_t const *p_page_data)
 {
-    ant_lev_page_4_data_layout_t *p_outcoming_data = (ant_lev_page_4_data_layout_t *)p_page_buffer;
+    antplus_lev_page_4_data_layout_t *p_outcoming_data = (antplus_lev_page_4_data_layout_t *)p_page_buffer;
 
     p_outcoming_data->charging_cycle_count_lsb = ((uint8_t)p_page_data->charging_cycle_count) & 0xff;
     p_outcoming_data->charging_cycle_count__fuel_consumption = ((uint8_t)(p_page_data->charging_cycle_count >> 8)) & 0x0f;

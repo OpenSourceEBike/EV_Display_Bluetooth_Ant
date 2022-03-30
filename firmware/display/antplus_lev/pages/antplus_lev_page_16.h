@@ -23,10 +23,10 @@ typedef struct
     bool light_beam;
     bool turn_signal_left;
     bool turn_signal_right;
-} ant_lev_page_16_data_t;
+} antplus_lev_page_16_data_t;
 
 #define DEFAULT_ANT_LEV_PAGE16() \
-    (ant_lev_page_16_data_t)      \
+    (antplus_lev_page_16_data_t)      \
     {                           \
         .wheel_circumference = 1050,    \
         .travel_mode     = 0,    \
@@ -39,7 +39,7 @@ typedef struct
         .turn_signal_right     = false,    \
     }
 
-void ant_lev_page_16_decode(const uint8_t * p_page_buffer,
-                           ant_lev_page_16_data_t * p_page_data);
+void antplus_lev_page_16_decode(const uint8_t * p_page_buffer,
+                           antplus_lev_page_16_data_t * p_page_data);
 
 #endif

@@ -11,19 +11,19 @@
 #include "nrf_assert.h"
 #include "app_error.h"
 #include "ant_interface.h"
-#include "ant_lev_pages.h"
-#include "ant_lev.h"
+#include "antplus_lev_pages.h"
+#include "antplus_lev.h"
 #include "app_error.h"
 
 #define COMMON_DATA_INTERVAL 20 /**< Common data page is sent every 20th message. */
 
 typedef struct
 {
-    ant_lev_page_t page_number;
+    antplus_lev_page_t page_number;
     uint8_t page_payload[7];
-} ant_lev_message_layout_t;
+} antplus_lev_message_layout_t;
 
-static ret_code_t ant_lev_init(ant_lev_profile_t *p_profile,
+static ret_code_t antplus_lev_init(antplus_lev_profile_t *p_profile,
                                ant_channel_config_t const *p_channel_config)
 {
     p_profile->channel_number = p_channel_config->channel_number;
@@ -42,9 +42,9 @@ static ret_code_t ant_lev_init(ant_lev_profile_t *p_profile,
     return ant_channel_init(p_channel_config);
 }
 
-ret_code_t ant_lev_sens_init(ant_lev_profile_t *p_profile,
+ret_code_t antplus_lev_sens_init(antplus_lev_profile_t *p_profile,
                              ant_channel_config_t const *p_channel_config,
-                             ant_lev_sens_config_t const *p_sens_config)
+                             antplus_lev_sens_config_t const *p_sens_config)
 {
     ASSERT(p_profile != NULL);
     ASSERT(p_channel_config != NULL);
@@ -64,13 +64,13 @@ ret_code_t ant_lev_sens_init(ant_lev_profile_t *p_profile,
     p_profile->_cb.p_sens_cb->message_counter = 0;
     p_profile->_cb.p_sens_cb->common_page_number = ANT_LEV_PAGE_80;
 
-    return ant_lev_init(p_profile, p_channel_config);
+    return antplus_lev_init(p_profile, p_channel_config);
 }
 
-static ant_lev_page_t next_page_number_get(ant_lev_profile_t *p_profile)
+static antplus_lev_page_t next_page_number_get(antplus_lev_profile_t *p_profile)
 {
-    ant_lev_sens_cb_t *p_lev_cb = p_profile->_cb.p_sens_cb;
-    ant_lev_page_t page_number;
+    antplus_lev_sens_cb_t *p_lev_cb = p_profile->_cb.p_sens_cb;
+    antplus_lev_page_t page_number;
 
     if (ant_request_controller_pending_get(&(p_lev_cb->req_controller), (uint8_t *)&page_number))
     {
@@ -126,42 +126,42 @@ static ant_lev_page_t next_page_number_get(ant_lev_profile_t *p_profile)
     return page_number;
 }
 
-static void sens_message_encode(ant_lev_profile_t *p_profile, uint8_t *p_message_payload)
+static void sens_message_encode(antplus_lev_profile_t *p_profile, uint8_t *p_message_payload)
 {
-    ant_lev_message_layout_t *p_lev_message_payload =
-        (ant_lev_message_layout_t *)p_message_payload;
+    antplus_lev_message_layout_t *p_lev_message_payload =
+        (antplus_lev_message_layout_t *)p_message_payload;
 
     p_lev_message_payload->page_number = next_page_number_get(p_profile);
 
-    p_profile->evt_handler_pre(p_profile, (ant_lev_evt_t)p_lev_message_payload->page_number);
+    p_profile->evt_handler_pre(p_profile, (antplus_lev_evt_t)p_lev_message_payload->page_number);
 
     switch (p_lev_message_payload->page_number)
     {
     case ANT_LEV_PAGE_1:
-        ant_lev_page_1_encode(p_lev_message_payload->page_payload, &(p_profile->page_1),
+        antplus_lev_page_1_encode(p_lev_message_payload->page_payload, &(p_profile->page_1),
                               &(p_profile->common));
         break;
 
     case ANT_LEV_PAGE_2:
-        ant_lev_page_2_encode(p_lev_message_payload->page_payload, &(p_profile->page_2),
+        antplus_lev_page_2_encode(p_lev_message_payload->page_payload, &(p_profile->page_2),
                               &(p_profile->common));
         break;
 
     case ANT_LEV_PAGE_3:
-        ant_lev_page_3_encode(p_lev_message_payload->page_payload, &(p_profile->page_3),
+        antplus_lev_page_3_encode(p_lev_message_payload->page_payload, &(p_profile->page_3),
                               &(p_profile->common));
         break;
 
     case ANT_LEV_PAGE_4:
-        ant_lev_page_4_encode(p_lev_message_payload->page_payload, &(p_profile->page_4));
+        antplus_lev_page_4_encode(p_lev_message_payload->page_payload, &(p_profile->page_4));
         break;
 
     case ANT_LEV_PAGE_5:
-        ant_lev_page_5_encode(p_lev_message_payload->page_payload, &(p_profile->page_5));
+        antplus_lev_page_5_encode(p_lev_message_payload->page_payload, &(p_profile->page_5));
         break;
 
     case ANT_LEV_PAGE_34:
-        ant_lev_page_34_encode(p_lev_message_payload->page_payload, &(p_profile->page_34),
+        antplus_lev_page_34_encode(p_lev_message_payload->page_payload, &(p_profile->page_34),
                                &(p_profile->common));
         break;
 
@@ -178,15 +178,15 @@ static void sens_message_encode(ant_lev_profile_t *p_profile, uint8_t *p_message
     }
 }
 
-static void disp_message_decode(ant_lev_profile_t *p_profile, uint8_t *p_message_payload)
+static void disp_message_decode(antplus_lev_profile_t *p_profile, uint8_t *p_message_payload)
 {
-    const ant_lev_message_layout_t *p_lev_message_payload =
-        (ant_lev_message_layout_t *)p_message_payload;
+    const antplus_lev_message_layout_t *p_lev_message_payload =
+        (antplus_lev_message_layout_t *)p_message_payload;
 
     switch (p_lev_message_payload->page_number)
     {
     case ANT_LEV_PAGE_16:
-        ant_lev_page_16_decode(p_lev_message_payload->page_payload,
+        antplus_lev_page_16_decode(p_lev_message_payload->page_payload,
                                &(p_profile->page_16));
         if (p_profile->page_16.light)
         {
@@ -204,20 +204,20 @@ static void disp_message_decode(ant_lev_profile_t *p_profile, uint8_t *p_message
         return;
     }
 
-    p_profile->evt_handler_post(p_profile, (ant_lev_evt_t)p_lev_message_payload->page_number);
+    p_profile->evt_handler_post(p_profile, (antplus_lev_evt_t)p_lev_message_payload->page_number);
 }
 
-void ant_lev_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
+void antplus_lev_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
 {
     ASSERT(p_context != NULL);
     ASSERT(p_ant_evt != NULL);
-    ant_lev_profile_t *p_profile = (ant_lev_profile_t *)p_context;
+    antplus_lev_profile_t *p_profile = (antplus_lev_profile_t *)p_context;
 
     if (p_ant_evt->channel == p_profile->channel_number)
     {
         uint32_t err_code;
         uint8_t p_message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE];
-        ant_lev_sens_cb_t *p_lev_cb = p_profile->_cb.p_sens_cb;
+        antplus_lev_sens_cb_t *p_lev_cb = p_profile->_cb.p_sens_cb;
         ant_request_controller_sens_evt_handler(&(p_lev_cb->req_controller), p_ant_evt);
 
         switch (p_ant_evt->event)
@@ -257,7 +257,7 @@ void ant_lev_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
     }
 }
 
-ret_code_t ant_lev_sens_open(ant_lev_profile_t *p_profile)
+ret_code_t antplus_lev_sens_open(antplus_lev_profile_t *p_profile)
 {
     ASSERT(p_profile != NULL);
 

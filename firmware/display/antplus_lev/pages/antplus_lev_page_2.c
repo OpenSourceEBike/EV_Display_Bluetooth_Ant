@@ -7,8 +7,8 @@
  */
 
 #include <stdint.h>
-#include "ant_lev_page_2.h"
-#include "ant_lev_common_data.h"
+#include "antplus_lev_page_2.h"
+#include "antplus_lev_common_data.h"
 
 typedef struct
 {
@@ -19,13 +19,13 @@ typedef struct
     uint8_t remaining_range_msn;
     uint8_t lev_speed_lsb;
     uint8_t lev_speed_msn;
-} ant_lev_page_2_data_layout_t;
+} antplus_lev_page_2_data_layout_t;
 
-void ant_lev_page_2_encode(uint8_t * p_page_buffer,
-                            ant_lev_page_2_data_t const * p_page_data,
-                            ant_lev_common_data_t const * p_common_data)
+void antplus_lev_page_2_encode(uint8_t * p_page_buffer,
+                            antplus_lev_page_2_data_t const * p_page_data,
+                            antplus_lev_common_data_t const * p_common_data)
 {
-    ant_lev_page_2_data_layout_t * p_outcoming_data = (ant_lev_page_2_data_layout_t *)p_page_buffer;
+    antplus_lev_page_2_data_layout_t * p_outcoming_data = (antplus_lev_page_2_data_layout_t *)p_page_buffer;
 
     p_outcoming_data->odometer_lsb = ((uint8_t) p_common_data->odometer) & 0xff;
     p_outcoming_data->odometer = ((uint8_t) (p_common_data->odometer >> 8)) & 0xff;

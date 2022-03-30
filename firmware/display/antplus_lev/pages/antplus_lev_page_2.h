@@ -10,21 +10,21 @@
 #define ANT_LEV_PAGE_2_H__
 
 #include <stdint.h>
-#include "ant_lev_common_data.h"
+#include "antplus_lev_common_data.h"
 
 typedef struct
 {
     uint16_t remaining_range;
-} ant_lev_page_2_data_t;
+} antplus_lev_page_2_data_t;
 
 #define DEFAULT_ANT_LEV_PAGE2() \
-    (ant_lev_page_2_data_t)      \
+    (antplus_lev_page_2_data_t)      \
     {                           \
         .remaining_range = 0,    \
     }
 
-void ant_lev_page_2_encode(uint8_t * p_page_buffer,
-                            ant_lev_page_2_data_t const * p_page_data,
-                            ant_lev_common_data_t const * p_common_data);
+void antplus_lev_page_2_encode(uint8_t * p_page_buffer,
+                            antplus_lev_page_2_data_t const * p_page_data,
+                            antplus_lev_common_data_t const * p_common_data);
 
 #endif

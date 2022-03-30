@@ -317,11 +317,11 @@ void mainScreenOnDirtyClean(void) {
   UG_DrawLine(63, 60, 63, 120, C_WHITE);
 
   // find if the next lines should be draw or not (white color to draw them)
-  UG_COLOR street_mode_color = C_BLACK;
-  if (ui_vars.ui8_street_mode_function_enabled &&
-      ui_vars.ui8_street_mode_enabled) {
-    street_mode_color = C_WHITE;
-  }
+  // UG_COLOR street_mode_color = C_BLACK;
+  // if (ui_vars.ui8_street_mode_function_enabled &&
+  //     ui_vars.ui8_street_mode_enabled) {
+  //   street_mode_color = C_WHITE;
+  // }
 
   // UG_DrawLine(0, 0, 63, 0, street_mode_color);
   // UG_DrawLine(0, 0, 0, 61, street_mode_color);

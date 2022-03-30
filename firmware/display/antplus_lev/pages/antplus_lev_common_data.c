@@ -7,7 +7,7 @@
  */
 
 #include <stdint.h>
-#include "ant_lev_common_data.h"
+#include "antplus_lev_common_data.h"
 
 typedef struct
 {
@@ -18,5 +18,5 @@ typedef struct
     uint8_t error_message;
     uint8_t lev_speed_lsb;
     uint8_t lev_speed_msn;
-} ant_lev_common_data_layout_t;
+} antplus_lev_common_data_layout_t;
 

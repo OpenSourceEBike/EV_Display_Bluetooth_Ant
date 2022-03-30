@@ -135,34 +135,34 @@ static Field walkAssistMenus[] =
             // FIELD_EDITABLE_UINT("Level 20", &ui_vars.ui8_walk_assist_level_factor[19], "", 0, 100),
 				FIELD_END };
 
-static Field startupPowerMenus[] =
-		{
-						FIELD_EDITABLE_ENUM("Feature", &ui_vars.ui8_startup_motor_power_boost_feature_enabled, "disable", "enable"), // FIXME, share one array of disable/enable strings
-						FIELD_EDITABLE_ENUM("Active on", &ui_vars.ui8_startup_motor_power_boost_always, "startup", "always"),
-						FIELD_EDITABLE_ENUM(_S("Limit to max-power", "Lim to max"), &ui_vars.ui8_startup_motor_power_boost_limit_power, "no", "yes"),
-						FIELD_EDITABLE_UINT("Duration", &ui_vars.ui8_startup_motor_power_boost_time, "secs", 0, 255, .div_digits = 1),
-						FIELD_EDITABLE_UINT("Fade", &ui_vars.ui8_startup_motor_power_boost_fade_time, "secs", 0, 255, .div_digits = 1),
-						FIELD_EDITABLE_UINT("Level 1", &ui_vars.ui16_startup_motor_power_boost_factor[0], "", 1, 65535, .div_digits = 3),
-						FIELD_EDITABLE_UINT("Level 2", &ui_vars.ui16_startup_motor_power_boost_factor[1], "", 1, 65535, .div_digits = 3),
-						FIELD_EDITABLE_UINT("Level 3", &ui_vars.ui16_startup_motor_power_boost_factor[2], "", 1, 65535, .div_digits = 3),
-						FIELD_EDITABLE_UINT("Level 4", &ui_vars.ui16_startup_motor_power_boost_factor[3], "", 1, 65535, .div_digits = 3),
-						FIELD_EDITABLE_UINT("Level 5", &ui_vars.ui16_startup_motor_power_boost_factor[4], "", 1, 65535, .div_digits = 3),
-						FIELD_EDITABLE_UINT("Level 6", &ui_vars.ui16_startup_motor_power_boost_factor[5], "", 1, 65535, .div_digits = 3),
-						FIELD_EDITABLE_UINT("Level 7", &ui_vars.ui16_startup_motor_power_boost_factor[6], "", 1, 65535, .div_digits = 3),
-						// FIELD_EDITABLE_UINT("Level 8", &ui_vars.ui16_startup_motor_power_boost_factor[7], "", 1, 65535, .div_digits = 3),
-						// FIELD_EDITABLE_UINT("Level 9", &ui_vars.ui16_startup_motor_power_boost_factor[8], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 10", &ui_vars.ui16_startup_motor_power_boost_factor[9], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 11", &ui_vars.ui16_startup_motor_power_boost_factor[10], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 12", &ui_vars.ui16_startup_motor_power_boost_factor[11], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 13", &ui_vars.ui16_startup_motor_power_boost_factor[12], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 14", &ui_vars.ui16_startup_motor_power_boost_factor[13], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 15", &ui_vars.ui16_startup_motor_power_boost_factor[14], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 16", &ui_vars.ui16_startup_motor_power_boost_factor[15], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 17", &ui_vars.ui16_startup_motor_power_boost_factor[16], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 18", &ui_vars.ui16_startup_motor_power_boost_factor[17], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 19", &ui_vars.ui16_startup_motor_power_boost_factor[18], "", 1, 65535, .div_digits = 3),
-            // FIELD_EDITABLE_UINT("Level 20", &ui_vars.ui16_startup_motor_power_boost_factor[19], "", 1, 65535, .div_digits = 3),
-				FIELD_END };
+// static Field startupPowerMenus[] =
+// 		{
+// 						FIELD_EDITABLE_ENUM("Feature", &ui_vars.ui8_startup_motor_power_boost_feature_enabled, "disable", "enable"), // FIXME, share one array of disable/enable strings
+// 						FIELD_EDITABLE_ENUM("Active on", &ui_vars.ui8_startup_motor_power_boost_always, "startup", "always"),
+// 						FIELD_EDITABLE_ENUM(_S("Limit to max-power", "Lim to max"), &ui_vars.ui8_startup_motor_power_boost_limit_power, "no", "yes"),
+// 						FIELD_EDITABLE_UINT("Duration", &ui_vars.ui8_startup_motor_power_boost_time, "secs", 0, 255, .div_digits = 1),
+// 						FIELD_EDITABLE_UINT("Fade", &ui_vars.ui8_startup_motor_power_boost_fade_time, "secs", 0, 255, .div_digits = 1),
+// 						FIELD_EDITABLE_UINT("Level 1", &ui_vars.ui16_startup_motor_power_boost_factor[0], "", 1, 65535, .div_digits = 3),
+// 						FIELD_EDITABLE_UINT("Level 2", &ui_vars.ui16_startup_motor_power_boost_factor[1], "", 1, 65535, .div_digits = 3),
+// 						FIELD_EDITABLE_UINT("Level 3", &ui_vars.ui16_startup_motor_power_boost_factor[2], "", 1, 65535, .div_digits = 3),
+// 						FIELD_EDITABLE_UINT("Level 4", &ui_vars.ui16_startup_motor_power_boost_factor[3], "", 1, 65535, .div_digits = 3),
+// 						FIELD_EDITABLE_UINT("Level 5", &ui_vars.ui16_startup_motor_power_boost_factor[4], "", 1, 65535, .div_digits = 3),
+// 						FIELD_EDITABLE_UINT("Level 6", &ui_vars.ui16_startup_motor_power_boost_factor[5], "", 1, 65535, .div_digits = 3),
+// 						FIELD_EDITABLE_UINT("Level 7", &ui_vars.ui16_startup_motor_power_boost_factor[6], "", 1, 65535, .div_digits = 3),
+// 						// FIELD_EDITABLE_UINT("Level 8", &ui_vars.ui16_startup_motor_power_boost_factor[7], "", 1, 65535, .div_digits = 3),
+// 						// FIELD_EDITABLE_UINT("Level 9", &ui_vars.ui16_startup_motor_power_boost_factor[8], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 10", &ui_vars.ui16_startup_motor_power_boost_factor[9], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 11", &ui_vars.ui16_startup_motor_power_boost_factor[10], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 12", &ui_vars.ui16_startup_motor_power_boost_factor[11], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 13", &ui_vars.ui16_startup_motor_power_boost_factor[12], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 14", &ui_vars.ui16_startup_motor_power_boost_factor[13], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 15", &ui_vars.ui16_startup_motor_power_boost_factor[14], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 16", &ui_vars.ui16_startup_motor_power_boost_factor[15], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 17", &ui_vars.ui16_startup_motor_power_boost_factor[16], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 18", &ui_vars.ui16_startup_motor_power_boost_factor[17], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 19", &ui_vars.ui16_startup_motor_power_boost_factor[18], "", 1, 65535, .div_digits = 3),
+//             // FIELD_EDITABLE_UINT("Level 20", &ui_vars.ui16_startup_motor_power_boost_factor[19], "", 1, 65535, .div_digits = 3),
+// 				FIELD_END };
 
 static Field motorTempMenus[] =
 		{

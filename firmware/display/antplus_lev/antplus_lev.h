@@ -15,7 +15,7 @@
 #include "nrf_sdh_ant.h"
 #include "ant_channel_config.h"
 #include "ant_request_controller.h"
-#include "ant_lev_pages.h"
+#include "antplus_lev_pages.h"
 #include "sdk_errors.h"
 
 #define LEV_DEVICE_TYPE       0x14u // ANT+ LEV datasheet: Device type reserved for ANT+ LEV.
@@ -48,8 +48,8 @@ ant_channel_config_t   CONCAT_2(NAME,_channel_lev_sens_config) =   \
 #define LEV_SENS_PROFILE_CONFIG_DEF(NAME,                                       \
                                     EVT_HANDLER_PRE,                            \
                                     EVT_HANDLER_POST)                           \
-static ant_lev_sens_cb_t            CONCAT_2(NAME,_lev_sens_cb);                \
-static const ant_lev_sens_config_t  CONCAT_2(NAME,_profile_lev_sens_config) =   \
+static antplus_lev_sens_cb_t            CONCAT_2(NAME,_lev_sens_cb);                \
+static const antplus_lev_sens_config_t  CONCAT_2(NAME,_profile_lev_sens_config) =   \
     {                                                                           \
         .p_cb                       = &CONCAT_2(NAME,_lev_sens_cb),             \
         .evt_handler_pre            = (EVT_HANDLER_PRE),                        \
@@ -68,7 +68,7 @@ typedef enum{
     ANT_LEV_PAGE_70 = ANT_COMMON_PAGE_70,
     ANT_LEV_PAGE_80 = ANT_COMMON_PAGE_80,
     ANT_LEV_PAGE_81 = ANT_COMMON_PAGE_81,
-} ant_lev_page_t;
+} antplus_lev_page_t;
 
 typedef enum{
     ANT_LEV_PAGE_1_UPDATED  = ANT_LEV_PAGE_1,
@@ -82,15 +82,15 @@ typedef enum{
     ANT_LEV_PAGE_81_UPDATED = ANT_LEV_PAGE_81,
     ANT_LEV_PAGE_REQUEST_SUCCESS,
     ANT_LEV_PAGE_REQUEST_FAILED,
-} ant_lev_evt_t;
+} antplus_lev_evt_t;
 
-// Forward declaration of the ant_lev_profile_t type.
-typedef struct ant_lev_profile_s ant_lev_profile_t;
+// Forward declaration of the antplus_lev_profile_t type.
+typedef struct antplus_lev_profile_s antplus_lev_profile_t;
 
 /**@brief SDM event handler type. */
-typedef void (* ant_lev_evt_handler_t) (ant_lev_profile_t *, ant_lev_evt_t);
+typedef void (* antplus_lev_evt_handler_t) (antplus_lev_profile_t *, antplus_lev_evt_t);
 
-#include "ant_lev_local.h"
+#include "antplus_lev_local.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -99,40 +99,40 @@ extern "C" {
 /**@brief LEV Sensor configuration structure. */
 typedef struct
 {
-    ant_lev_sens_cb_t     * p_cb;                       ///< Pointer to the data buffer for internal use.
-    ant_lev_evt_handler_t   evt_handler_pre;                ///< Event handler to be called for handling events in the LEV profile.
-    ant_lev_evt_handler_t   evt_handler_post;                ///< Event handler to be called for handling events in the LEV profile.
-} ant_lev_sens_config_t;
+    antplus_lev_sens_cb_t     * p_cb;                       ///< Pointer to the data buffer for internal use.
+    antplus_lev_evt_handler_t   evt_handler_pre;                ///< Event handler to be called for handling events in the LEV profile.
+    antplus_lev_evt_handler_t   evt_handler_post;                ///< Event handler to be called for handling events in the LEV profile.
+} antplus_lev_sens_config_t;
 
-struct ant_lev_profile_s
+struct antplus_lev_profile_s
 {
     uint8_t                     channel_number; ///< Channel number assigned to the profile.
     union {
-        ant_lev_sens_cb_t * p_sens_cb;
+        antplus_lev_sens_cb_t * p_sens_cb;
     } _cb;                                      ///< Pointer to internal control block.
-    ant_lev_evt_handler_t       evt_handler_pre;    ///< Event handler to be called for handling events in the LEV profile.
-    ant_lev_evt_handler_t       evt_handler_post;    ///< Event handler to be called for handling events in the LEV profile.
-    ant_lev_page_1_data_t       page_1;         ///< Page 1.
-    ant_lev_page_2_data_t       page_2;         ///< Page 2.
-    ant_lev_page_3_data_t       page_3;         ///< Page 3.
-    ant_lev_page_4_data_t       page_4;         ///< Page 4.
-    ant_lev_page_5_data_t       page_5;         ///< Page 5.
-    ant_lev_page_16_data_t      page_16;        ///< Page 16.
-    ant_lev_page_34_data_t      page_34;        ///< Page 34.
+    antplus_lev_evt_handler_t       evt_handler_pre;    ///< Event handler to be called for handling events in the LEV profile.
+    antplus_lev_evt_handler_t       evt_handler_post;    ///< Event handler to be called for handling events in the LEV profile.
+    antplus_lev_page_1_data_t       page_1;         ///< Page 1.
+    antplus_lev_page_2_data_t       page_2;         ///< Page 2.
+    antplus_lev_page_3_data_t       page_3;         ///< Page 3.
+    antplus_lev_page_4_data_t       page_4;         ///< Page 4.
+    antplus_lev_page_5_data_t       page_5;         ///< Page 5.
+    antplus_lev_page_16_data_t      page_16;        ///< Page 16.
+    antplus_lev_page_34_data_t      page_34;        ///< Page 34.
     antplus_common_page80_data_t    page_80;        ///< Page 80.
     antplus_common_page81_data_t    page_81;        ///< Page 81.
-    ant_lev_common_data_t       common;         ///< SDM common data.
+    antplus_lev_common_data_t       common;         ///< SDM common data.
 };
 
-ret_code_t ant_lev_sens_init(ant_lev_profile_t           * p_profile,
+ret_code_t antplus_lev_sens_init(antplus_lev_profile_t           * p_profile,
                              ant_channel_config_t const  * p_channel_config,
-                             ant_lev_sens_config_t const * p_sens_config);
+                             antplus_lev_sens_config_t const * p_sens_config);
 
-ret_code_t ant_lev_sens_open(ant_lev_profile_t * p_profile);
+ret_code_t antplus_lev_sens_open(antplus_lev_profile_t * p_profile);
 
-ret_code_t ant_lev_page_request(ant_lev_profile_t * p_profile, antplus_common_page70_data_t * p_page_70);
+ret_code_t antplus_lev_page_request(antplus_lev_profile_t * p_profile, antplus_common_page70_data_t * p_page_70);
 
-void ant_lev_sens_evt_handler(ant_evt_t * p_ant_evt, void * p_context);
+void antplus_lev_sens_evt_handler(ant_evt_t * p_ant_evt, void * p_context);
 
 #ifdef __cplusplus
 }
