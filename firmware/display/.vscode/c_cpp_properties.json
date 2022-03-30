@@ -7,7 +7,7 @@
                 "${workspaceFolder}/../common_firmware/include/**"
             ],
             "forcedInclude": [
-                "${workspaceFolder}/nRF5_SDK_16.0.0/sdk_config.h"
+                "${workspaceFolder}/include/sdk_config.h"
             ],
             "defines": [
                 "APP_TIMER_V2",

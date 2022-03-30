@@ -50,54 +50,83 @@ const configurations_t m_configurations_defaults = {
   .ui8_motor_current_control_mode = DEFAULT_VALUE_MOTOR_CURRENT_CONTROL_MODE,
   .ui8_motor_assistance_startup_without_pedal_rotation = DEFAULT_VALUE_MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION,
   .ui16_assist_level_factor = {
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_1,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_2,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_3,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_4,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_5,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_6,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_7,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_1,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_2,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_3,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_4,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_5,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_6,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_7,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_8,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_9,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_10,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_11,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_12,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_13,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_14,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_15,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_16,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_17,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_18,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_19,
+    DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_20,
   },
   .ui8_number_of_assist_levels = DEFAULT_VALUE_NUMBER_OF_ASSIST_LEVELS,
   .ui8_startup_motor_power_boost_feature_enabled = DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_FEATURE_ENABLED,
   .ui8_startup_motor_power_boost_always = DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ALWAYS,
   .ui16_startup_motor_power_boost_factor = {
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_1,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_2,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_3,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_4,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_5,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_6,
-  DEFAULT_VALUE_ASSIST_LEVEL_FACTOR_7,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_1,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_2,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_3,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_4,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_5,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_6,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_7,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_8,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_9,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_10,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_11,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_12,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_13,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_14,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_15,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_16,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_17,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_18,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_19,
+    DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_ASSIST_LEVEL_20,  
   },
-  .ui8_startup_motor_power_boost_time =
-  DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_TIME,
-  .ui8_startup_motor_power_boost_fade_time =
-  DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_FADE_TIME,
-  .ui8_temperature_limit_feature_enabled =
-  DEFAULT_VALUE_MOTOR_TEMPERATURE_FEATURE_ENABLE,
-  .ui8_motor_temperature_min_value_to_limit =
-  DEFAULT_VALUE_MOTOR_TEMPERATURE_MIN_VALUE_LIMIT,
-  .ui8_motor_temperature_max_value_to_limit =
-  DEFAULT_VALUE_MOTOR_TEMPERATURE_MAX_VALUE_LIMIT,
-  .ui16_battery_voltage_reset_wh_counter_x10 =
-  DEFAULT_VALUE_BATTERY_VOLTAGE_RESET_WH_COUNTER_X10,
-  .ui8_system_power_off_time_minutes =
-  DEFAULT_VALUE_LCD_POWER_OFF_TIME,
-  .ui16_battery_pack_resistance_x1000 =
-  DEFAULT_VALUE_BATTERY_PACK_RESISTANCE,
-  .ui32_odometer_x10 =
-  DEFAULT_VALUE_ODOMETER_X10,
-  .ui8_walk_assist_feature_enabled =
-  DEFAULT_VALUE_WALK_ASSIST_FEATURE_ENABLED,
+  .ui8_startup_motor_power_boost_time = DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_TIME,
+  .ui8_startup_motor_power_boost_fade_time = DEFAULT_VALUE_STARTUP_MOTOR_POWER_BOOST_FADE_TIME,
+  .ui8_temperature_limit_feature_enabled = DEFAULT_VALUE_MOTOR_TEMPERATURE_FEATURE_ENABLE,
+  .ui8_motor_temperature_min_value_to_limit = DEFAULT_VALUE_MOTOR_TEMPERATURE_MIN_VALUE_LIMIT,
+  .ui8_motor_temperature_max_value_to_limit = DEFAULT_VALUE_MOTOR_TEMPERATURE_MAX_VALUE_LIMIT,
+  .ui16_battery_voltage_reset_wh_counter_x10 = DEFAULT_VALUE_BATTERY_VOLTAGE_RESET_WH_COUNTER_X10,
+  .ui8_system_power_off_time_minutes = DEFAULT_VALUE_LCD_POWER_OFF_TIME,
+  .ui16_battery_pack_resistance_x1000 = DEFAULT_VALUE_BATTERY_PACK_RESISTANCE,
+  .ui32_odometer_x10 = DEFAULT_VALUE_ODOMETER_X10,
+  .ui8_walk_assist_feature_enabled = DEFAULT_VALUE_WALK_ASSIST_FEATURE_ENABLED,
   .ui8_walk_assist_level_factor = {
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_1,
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_2,
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_3,
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_4,
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_5,
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_6,
-  DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_7,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_1,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_2,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_3,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_4,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_5,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_6,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_7,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_8,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_9,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_10,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_11,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_12,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_13,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_14,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_15,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_16,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_17,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_18,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_19,
+    DEFAULT_VALUE_WALK_ASSIST_LEVEL_FACTOR_20,
   },
 
   .ui16_torque_sensor_calibration_table_left[0][0] = DEFAULT_TORQUE_SENSOR_CALIBRATION_LEFT_WEIGHT_1,
@@ -243,6 +272,50 @@ void eeprom_init() {
   APP_ERROR_CHECK(err_code);
   wait_for_fds_ready();
 
+  err_code = fds_record_find(CONFIG_FILE, CONFIG_REC_KEY, &m_desc_config, &m_tok_config);
+  // see if a record is found for config file
+  if (err_code == NRF_SUCCESS)
+  {
+    /* A config file is in flash. Let's update it. */
+    fds_flash_record_t config = {0};
+
+    /* Open the record and read its contents. */
+    err_code = fds_record_open(&m_desc_config, &config);
+    APP_ERROR_CHECK(err_code);
+
+    /* Copy the configuration from flash into m_dummy_cfg. */
+    memcpy(&m_configurations, config.p_data, sizeof(m_configurations));
+    
+    /* Close the record when done reading. */
+    err_code = fds_record_close(&m_desc_config);
+    APP_ERROR_CHECK(err_code);
+
+    // if eeprom is blank or configurations version is incorrect, RESET to default values
+    if (m_configurations.ui8_configurations_version != CONFIGURATIONS_VERSION)
+    {
+      memcpy(&m_configurations, &m_configurations_defaults,
+          sizeof(m_configurations_defaults));
+    }
+  }
+  else // no record is found for config file, set to default values
+  {
+    memcpy(&m_configurations, &m_configurations_defaults,
+        sizeof(m_configurations_defaults));
+
+    err_code = fds_record_write(&m_desc_config, &m_fds_configurations);
+    APP_ERROR_CHECK(err_code);
+  }
+  
+  eeprom_init_variables();
+  set_conversions();
+
+  // prepare torque_sensor_calibration_table as it will be used at begin to init the motor
+  prepare_torque_sensor_calibration_table();
+}
+
+void eeprom_init_defaults(void) {
+  ret_code_t err_code;
+  
   err_code = fds_record_find(CONFIG_FILE, CONFIG_REC_KEY, &m_desc_config, &m_tok_config);
   // see if a record is found for config file
   if (err_code == NRF_SUCCESS)

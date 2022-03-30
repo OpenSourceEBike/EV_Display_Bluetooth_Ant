@@ -1,6 +1,52 @@
 PROJECT_NAME     := display_firmware
 TARGETS          := display_firmware
 
+# This is the user visible string for the version
+VERSION_STRING := 0.10.0
+
+# This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
+MOTOR_FIRMWARE_MAJOR := 1
+MOTOR_FIRMWARE_MINOR := 1
+
+APP_VER_MAJOR = 1
+APP_VER_MINOR = 0
+
+ifdef DISPLAY_OLED_1.3_SPI
+$(warning )
+$(warning DISPLAY OLED 1.3 SPI)
+$(warning )
+DISPLAY = OLED_1.3_SPI
+CFLAGS += -DDISPLAY_SH1106
+CFLAGS += -DDISPLAY_SPI
+endif
+
+ifdef DISPLAY_OLED_1.3_I2C
+$(warning )
+$(warning DISPLAY OLED 1.3 I2C)
+$(warning )
+DISPLAY = OLED_1.3_I2C
+CFLAGS += -DDISPLAY_SH1106
+CFLAGS += -DDISPLAY_I2C
+endif
+
+ifdef DISPLAY_OLED_0.96_SPI
+$(warning )
+$(warning DISPLAY OLED 0.96 SPI)
+$(warning )
+DISPLAY = OLED_0.96_SPI
+CFLAGS += -DDISPLAY_SSD1306
+CFLAGS += -DDISPLAY_SPI
+endif
+
+ifdef DISPLAY_OLED_0.96_I2C
+$(warning )
+$(warning DISPLAY_OLED_0.96_I2C)
+$(warning )
+DISPLAY = OLED_0.96_I2C
+CFLAGS += -DDISPLAY_SSD1306
+CFLAGS += -DDISPLAY_I2C
+endif
+
 # This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
 MOTOR_FIRMWARE_MAJOR := 1
 MOTOR_FIRMWARE_MINOR := 1
@@ -14,21 +60,11 @@ $(OUTPUT_DIRECTORY)/display_firmware.out: \
   LINKER_SCRIPT  := linker_script_nrf52.ld
 
 BOOTLOADER_DIR = $(PROJ_DIR)/../EBike_wireless_bootloader/firmware
-BOOTLOADER_HEX = $(BOOTLOADER_DIR)/_build/TSDZ2_bootloader_with_sd.hex
-
-APP_VER_MAJOR = 0
-APP_VER_MINOR = 1
+BOOTLOADER_HEX = $(BOOTLOADER_DIR)/_build/bootloader.hex
 
 # The integer build number for this release, MUST BE INCREMENTED FOR EACH RELEASE SO BOOTLOADER WILL INSTALL
 # it is not user visible, but we must ensure it is monotonically increasing
 VERSION_NUM := 1
-
-# This is the user visible string for the version
-VERSION_STRING := 1.0.0
-
-# This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
-MOTOR_FIRMWARE_MAJOR := 1
-MOTOR_FIRMWARE_MINOR := 1
 
 CFLAGS += -DVERSION_STRING=\"$(VERSION_STRING)\" -DMOTOR_FIRMWARE_MAJOR=\"$(MOTOR_FIRMWARE_MAJOR)\" -DMOTOR_FIRMWARE_MINOR=\"$(MOTOR_FIRMWARE_MINOR)\"
 
@@ -87,6 +123,9 @@ SRC_FILES += \
 	$(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c \
 	$(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uart.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uarte.c \
+  $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_spi.c \
+  $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_spi.c \
+  $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_spim.c \
 	$(SDK_ROOT)/components/libraries/atomic_flags/nrf_atflags.c \
 	$(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage.c \
 	$(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
@@ -154,7 +193,8 @@ SRC_FILES += \
 	$(PROJ_DIR)/mainscreen-oled128x64.c \
 	$(PROJ_DIR)/battery_gui.c \
 	$(PROJ_DIR)/rtc.c \
-	$(PROJ_DIR)/configscreen.c
+	$(PROJ_DIR)/configscreen.c \
+	$(PROJ_DIR)/spi.c
  
 # Include folders common to all targets
 INC_FOLDERS += \
@@ -336,7 +376,7 @@ bl_settings:
 	$(SREC_PATH)nrfutil settings generate --family NRF52840 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --bootloader-version 1 --bl-settings-version 2 $(OUTPUT_DIRECTORY)/bl_settings.hex
 
 OTA:
-	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/display_firmware_ota_update.zip
+	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/firmware_ota-$(DISPLAY)-$(VERSION_STRING).zip
 
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc

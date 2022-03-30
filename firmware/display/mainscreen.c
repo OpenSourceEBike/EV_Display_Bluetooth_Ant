@@ -27,7 +27,6 @@
 #include "peer_manager.h"
 #include "configscreen.h"
 
-// only used on SW102, to count timeout to override the wheel speed value with assist level value
 static uint16_t m_assist_level_change_timeout = 0;
 
 uint8_t ui8_m_wheel_speed_integer;
@@ -196,7 +195,7 @@ static void bootScreenOnPreUpdate() {
 }
 
 void bootScreenOnExit(void) {
-  // SW102: now that we are goind to main screen, start by showing the assist level for 5 seconds
+  // now that we are goind to main screen, start by showing the assist level for 5 seconds
   m_assist_level_change_timeout = 50;
 }
 
@@ -499,19 +498,8 @@ void alternatField(void) {
 
   switch (ui8_m_alternate_field_state) {
     case 1:
-#ifndef SW102
-      assistLevelField.rw->visibility = FieldTransitionNotVisible;
-#else
       wheelSpeedIntegerField.rw->visibility = FieldTransitionNotVisible;
-#endif
       ui8_m_alternate_field_state = 2;
-
-#ifndef SW102
-      UG_SetBackcolor(C_BLACK);
-      UG_SetForecolor(MAIN_SCREEN_FIELD_LABELS_COLOR);
-      UG_FontSelect(&FONT_10X16);
-      UG_PutString(15, 46, "      ");
-#endif
       break;
 
     case 2:
@@ -532,11 +520,7 @@ void alternatField(void) {
       break;
 
     case 5:
-#ifndef SW102
-      assistLevelField.rw->visibility = FieldTransitionVisible;
-#else
       wheelSpeedIntegerField.rw->visibility = FieldTransitionVisible;
-#endif
       mainScreenOnDirtyClean();
       ui8_m_alternate_field_state = 0;
       break;
@@ -812,9 +796,7 @@ void handle_buttons() {
 }
 
 void mainscreen_idle() {
-   
-  automatic_power_off_management();
-
+ 	automatic_power_off_management();
 	handle_buttons();
 	mainscreen_clock(); // This is _after_ handle_buttons so if a button was pressed this tick, we immediately update the GUI
 }
@@ -825,23 +807,15 @@ void onSetConfigurationBatteryTotalWh(uint32_t v) {
 }
 
 void DisplayResetToDefaults(void) {
-
-  // if (ui8_g_configuration_display_reset_to_defaults) {
-  //   ui8_g_configuration_display_reset_to_defaults = 0;
-  //   eeprom_init_defaults();
-  // }
+  if (ui8_g_configuration_display_reset_to_defaults) {
+    ui8_g_configuration_display_reset_to_defaults = 0;
+    eeprom_init_defaults();
+  }
 }
 
 void TripMemoriesReset(void) {
 //   if (ui8_g_configuration_trip_a_reset) {
 //     ui8_g_configuration_trip_a_reset = 0;
-
-// #ifndef SW102
-//     uint32_t current_time = RTC_GetCounter();
-
-//     rt_vars.ui32_trip_a_last_update_time = current_time;
-// #endif
-
 //     rt_vars.ui32_trip_a_distance_x1000 = 0;
 //     rt_vars.ui32_trip_a_time = 0;
 //     rt_vars.ui16_trip_a_avg_speed_x10 = 0;
@@ -850,13 +824,6 @@ void TripMemoriesReset(void) {
 
 //   if (ui8_g_configuration_trip_b_reset) {
 //     ui8_g_configuration_trip_b_reset = 0;
-
-// #ifndef SW102
-//     uint32_t current_time = RTC_GetCounter();
-
-//     rt_vars.ui32_trip_b_last_update_time = current_time;
-// #endif
-
 //     rt_vars.ui32_trip_b_distance_x1000 = 0;
 //     rt_vars.ui32_trip_b_time = 0;
 //     rt_vars.ui16_trip_b_avg_speed_x10 = 0;
@@ -865,7 +832,6 @@ void TripMemoriesReset(void) {
 }
 
 void DisplayResetBluetoothPeers(void) {
-// #ifdef SW102
 //   if (ui8_g_configuration_display_reset_bluetooth_peers) {
 //     ui8_g_configuration_display_reset_bluetooth_peers = 0;
 //     // TODO: fist disable any connection
@@ -874,7 +840,6 @@ void DisplayResetBluetoothPeers(void) {
 //     // the behavior is undefined.
 //     pm_peers_delete();
 //   }
-// #endif
 }
 
 void batteryCurrent(void) {

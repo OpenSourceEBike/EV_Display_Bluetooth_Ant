@@ -174,7 +174,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/bootloader \
   $(SDK_ROOT)/components/softdevice/s340/headers \
   $(SDK_ROOT)/components/libraries/crypto \
-  $(PROJ_DIR)/config \
   $(PROJ_DIR)/include \
   $(SDK_ROOT)/components/libraries/crypto/backend/optiga \
   $(SDK_ROOT)/components/libraries/scheduler \
@@ -334,12 +333,12 @@ default: nrf52840_xxaa bootloader_with_SD OTA
 
 #generate unsigned merged bootloader hex
 bootloader_with_SD:
-	srec_cat $(SOFT_DEVICE) -intel $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex  -intel -o $(OUTPUT_DIRECTORY)/TSDZ2_bootloader_with_sd.hex -intel -address-length=4
+	srec_cat $(SOFT_DEVICE) -intel $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex  -intel -o $(OUTPUT_DIRECTORY)/bootloader.hex -intel -address-length=4
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc
 
 #generate signed bootloader distribution zip file
 OTA:
-	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req $(SD_REQ) --bootloader-version $(BOOTLOADER_VERSION) --bootloader $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex --softdevice $(SOFT_DEVICE) --key-file $(PROJ_DIR)/include/private.key $(OUTPUT_DIRECTORY)/TSDZ2_bootloader_ota_update.zip
+	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req $(SD_REQ) --bootloader-version $(BOOTLOADER_VERSION) --bootloader $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex --softdevice $(SOFT_DEVICE) --key-file $(PROJ_DIR)/include/private.key $(OUTPUT_DIRECTORY)/bootloader_ota_update.zip
 
 include $(TEMPLATE_PATH)/Makefile.common
 

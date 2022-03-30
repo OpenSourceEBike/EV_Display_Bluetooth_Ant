@@ -36,10 +36,6 @@
 volatile bool g_graphs_ui_update[3] = { false, false, false };
 
 variables_t g_vars[VARS_SIZE];
-#ifndef SW102
-GraphVars g_graphVars[VARS_SIZE];
-GraphData g_graphData[VARS_SIZE][3];
-#endif
 
 extern UG_GUI gui;
 
@@ -79,12 +75,7 @@ static bool screenDirty;
 
 bool graphNeedUpdate = false;
 
-#ifdef SW102
 #define HEADING_FONT FONT_5X12
-#else
-#define HEADING_FONT TITLE_TEXT_FONT
-
-#endif
 
 #define SCROLLABLE_FONT CONFIGURATIONS_TEXT_FONT
 
@@ -93,13 +84,9 @@ const UG_FONT *editable_value_font = &SMALL_TEXT_FONT;
 const UG_FONT *editable_units_font = &SMALL_TEXT_FONT;
 
 // We can optionally render by filling all with black and then drawing text with a transparent background
-// This is useful on very small screens (SW102) where we might want the text to overlap.  However, this
+// This is useful on very small screens where we might want the text to overlap.  However, this
 // approach causes flickering on non memory resident framebuffers (850C)
-#ifdef SW102
 #define EDITABLE_BLANKALL true
-#else
-#define EDITABLE_BLANKALL false
-#endif
 
 // The default is for editables to be two rows tall, with the data value on the second row
 // define this as 1 if you want them to be one row tall (because you have a wide enough screen)

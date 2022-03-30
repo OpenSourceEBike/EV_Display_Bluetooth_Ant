@@ -2,13 +2,19 @@
 
 #include <stdio.h>
 #include "common.h"
-// #include "button.h"
 
 // #define DEVELOPMENT
 
-#define SW102 // our display is similar to SW102 OLED 128x64
-// #define DISPLAY_SSD1306
-#define DISPLAY_SH1106
+#ifdef DEVELOPMENT
+  #define DISPLAY_SSD1306
+  #define DISPLAY_SPI
+#endif
+
+#ifdef DISPLAY_SPI
+  #define DISPLAY_USE_RESET_PIN
+  // #define DISPLAY_USE_SELECT_PIN
+#endif
+
 
 /* Typedef of unions for handy access of single bytes */
 /* Access bytewise: U16 var; var.byte[x] = z; */

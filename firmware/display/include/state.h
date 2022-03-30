@@ -4,7 +4,7 @@
 
 #pragma once
 
-#define ASSIST_LEVEL_NUMBER 7
+#define ASSIST_LEVEL_NUMBER 20
 
 // Possible values: 0, 1, 2, 3, 4, 5, 6
 // 0 equal to no filtering and no delay, higher values will increase filtering but will also add bigger delay
@@ -128,21 +128,11 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_motor_temperature_max_value_to_limit;
 	uint32_t ui32_odometer_x10;
 
-// // #ifndef SW102
-// 	uint8_t  ui8_trip_a_auto_reset;
-// 	uint16_t ui16_trip_a_auto_reset_hours;
-// 	uint32_t ui32_trip_a_last_update_time;
-// // #endif
 // 	uint32_t ui32_trip_a_distance_x1000;
 // 	uint32_t ui32_trip_a_time;
 // 	uint16_t ui16_trip_a_avg_speed_x10;
 // 	uint16_t ui16_trip_a_max_speed_x10;
 
-// // #ifndef SW102
-// 	uint8_t  ui8_trip_b_auto_reset;
-// 	uint16_t ui16_trip_b_auto_reset_hours;
-// 	uint32_t ui32_trip_b_last_update_time;
-// // #endif
 // 	uint32_t ui32_trip_b_distance_x1000;
 // 	uint32_t ui32_trip_b_time;
 //   	uint16_t ui16_trip_b_avg_speed_x10;
@@ -181,11 +171,8 @@ typedef struct rt_vars_struct {
 //  * 5-8  are the boxes above the graph, mainscreen2 on 850C
 //  * 9-12 are the boxes above the graph, mainscreen2 on 850C
 //  */
-// #ifdef SW102
+
 // #define NUM_CUSTOMIZABLE_FIELDS 6
-// #else
-// #define NUM_CUSTOMIZABLE_FIELDS 12
-// #endif
 
 typedef struct ui_vars_struct {
   uint8_t ui8_configurations_version;
@@ -262,22 +249,12 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_lcd_backlight_off_brightness;
 	uint32_t ui32_odometer_x10;
 
-// // #ifndef SW102
-// 	uint8_t  ui8_trip_a_auto_reset;
-// 	uint16_t ui16_trip_a_auto_reset_hours;
-// 	uint32_t ui32_trip_a_last_update_time;
-// // #endif
 // 	uint32_t ui32_trip_a_distance_x1000;
 // 	uint32_t ui32_trip_a_distance_x100;
 // 	uint32_t ui32_trip_a_time;
 // 	uint16_t ui16_trip_a_avg_speed_x10;
 // 	uint16_t ui16_trip_a_max_speed_x10;
 
-// // #ifndef SW102
-// 	uint8_t  ui8_trip_b_auto_reset;
-// 	uint16_t ui16_trip_b_auto_reset_hours;
-// 	uint32_t ui32_trip_b_last_update_time;
-// // #endif
 // 	uint32_t ui32_trip_b_distance_x1000;
 // 	uint32_t ui32_trip_b_distance_x100;
 // 	uint32_t ui32_trip_b_time;
