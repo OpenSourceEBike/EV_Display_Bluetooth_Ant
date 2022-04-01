@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Flash",
             "type": "cppdbg",
@@ -38,10 +37,16 @@
                     "text": "target remote localhost:3333"
                 },
                 {
-                    "text": "monitor init"
+                    "text": "monitor soft_reset_halt"
                 },
                 {
-                    "text": "monitor reset halt"
+                    "text": "monitor sleep 500"
+                },
+                {
+                    "text": "monitor nrf52.dap apreg 1 0x04 0x01"
+                },
+                {
+                    "text": "monitor sleep 500"
                 },
                 {
                     "text": "monitor nrf5 mass_erase"
