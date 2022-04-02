@@ -572,58 +572,6 @@ void antplus_lev_evt_handler_post(antplus_lev_profile_t *p_profile, antplus_lev_
   }
 }
 
-void ant_generic_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
-{
-  uint8_t payload[8];
-  uint32_t err_code;
-
-  switch (p_ant_evt->event)
-  {
-  // ANT broadcast success.
-  // Increment the counter and send a new broadcast.
-  case EVENT_TX:
-    switch (p_ant_evt->channel)
-    {
-    case 1:
-      payload[0] = 1;
-      payload[1] = ui_vars.ui8_assist_level & 0x3F;
-      break;
-
-    case 2:
-      payload[0] = 2;
-      payload[1] = ui8_g_battery_soc;
-      break;
-
-    case 3:
-      payload[0] = 3;
-      payload[1] = (uint8_t)(ui_vars.ui16_battery_power_filtered_ui & 0xff);
-      payload[2] = (uint8_t)(ui_vars.ui16_battery_power_filtered_ui >> 8);
-      break;
-
-    default:
-      return;
-      break;
-    }
-
-    // Broadcast the data.
-    err_code = sd_ant_broadcast_message_tx(p_ant_evt->channel,
-                                           ANT_STANDARD_DATA_PAYLOAD_SIZE,
-                                           payload);
-    APP_ERROR_CHECK(err_code);
-
-    break;
-
-  case EVENT_CHANNEL_COLLISION:
-    err_code = 0;
-    APP_ERROR_CHECK(err_code);
-    break;
-
-  default:
-    break;
-  }
-}
-
-NRF_SDH_ANT_OBSERVER(m_ant_observer_generic, APP_ANT_OBSERVER_PRIO, ant_generic_evt_handler, NULL);
 static void ant_setup(void)
 {
   ret_code_t err_code;
@@ -653,36 +601,6 @@ static void ant_setup(void)
 
   err_code = antplus_lev_sens_open(&m_antplus_lev);
   APP_ERROR_CHECK(err_code);
-
-  // now setup the ANT generic channels
-  uint8_t array[] = {0, 0, 0, 0, 0, 0, 0, 0};
-  err_code = sd_ant_network_address_set(1, array);
-  APP_ERROR_CHECK(err_code);
-
-  // add ANT communications for the Garmin data fields
-  ant_channel_config_t t_channel_config = {
-      .channel_number = 1,
-      .channel_type = CHANNEL_TYPE_MASTER,
-      .ext_assign = 0x00,
-      .rf_freq = 48,
-      .transmission_type = 5,
-      .device_type = 0x7b,
-      .device_number = 65136,
-      .channel_period = 16384,
-      .network_number = 1,
-  };
-
-  for (uint8_t i = 0; i < 3; i++)
-  {
-    err_code = ant_channel_init(&t_channel_config);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = sd_ant_channel_open(t_channel_config.channel_number);
-    APP_ERROR_CHECK(err_code);
-
-    t_channel_config.channel_number++;
-    t_channel_config.device_number++;
-  }
 }
 
 static void main_timer_timeout(void *p_context)
@@ -743,18 +661,18 @@ static void ble_stack_init(void)
   err_code = nrf_sdh_enable_request();
   APP_ERROR_CHECK(err_code);
 
-  // Configure the BLE stack using the default settings.
-  // Fetch the start address of the application RAM.
-  uint32_t ram_start = 0;
-  err_code = nrf_sdh_ble_default_cfg_set(APP_BLE_CONN_CFG_TAG, &ram_start);
-  APP_ERROR_CHECK(err_code);
+  // // Configure the BLE stack using the default settings.
+  // // Fetch the start address of the application RAM.
+  // uint32_t ram_start = 0;
+  // err_code = nrf_sdh_ble_default_cfg_set(APP_BLE_CONN_CFG_TAG, &ram_start);
+  // APP_ERROR_CHECK(err_code);
 
-  // Enable BLE stack.
-  err_code = nrf_sdh_ble_enable(&ram_start);
-  APP_ERROR_CHECK(err_code);
+  // // Enable BLE stack.
+  // err_code = nrf_sdh_ble_enable(&ram_start);
+  // APP_ERROR_CHECK(err_code);
 
-  // Register a handler for BLE events.
-  NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
+  // // Register a handler for BLE events.
+  // NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
 }
 
 /**@brief Function for the GAP initialization.
@@ -1294,13 +1212,13 @@ static void peer_manager_init(void)
 void ble_init(void)
 {
   ble_stack_init();
-  gap_params_init();
-  gatt_init();
-  services_init();
-  advertising_init();
-  conn_params_init();
-  peer_manager_init();
-  advertising_start(true);
+  // gap_params_init();
+  // gatt_init();
+  // services_init();
+  // advertising_init();
+  // conn_params_init();
+  // peer_manager_init();
+  // advertising_start(true);
 }
 
 void eeprom_write_variables_and_reset(void)
@@ -1735,8 +1653,8 @@ int main(void)
     NVIC_SystemReset(); // reboot into bootloader
   }
 
-  // ble_init();
-  // ant_setup();
+  ble_init();
+  ant_setup();
   uart_init();
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
