@@ -756,6 +756,14 @@ bool appwide_onpress(buttons_events_t events)
     return true;
   }
 
+  if (events & SCREENCLICK_ANT_CONTROLS_PAGE_MOVE_FORWARD) {
+    buttons_send_pag73(&m_antplus_controls, 1);
+    return true;
+  } else if (events & SCREENCLICK_ANT_CONTROLS_PAGE_MOVE_BACKWARD) {
+    buttons_send_pag73(&m_antplus_controls, 0);
+    return true;
+  }
+
 	return false;
 }
 

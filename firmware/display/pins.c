@@ -19,6 +19,7 @@ void pins_init(void)
 
     /* Buttons */
   InitButton(&buttonPWR, ONOFF__PIN, NRF_GPIO_PIN_NOPULL, BUTTON_ACTIVE_HIGH);
+  InitButton(&buttonM, M__PIN, NRF_GPIO_PIN_PULLUP, BUTTON_ACTIVE_LOW);
   InitButton(&buttonUP, UP__PIN, NRF_GPIO_PIN_PULLUP, BUTTON_ACTIVE_LOW);
   InitButton(&buttonDWN, DOWN__PIN, NRF_GPIO_PIN_PULLUP, BUTTON_ACTIVE_LOW);
 

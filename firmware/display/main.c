@@ -37,6 +37,7 @@
 #include "nrf_sdh_ant.h"
 #include "ant_key_manager.h"
 #include "antplus_lev.h"
+#include "antplus_controls.h"
 #include "pins.h"
 #include "uart.h"
 #include "nrf_drv_uart.h"
@@ -45,6 +46,7 @@
 #include "eeprom.h"
 #include "state.h"
 #include "ant_interface.h"
+#include "ant_search_config.h"
 #include "nrf_delay.h"
 #include "fds.h"
 #include "nrf_power.h"
@@ -122,8 +124,23 @@ void rt_processing_start(void)
 #define ANTPLUS_NETWORK_NUM 0
 #define ANT_LEV_ANT_OBSERVER_PRIO 1
 
+#define CONTROLS_HW_REVISION 2
+#define CONTROLS_MANUFACTURER_ID 255
+#define CONTROLS_MODEL_NUMBER 2
+#define CONTROLS_SW_REVISION_MAJOR 2
+#define CONTROLS_SW_REVISION_MINOR 2
+#define CONTROLS_SERIAL_NUMBER 3241
+#define CONTROLS_CHANNEL_NUM 1 //see: NRF_SDH_ANT_TOTAL_CHANNELS_ALLOCATED in sdk_config.sys
+#define ANT_CONTROLS_ANT_OBSERVER_PRIO 1
+#define CONTROLS_CHAN_ID_TRANS_TYPE 0 // slave wildcard match
+#define CONTROLS_CHAN_ID_DEV_NUM 0 // wildcard match to any master
+
 void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event);
 void antplus_lev_evt_handler_post(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event);
+void antplus_controls_evt_handler(antplus_controls_profile_t *p_profile, antplus_controls_evt_t event);
+
+static antplus_lev_profile_t m_antplus_lev;
+antplus_controls_profile_t m_antplus_controls;
 
 LEV_SENS_CHANNEL_CONFIG_DEF(m_antplus_lev,
                             LEV_CHANNEL_NUM,
@@ -134,9 +151,18 @@ LEV_SENS_PROFILE_CONFIG_DEF(m_antplus_lev,
                             antplus_lev_evt_handler_pre,
                             antplus_lev_evt_handler_post);
 
-static antplus_lev_profile_t m_antplus_lev;
+CONTROLS_SENS_CHANNEL_CONFIG_DEF(m_antplus_controls,
+                                 CONTROLS_CHANNEL_NUM,
+                                 CONTROLS_CHAN_ID_TRANS_TYPE,
+                                 CONTROLS_CHAN_ID_DEV_NUM,
+                                 ANTPLUS_NETWORK_NUM,
+                                 CONTROLS_MSG_PERIOD_4Hz);
+
+CONTROLS_SENS_PROFILE_CONFIG_DEF(m_antplus_controls,
+                                 antplus_controls_evt_handler);                            
 
 NRF_SDH_ANT_OBSERVER(m_ant_observer, ANT_LEV_ANT_OBSERVER_PRIO, antplus_lev_sens_evt_handler, &m_antplus_lev);
+NRF_SDH_ANT_OBSERVER(m_ant_observer_control, ANT_CONTROLS_ANT_OBSERVER_PRIO, antplus_controls_sens_evt_handler, &m_antplus_controls);
 
 #define DEVICE_NAME "Display" /**< Name of device. Will be included in the advertising data. */
 
@@ -571,9 +597,27 @@ void antplus_lev_evt_handler_post(antplus_lev_profile_t *p_profile, antplus_lev_
   }
 }
 
+void antplus_controls_evt_handler(antplus_controls_profile_t *p_profile, antplus_controls_evt_t event)
+{
+  nrf_pwr_mgmt_feed();
+
+  switch (event)
+  {
+  case ANTPLUS_CONTROLS_PAGE_73_UPDATED:
+    break;
+
+  default:
+    break;
+  }
+}
+
 static void ant_setup(void)
 {
   ret_code_t err_code;
+
+  ant_search_config_t controls_search_config = DEFAULT_ANT_SEARCH_CONFIG(CONTROLS_CHANNEL_NUM);
+  controls_search_config.low_priority_timeout = 2;  //5 seconds
+  controls_search_config.high_priority_timeout = 5; //4*2.5 =10 seconds
 
   err_code = nrf_sdh_ant_enable();
   APP_ERROR_CHECK(err_code);
@@ -600,6 +644,27 @@ static void ant_setup(void)
 
   err_code = antplus_lev_sens_open(&m_antplus_lev);
   APP_ERROR_CHECK(err_code);
+
+
+  // fill battery status data page.
+  m_antplus_controls.page_82 = ANTPLUS_CONTROLS_PAGE82(295); // battery 2.95 volts, fully charged
+
+  // fill manufacturer's common data page.
+
+  m_antplus_controls.page_80 = ANT_COMMON_page80(CONTROLS_HW_REVISION,
+                                                 CONTROLS_MANUFACTURER_ID,
+                                                 CONTROLS_MODEL_NUMBER);
+  // fill product's common data page.
+  m_antplus_controls.page_81 = ANT_COMMON_page81(CONTROLS_SW_REVISION_MAJOR,
+                                                 CONTROLS_SW_REVISION_MINOR,
+                                                 CONTROLS_SERIAL_NUMBER);
+
+  err_code = antplus_controls_sens_init(&m_antplus_controls, CONTROLS_SENS_CHANNEL_CONFIG(m_antplus_controls), CONTROLS_SENS_PROFILE_CONFIG(m_antplus_controls));
+  APP_ERROR_CHECK(err_code);
+  err_code = antplus_controls_sens_open(&m_antplus_controls);
+  APP_ERROR_CHECK(err_code);
+  // err_code = ant_search_init(&controls_search_config);
+  // APP_ERROR_CHECK(err_code);
 }
 
 static void main_timer_timeout(void *p_context)

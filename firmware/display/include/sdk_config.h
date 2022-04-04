@@ -6414,6 +6414,28 @@
 #define LED_SOFTBLINK_ENABLED 1
 #endif
 
+//==========================================================
+// <e> ANT_SEARCH_CONFIG_ENABLED - ant_search_config - ANT common search configuration
+//==========================================================
+#ifndef ANT_SEARCH_CONFIG_ENABLED
+#define ANT_SEARCH_CONFIG_ENABLED 1
+#endif
+// <o> ANT_DEFAULT_LOW_PRIORITY_TIMEOUT - Default low priority search time-out.  <0-255> 
+
+
+#ifndef ANT_DEFAULT_LOW_PRIORITY_TIMEOUT
+#define ANT_DEFAULT_LOW_PRIORITY_TIMEOUT 2
+#endif
+
+// <o> ANT_DEFAULT_HIGH_PRIORITY_TIMEOUT - Default high priority search time-out.  <0-255> 
+
+
+#ifndef ANT_DEFAULT_HIGH_PRIORITY_TIMEOUT
+#define ANT_DEFAULT_HIGH_PRIORITY_TIMEOUT 10
+#endif
+
+// </e>
+
 // </h> 
 //==========================================================
 

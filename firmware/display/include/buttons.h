@@ -38,7 +38,7 @@ typedef enum {
 	ONOFFUPDOWN_LONG_CLICK = 4096,
 } buttons_events_t;
 
-extern Button buttonDWN, buttonUP, buttonPWR;
+extern Button buttonDWN, buttonUP, buttonPWR, buttonM;
 
 void InitButton(Button* button, uint32_t pin_number, nrf_gpio_pin_pull_t pull_config, button_active_state active_state);
 bool PollButton(Button* button);

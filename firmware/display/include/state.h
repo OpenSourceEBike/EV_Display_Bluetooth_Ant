@@ -328,3 +328,4 @@ extern uint8_t ui8_g_battery_soc;
 
 /// Set correct backlight brightness for current headlight state
 void set_lcd_backlight();
+void reset_wh(void);

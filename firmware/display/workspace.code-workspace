@@ -10,7 +10,8 @@
   "settings": {
     "git.ignoreLimitWarning": true,
     "files.associations": {
-      "nrf_assert.h": "c"
+      "nrf_assert.h": "c",
+      "state.h": "c"
     }
   }
 }

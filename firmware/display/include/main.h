@@ -2,19 +2,16 @@
 
 #include <stdio.h>
 #include "common.h"
+#include "antplus_controls.h"
 
 // #define DEVELOPMENT
-
-#ifdef DEVELOPMENT
-  #define DISPLAY_SSD1306
-  #define DISPLAY_SPI
-#endif
 
 #ifdef DISPLAY_SPI
   #define DISPLAY_USE_RESET_PIN
   // #define DISPLAY_USE_SELECT_PIN
 #endif
 
+extern antplus_controls_profile_t m_antplus_controls;
 
 /* Typedef of unions for handy access of single bytes */
 /* Access bytewise: U16 var; var.byte[x] = z; */

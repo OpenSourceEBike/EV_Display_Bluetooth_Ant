@@ -29,7 +29,7 @@ static uint32_t ui32_down_button_state_counter = 0;
 static uint32_t ui32_up_button_state = 0;
 static uint32_t ui32_up_button_state_counter = 0;
 static uint32_t ui32_m_button_state = 0;
-static uint32_t ui32_m_clear_event = 0;
+static uint32_t ui32_m_button_state_counter = 0;
 buttons_events_t buttons_events = 0;
 
 uint32_t ui32_up_presstime = 0;
@@ -37,8 +37,10 @@ uint32_t ui32_down_presstime = 0;
 uint32_t ui32_onoff_presstime = 0;
 uint32_t ui32_m_presstime = 0;
 
+static uint32_t ui32_m_clear_event = 0;
+
 /* Buttons */
-Button buttonDWN, buttonUP, buttonPWR;
+Button buttonDWN, buttonUP, buttonPWR, buttonM;
 
 /**
  * @brief Init button struct. Call once.
@@ -92,8 +94,7 @@ uint32_t buttons_get_onoff_state (void)
 
 uint32_t buttons_get_m_state (void)
 {
-  // return PollButton(&buttonM);
-  return 0;
+  return PollButton(&buttonM);
 }
 
 uint32_t buttons_get_m_click_event(void) {
@@ -188,15 +189,15 @@ void buttons_clear_all_events(void) {
 	ui32_m_clear_event = 1;
 	buttons_events = 0;
 	ui32_onoff_button_state = 0;
+  ui32_m_button_state = 0;
 	ui32_up_button_state = 0;
 	ui32_down_button_state = 0;
-	ui32_m_button_state = 0;
 }
 
 void buttons_clock(void) {
 	// exit if any button is pressed after clear event
 	if ((ui32_m_clear_event)
-			&& (buttons_get_up_state() || buttons_get_down_state() || buttons_get_onoff_state())) {
+			&& (buttons_get_up_state() || buttons_get_down_state() || buttons_get_onoff_state() || buttons_get_m_state())) {
 		return;
 	} else {
 		ui32_m_clear_event = 0;
@@ -338,9 +339,6 @@ void buttons_clock(void) {
       break;
 	}
 
-
-
-
   switch (ui32_down_button_state) {
     case 0:
       if (buttons_get_down_state()) {
@@ -390,6 +388,45 @@ void buttons_clock(void) {
 
     default:
       ui32_down_button_state = 0;
+      break;
+  }
+
+  switch (ui32_m_button_state) {
+    case 0:
+      if (buttons_get_m_state()) {
+        ui32_m_button_state_counter = 0;
+        ui32_m_button_state = 1;
+      }
+      break;
+
+    case 1:
+      // event long click
+      if (ui32_m_button_state_counter++ > MS_TO_TICKS(TIME_1)) {
+        
+        buttons_set_events(M_LONG_CLICK);
+
+        ui32_m_button_state = 2;
+        ui32_m_button_state_counter = 0;
+        break;
+      }
+
+      // if button release
+      if (!buttons_get_m_state()) {
+        buttons_set_events(M_CLICK);
+        ui32_m_button_state = 0;
+        break;
+      }
+      break;
+
+    case 2:
+      // wait for button release
+      if (!buttons_get_m_state()) {
+        ui32_m_button_state = 0;
+      }
+      break;
+
+    default:
+      ui32_m_button_state = 0;
       break;
   }
 }

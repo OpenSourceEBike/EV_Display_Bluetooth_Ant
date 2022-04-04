@@ -2,7 +2,7 @@ PROJECT_NAME     := display_firmware
 TARGETS          := display_firmware
 
 # This is the user visible string for the version
-VERSION_STRING := 0.10.0
+VERSION_STRING := 0.12.0
 
 # This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
 MOTOR_FIRMWARE_MAJOR := 1
@@ -156,6 +156,7 @@ SRC_FILES += \
   $(SDK_ROOT)/components/ant/ant_channel_config/ant_channel_config.c \
   $(SDK_ROOT)/components/ant/ant_key_manager/ant_key_manager.c \
   $(SDK_ROOT)/components/ant/ant_state_indicator/ant_state_indicator.c \
+  $(SDK_ROOT)/components/ant/ant_search_config/ant_search_config.c \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages/ant_common_page_70.c \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages/ant_common_page_80.c \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages/ant_common_page_81.c \
@@ -278,6 +279,7 @@ INC_FOLDERS += \
 	$(SDK_ROOT)/components/ble/ble_advertising \
   $(SDK_ROOT)/components/ant/ant_state_indicator \
   $(SDK_ROOT)/components/ant/ant_key_manager \
+  $(SDK_ROOT)/components/ant/ant_search_config \
   $(SDK_ROOT)/components/ant/ant_channel_config \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/ant_request_controller \
   $(SDK_ROOT)/components/ant/ant_profiles/ant_common/pages \

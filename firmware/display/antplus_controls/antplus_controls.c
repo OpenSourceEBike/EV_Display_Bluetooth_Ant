@@ -91,48 +91,37 @@ static bool message_encode(antplus_controls_profile_t * p_profile, uint8_t * p_m
      return false;
  }
 */
-void buttons_send_pag73(antplus_controls_profile_t *p_profile, button_pins_t button, uint8_t pagectrl)
+void buttons_send_pag73(antplus_controls_profile_t *p_profile, uint8_t pagectrl)
 {
   ASSERT(p_profile != NULL);
 
-  // bool send_page = false;
+  p_profile->page_73.utf8_character = pagectrl;
 
-  // if (button == ENTER__PIN)
-  // {
-  //   p_profile->page_73.utf8_character = pagectrl;
-  //   send_page = true;
-  // }
+  static uint8_t p_message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE] = {
+      ANTPLUS_CONTROLS_PAGE_73,
+      0x01,
+      0x00,
+      0x0F,
+      0x00,
+      0x00,
+      0x00,
+      0x00};
 
-  // if (send_page)
-  // {
-  //   send_page = false;
+  antplus_controls_message_layout_t *p_controls_message_payload =
+      (antplus_controls_message_layout_t *)p_message_payload;
 
-  //   static uint8_t p_message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE] = {
-  //       ANTPLUS_CONTROLS_PAGE_73,
-  //       0x01,
-  //       0x00,
-  //       0x0F,
-  //       0x00,
-  //       0x00,
-  //       0x00,
-  //       0x00};
+  antplus_controls_page_73_encode(p_controls_message_payload->page_payload,
+                                  &(p_profile->page_73));
 
-  //   antplus_controls_message_layout_t *p_controls_message_payload =
-  //       (antplus_controls_message_layout_t *)p_message_payload;
-
-  //   antplus_controls_page_73_encode(p_controls_message_payload->page_payload,
-  //                                   &(p_profile->page_73));
-
-  //   uint32_t err_code;
-  //   err_code = sd_ant_acknowledge_message_tx(p_profile->channel_number,
-  //                                            sizeof(p_message_payload),
-  //                                            p_message_payload);
-  //   send_page = true;
-  //   (void)err_code; // ignore
-  //                   //the following code is needed to start a new ANT Rx search if the garmin is disconnected during use and restarted
-  //   err_code = antplus_controls_sens_open(p_profile);
-  //   //  APP_ERROR_CHECK(err_code);
-  // }
+  uint32_t err_code;
+  err_code = sd_ant_acknowledge_message_tx(p_profile->channel_number,
+                                            sizeof(p_message_payload),
+                                            p_message_payload);
+  (void)err_code; // ignore
+                  //the following code is needed to start a new ANT Rx search if the garmin is disconnected during use and restarted
+                  
+  err_code = antplus_controls_sens_open(p_profile);
+  //  APP_ERROR_CHECK(err_code);
 }
 
 void antplus_controls_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
@@ -157,7 +146,7 @@ void antplus_controls_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
       break;
 
     case EVENT_RX_SEARCH_TIMEOUT:
-      ANT_Search_Stop();
+      // ANT_Search_Stop();
       break;
 
     case EVENT_RX:
@@ -210,7 +199,7 @@ void antplus_controls_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
       */
       break;
     case EVENT_RX_FAIL_GO_TO_SEARCH:
-      ANT_Search_Start();
+      // ANT_Search_Start();
       break;
     default:
       break;

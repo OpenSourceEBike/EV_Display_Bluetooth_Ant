@@ -27,7 +27,8 @@ typedef enum {
     UP__PIN  = 13,
     DOWN__PIN  = 15,
     ONOFF__PIN = 20,
-    BUTTON_PIN_ELEMENTS = 3 // must be updated when added or removed an element
+    M__PIN = 17,
+    BUTTON_PIN_ELEMENTS = 4 // must be updated when added or removed an element
 } button_pins_t;
 
 typedef enum {

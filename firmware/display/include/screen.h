@@ -570,7 +570,8 @@ extern volatile bool g_graphs_ui_update[3];
 // with strings in German, Portuguese etc...
 #define _S(longstr, shortstr) shortstr
 
-#define SCREENFN_FORCE_LABELS buttons_get_m_state()
+// #define SCREENFN_FORCE_LABELS buttons_get_m_state()
+#define SCREENFN_FORCE_LABELS false
 #define SCREENCLICK_START_EDIT ONOFF_CLICK
 #define SCREENCLICK_STOP_EDIT ONOFF_CLICK
 #define SCREENCLICK_EXIT_SCROLLABLE ONOFF_LONG_CLICK
@@ -581,3 +582,5 @@ extern volatile bool g_graphs_ui_update[3];
 #define SCREENCLICK_ALTERNATE_FIELD_START ONOFFUP_LONG_CLICK
 #define SCREENCLICK_ALTERNATE_FIELD_STOP ONOFF_LONG_CLICK
 #define SCREENCLICK_STREET_MODE ONOFFDOWN_LONG_CLICK
+#define SCREENCLICK_ANT_CONTROLS_PAGE_MOVE_FORWARD M_CLICK
+#define SCREENCLICK_ANT_CONTROLS_PAGE_MOVE_BACKWARD M_LONG_CLICK
