@@ -333,65 +333,20 @@ static void ble_evt_handler(ble_evt_t const *p_ble_evt, void *p_context)
 void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_evt_t event)
 {
   nrf_pwr_mgmt_feed();
-  // set the assist level
-  p_profile->common.travel_mode_state = (mp_ui_vars->ui8_assist_level << 3);
-  p_profile->page_16.travel_mode = p_profile->common.travel_mode_state;
-  // common gear state is used for motor state control
-  //  use front gear setting to transfer motor state information to the remote:
-  //  the two bits are used as follows:
-  //  00 - motor off (MOTOR_INIT_OFF (0))
-  //  01  - motor ready (MOTOR_INIT_READY (1))
-  //  10  - motor not ready (MOTOR_INIT_GET_MOTOR_ALIVE-2, MOTOR_INIT_WAIT_MOTOR_ALIVE-3)
-  //  11  - signal to turn motor on/off (3)
-  //  higher bits are used to indicated motor start up errors (MOTOR_INIT_ERROR_ALIVE -4, MOTOR_INIT_ERROR_GET_FIRMWARE_VERSION-8,
-  //        MOTOR_INIT_ERROR_FIRMWARE_VERSION-10,MOTOR_INIT_ERROR_SET_CONFIGURATIONS-14)
-  // set up the common gear state byte
-  if (g_motor_init_state < 4)         // no errors
-    p_profile->common.gear_state = 0; // clear any error states
 
-  switch (g_motor_init_state)
-  {
-  case MOTOR_INIT_OFF:
-
-    // first two bits are front gear
-    p_profile->common.gear_state = (p_profile->common.gear_state & 0x7C) + 0;
-    break;
-
-  case MOTOR_INIT_READY:
-    p_profile->common.gear_state = (p_profile->common.gear_state & 0x7C) + 1;
-    break;
-  case MOTOR_INIT_GET_MOTOR_ALIVE:
-  case MOTOR_INIT_WAIT_MOTOR_ALIVE:
-    p_profile->common.gear_state = (p_profile->common.gear_state & 0x7C) + 2;
-
-    break;
-    // note gear state value 3 is used to turn on/off the motor; above 3 are error states
-  case MOTOR_INIT_ERROR_ALIVE:
-    p_profile->common.gear_state = (4 | (p_profile->common.gear_state & 0x03));
-    // p_profile->page_16.current_rear_gear = 1;
-    break;
-  case MOTOR_INIT_ERROR_GET_FIRMWARE_VERSION:
-    p_profile->common.gear_state = (8 | (p_profile->common.gear_state & 0x03));
-    // p_profile->page_16.current_rear_gear = 2;
-    break;
-  case MOTOR_INIT_ERROR_FIRMWARE_VERSION:
-    p_profile->common.gear_state = (12 | (p_profile->common.gear_state & 0x03));
-    // p_profile->page_16.current_rear_gear = 3;
-    break;
-  case MOTOR_INIT_ERROR_SET_CONFIGURATIONS:
-    p_profile->common.gear_state = (16 | (p_profile->common.gear_state & 0x03));
-    // p_profile->page_16.current_rear_gear = 4;
-    break;
-
-  default:
-    break;
-  }
   // set variables for ANT transmission in order of connectIQ fields
   //  1. lev speed
   p_profile->common.lev_speed = ui_vars.ui16_wheel_speed_x10 / 10;
 
   // 2.  assist level
-  p_profile->common.travel_mode_state |= (mp_ui_vars->ui8_assist_level << 3) & 0x38;
+  uint8_t temp = mp_ui_vars->ui8_assist_level;
+  // limit assist level value to max ANT+ LEV supports
+  if (temp > 7)
+  {
+    temp = 7;
+  }
+  p_profile->common.travel_mode_state |= (temp << 3) & 0x38;
+  p_profile->page_16.travel_mode = p_profile->common.travel_mode_state;
 
   // 3. lights
   // set by the remote control page 16 command
@@ -424,8 +379,7 @@ void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_e
   // 011 warm
   // 100 warm/hot
   // 101 hot
-
-  uint8_t temp = ui_vars.ui8_motor_temperature;
+  temp = ui_vars.ui8_motor_temperature;
   uint8_t temp_max = ui_vars.ui8_motor_temperature_max_value_to_limit;
   uint8_t temp_min = ui_vars.ui8_motor_temperature_min_value_to_limit;
   uint8_t lev_temp;
@@ -446,45 +400,48 @@ void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_e
   // max value 0.1 wh/km per bit, max value=409.5 Wh/km
   p_profile->page_4.fuel_consumption = 0; // not yet implemented
 
+  // set up the common gear state byte
+  p_profile->common.gear_state = 0; // not yet implemented
+
   switch (event)
   {
-  case ANT_LEV_PAGE_1_UPDATED:
+    case ANT_LEV_PAGE_1_UPDATED:
 
-    break;
-  case ANT_LEV_PAGE_2_UPDATED:
+      break;
+    case ANT_LEV_PAGE_2_UPDATED:
 
-    break;
+      break;
 
-  case ANT_LEV_PAGE_3_UPDATED:
+    case ANT_LEV_PAGE_3_UPDATED:
 
-    break;
+      break;
 
-  case ANT_LEV_PAGE_4_UPDATED:
-    break;
+    case ANT_LEV_PAGE_4_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_5_UPDATED:
-    break;
+    case ANT_LEV_PAGE_5_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_34_UPDATED:
-    break;
+    case ANT_LEV_PAGE_34_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_16_UPDATED:
+    case ANT_LEV_PAGE_16_UPDATED:
 
-    break;
-  case ANT_LEV_PAGE_80_UPDATED:
-    break;
+      break;
+    case ANT_LEV_PAGE_80_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_81_UPDATED:
-    break;
+    case ANT_LEV_PAGE_81_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_REQUEST_SUCCESS:
-    break;
+    case ANT_LEV_PAGE_REQUEST_SUCCESS:
+      break;
 
-  case ANT_LEV_PAGE_REQUEST_FAILED:
-    break;
+    case ANT_LEV_PAGE_REQUEST_FAILED:
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
 }
 
@@ -494,106 +451,48 @@ void antplus_lev_evt_handler_post(antplus_lev_profile_t *p_profile, antplus_lev_
 
   switch (event)
   {
-  case ANT_LEV_PAGE_1_UPDATED:
-    break;
+    case ANT_LEV_PAGE_1_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_2_UPDATED:
-    break;
+    case ANT_LEV_PAGE_2_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_3_UPDATED:
-    break;
+    case ANT_LEV_PAGE_3_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_4_UPDATED:
-    break;
+    case ANT_LEV_PAGE_4_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_5_UPDATED:
-    break;
+    case ANT_LEV_PAGE_5_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_34_UPDATED:
-    break;
+    case ANT_LEV_PAGE_34_UPDATED:
+      break;
 
-  case ANT_LEV_PAGE_16_UPDATED:
+    case ANT_LEV_PAGE_16_UPDATED:
+      // assist level
+      p_profile->common.travel_mode_state = p_profile->page_16.travel_mode;
+      mp_ui_vars->ui8_assist_level = p_profile->page_16.travel_mode >> 3;
 
-    if (p_profile->page_16.light)
-    {
-      // light mode activated
-    }
-    else
-    {
-      // light mode  deactivated
-    }
+      // lights
+      p_profile->common.system_state |= ((((uint8_t)p_profile->page_16.light) << 3));
+      mp_ui_vars->ui8_lights = ((uint8_t)p_profile->page_16.light);
+      break;
 
-    if (p_profile->page_16.current_rear_gear == 14)
-    {
-      // walk mode is requested
-      if (ui_vars.ui8_walk_assist_feature_enabled)
-      {
-        ui_vars.ui8_walk_assist = 1;
-        ui8_walk_assist_timeout = 2;
-        ui8_walk_assist_state_process_locally = 0;
-        led_sequence_play_now_until(LED_EVENT_WALK_ASSIST_ACTIVE);
-      }
-    }
-    if (p_profile->page_16.current_rear_gear == 15)
-    {
-      // enable brakes: be as fast as possible
-      // nrf_gpio_port_out_clear(NRF_P0, 1UL << BRAKE__PIN);
-      led_sequence_play_next_until(LED_EVENT_SHORT_RED);
-    }
-    if (p_profile->page_16.current_rear_gear == 0)
-    {
-      // this state should clear both brakes and walk mode
+    case ANT_LEV_PAGE_80_UPDATED:
+      break;
 
-      // disable walk mode
-      if (ui_vars.ui8_walk_assist == 1)
-      {
-        ui_vars.ui8_walk_assist = 0;
-        ui8_walk_assist_state_process_locally = 1;
-      }
-      // disable brakes: be as fast as possible
-      // nrf_gpio_port_out_set(NRF_P0, 1UL << BRAKE__PIN);
-      led_sequence_cancel_play_until();
-    }
+    case ANT_LEV_PAGE_81_UPDATED:
+      break;
 
-    if (p_profile->page_16.current_front_gear == 3)
-    {
+    case ANT_LEV_PAGE_REQUEST_SUCCESS:
+      break;
 
-      if (m_motor_state == MOTOR_STATE_OFF)
-      {
-        // turn on TSDZ2 motor controller
-        m_motor_state = MOTOR_STATE_ON_START;
-      }
+    case ANT_LEV_PAGE_REQUEST_FAILED:
+      break;
 
-      else if (m_motor_state == MOTOR_STATE_ON)
-      {
-        //  turn off TSDZ2 motor controller
-        m_motor_state = MOTOR_STATE_OFF_START;
-      }
-    }
-
-    // assist level
-    p_profile->common.travel_mode_state = p_profile->page_16.travel_mode;
-    mp_ui_vars->ui8_assist_level = p_profile->page_16.travel_mode >> 3;
-
-    // lights
-    p_profile->common.system_state |= ((((uint8_t)p_profile->page_16.light) << 3));
-    mp_ui_vars->ui8_lights = ((uint8_t)p_profile->page_16.light);
-    break;
-
-  case ANT_LEV_PAGE_80_UPDATED:
-    break;
-
-  case ANT_LEV_PAGE_81_UPDATED:
-    break;
-
-  case ANT_LEV_PAGE_REQUEST_SUCCESS:
-    break;
-
-  case ANT_LEV_PAGE_REQUEST_FAILED:
-    break;
-
-  default:
-    break;
+    default:
+      break;
   }
 }
 
@@ -603,11 +502,11 @@ void antplus_controls_evt_handler(antplus_controls_profile_t *p_profile, antplus
 
   switch (event)
   {
-  case ANTPLUS_CONTROLS_PAGE_73_UPDATED:
-    break;
+    case ANTPLUS_CONTROLS_PAGE_73_UPDATED:
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
 }
 
