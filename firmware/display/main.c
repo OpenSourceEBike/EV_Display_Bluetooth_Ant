@@ -71,8 +71,8 @@ volatile uint8_t ui8_m_enter_bootloader = 0;
 volatile uint8_t ui8_m_ant_device_id = 0;
 volatile uint8_t ui8_m_flash_configurations = 0;
 
-uint8_t ui8_m_wheel_speed_integer;
-uint8_t ui8_m_wheel_speed_decimal;
+// uint8_t ui8_m_wheel_speed_integer;
+// uint8_t ui8_m_wheel_speed_decimal;
 
 static uint8_t ui8_walk_assist_timeout = 0;
 static uint8_t ui8_walk_assist_state_process_locally = 0;

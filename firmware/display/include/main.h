@@ -4,11 +4,11 @@
 #include "common.h"
 #include "antplus_controls.h"
 
-// #define DEVELOPMENT
+#define DEVELOPMENT
 
 #ifdef DISPLAY_SPI
   #define DISPLAY_USE_RESET_PIN
-  // #define DISPLAY_USE_SELECT_PIN
+  #define DISPLAY_USE_SELECT_PIN
 #endif
 
 extern antplus_controls_profile_t m_antplus_controls;

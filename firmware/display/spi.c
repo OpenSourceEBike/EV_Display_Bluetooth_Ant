@@ -42,8 +42,14 @@ void spi_init(uint32_t clk, uint32_t mosi) {
 }
 
 void spi_transfer(uint8_t* m_tx_buf, uint32_t m_length) {
-  static uint8_t m_rx_buf[1]; // we are not receiving anything
   while (spi_xfer_done == false) ;
   spi_xfer_done = false;
-  APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, m_rx_buf, m_length));
+  APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, NULL, 0));
 }
+
+// void spi_transfer(uint8_t* m_tx_buf, uint32_t m_length) {
+//   static uint8_t m_rx_buf[1]; // we are not receiving anything
+//   while (spi_xfer_done == false) ;
+//   spi_xfer_done = false;
+//   APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, m_rx_buf, m_length));
+// }

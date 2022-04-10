@@ -11,7 +11,9 @@
     "git.ignoreLimitWarning": true,
     "files.associations": {
       "nrf_assert.h": "c",
-      "state.h": "c"
+      "state.h": "c",
+      "buttons.h": "c",
+      "nrf_drv_spi.h": "c"
     }
   }
 }
