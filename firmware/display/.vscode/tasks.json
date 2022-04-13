@@ -36,13 +36,28 @@
             "group": "build"
         },
         {
-          "label": "OpenOCD",
+          "label": "OpenOCD JLink",
           "type": "shell",
           "args": [],
           "linux": {
               "command": "openocd -c 'interface jlink; transport select swd; source [find target/nrf52.cfg]'"
           },
           "problemMatcher": []
+        },
+        {
+          "label": "OpenOCD ST-LINK",
+          "type": "shell",
+          "args": [],
+          "linux": {
+              "command": "openocd",
+              "args": [
+                  "-f",
+                  "${workspaceFolder}/../../common_firmware/tools/openocd-scripts/stlink.cfg",
+                  "-f",
+                  "${workspaceFolder}/../../common_firmware/tools/openocd-scripts/nrf52.cfg"
+              ]
+          },
+            "problemMatcher": []
         }
     ]
 }
