@@ -195,7 +195,9 @@ SRC_FILES += \
 	$(PROJ_DIR)/battery_gui.c \
 	$(PROJ_DIR)/rtc.c \
 	$(PROJ_DIR)/configscreen.c \
-	$(PROJ_DIR)/spi.c
+	$(PROJ_DIR)/spi.c \
+  $(PROJ_DIR)/can/MCP2515.c \
+  $(PROJ_DIR)/can/CANSPI.c \
  
 # Include folders common to all targets
 INC_FOLDERS += \
@@ -232,6 +234,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/balloc \
 	$(SDK_ROOT)/components/libraries/crc16 \
   $(SDK_ROOT)/components/libraries/util \
+  $(SDK_ROOT)/components/libraries/queue \
   $(SDK_ROOT)/modules/nrfx \
   $(SDK_ROOT)/components/softdevice/common \
   $(SDK_ROOT)/components \
@@ -289,6 +292,7 @@ INC_FOLDERS += \
   $(PROJ_DIR)/antplus_controls \
   $(PROJ_DIR)/antplus_controls/pages \
 	$(PROJ_DIR)/ssd1306_driver \
+  $(PROJ_DIR)/can \
 
 # Libraries common to all targets
 LIB_FILES += \

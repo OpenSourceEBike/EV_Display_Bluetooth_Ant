@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "utils.h"
+#include "nrf_gpio.h"
 
 int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min,
 		int32_t out_max) {
@@ -144,4 +145,15 @@ uint8_t* itoa(uint32_t ui32_i) {
 		*--p = '-';
 	}
 	return p;
+}
+
+void nrf_gpio_cfg_output_HIGH_DRIVE(uint32_t pin_number)
+{
+	nrf_gpio_cfg(
+		pin_number,
+		NRF_GPIO_PIN_DIR_OUTPUT,
+		NRF_GPIO_PIN_INPUT_DISCONNECT,
+		NRF_GPIO_PIN_NOPULL,
+		GPIO_PIN_CNF_DRIVE_H0H1,
+		NRF_GPIO_PIN_NOSENSE);
 }

@@ -210,7 +210,6 @@ typedef struct{
 }id_reg_t;
 
 /* Functions */
-bool MCP2515_Initialize(void);
 bool MCP2515_SetConfigMode(void);
 bool MCP2515_SetNormalMode(void);
 bool MCP2515_SetSleepMode(void);

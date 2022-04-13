@@ -12,8 +12,8 @@
 #include "SSD1306.h"
 #include "app_error.h"
 #include "app_util_platform.h"
-#include "spi.h"
 #include "main.h"
+#include "spi.h"
 
 static uint8_t _i2caddr, _vccstate;
 static uint32_t _dc, _rs, _cs;
@@ -209,30 +209,18 @@ void set_rotation(uint8_t x)
 }
 
 #ifdef DISPLAY_SPI
-void ssd1306_init_spi(uint32_t dc, uint32_t rs, uint32_t cs, uint32_t clk, uint32_t mosi)
+void ssd1306_init_spi(uint32_t dc, uint32_t rs, uint32_t cs)
 {
-  _dc = dc;
-  _rs = rs;
-  _cs = cs;
-
-  nrf_gpio_cfg_output(dc);
-  nrf_gpio_pin_set(dc);
-#ifdef DISPLAY_USE_RESET_PIN
-  nrf_gpio_cfg_output(rs);
-  nrf_gpio_pin_clear(rs); // hold in reset until initialization
-  nrf_delay_ms(1);
-#endif
-#ifdef DISPLAY_USE_SELECT_PIN
-  nrf_gpio_cfg_output(cs);
-#endif
-  spi_init(clk, mosi);
+  _dc = DISPLAY_DC_PIN;
+  _rs = DISPLAY_RS_PIN;
+  _cs = DISPLAY_CS_PIN;
 }
 #elif defined(DISPLAY_I2C)
-void ssd1306_init_i2c(uint32_t scl, uint32_t sda)
+void ssd1306_init_i2c()
 {
   _i2caddr = SSD1306_I2C_ADDRESS;
   use_i2c = true;
-  twi_master_init(scl, sda);
+  twi_master_init(DISPLAY_SCL_PIN, DISPLAY_SDA_PIN);
 }
 #else
 #error MUST define DISPLAY_I2C or DISPLAY_SPI
@@ -249,7 +237,7 @@ void ssd1306_command(uint8_t c)
   _HI_CS();
   _LO_DC();
   _LO_CS();
-  spi_transfer(&c, 1);
+  spi_tx(&c, 1);
   _HI_CS();
 #else
 #error MUST define DISPLAY_I2C or DISPLAY_SPI
@@ -578,7 +566,7 @@ void ssd1306_power_off()
 //   //   _HI_CS();
 //   //   _HI_DC();
 //   //   _LO_CS();
-//   //   UNUSED_VARIABLE(spi_transfer(&c, 1));
+//   //   UNUSED_VARIABLE(spi_tx(&c, 1));
 //   //   _HI_CS();
 //   // }
 // }
@@ -610,7 +598,7 @@ void ssd1306_display(void)
     ssd1306_command(0x10);
     
     _HI_DC(); // data mode
-    spi_transfer(&buffer[buffer_index], 128);
+    spi_tx(&buffer[buffer_index], 128);
     buffer_index += 128;
     nrf_delay_us(200); // needed otherwise the pixels on the OLED screen are not written correctly
   }
@@ -651,7 +639,7 @@ void ssd1306_display(void)
     ssd1306_command(0x10);
     
     _HI_DC(); // data mode
-    spi_transfer(&buffer[buffer_index], 128);
+    spi_tx(&buffer[buffer_index], 128);
     buffer_index += 128;
     nrf_delay_us(200); // needed otherwise the pixels on the OLED screen are not written correctly
   }

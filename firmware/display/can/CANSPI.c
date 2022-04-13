@@ -81,11 +81,7 @@ bool CANSPI_Initialize(void)
   RXF5reg.RXF5SIDL = 0x08;
   RXF5reg.RXF5EID8 = 0x00;
   RXF5reg.RXF5EID0 = 0x00;
-  
-  /* MCP2515 초기화, SPI 통신 상태 확인 */
-  if(!MCP2515_Initialize())
-    return false;
-    
+
   /* Configuration 모드로 설정 */
   if(!MCP2515_SetConfigMode())
     return false;

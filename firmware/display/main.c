@@ -61,6 +61,9 @@
 #include "screen.h"
 #include "mainscreen.h"
 #include "configscreen.h"
+#include "utils.h"
+#include "spi.h"
+#include "CANSPI.h"
 
 UG_GUI gui;
 
@@ -1113,12 +1116,12 @@ int main(void)
     NVIC_SystemReset(); // reboot into bootloader
   }
 
-  ble_init();
-  ant_setup();
+  // ble_init();
+  // ant_setup();
   uart_init();
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
-  // ui_vars.ui8_street_mode_function_enabled = 1;
+  ui_vars.ui8_street_mode_function_enabled = 1;
 
   // setup this member variable ui8_m_ant_device_id
   ui8_m_ant_device_id = mp_ui_vars->ui8_ant_device_id;
@@ -1128,9 +1131,20 @@ int main(void)
 
   led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
 
+#ifdef DISPLAY_I2C
+  ssd1306_init_i2c();
+#elif defined(DISPLAY_SPI)
+  // SPI is used to display and CAN module
+  spi_init();
+#else
+#error MUST define DISPLAY_I2C or DISPLAY_SPI
+#endif
+
   // init the display
-  display_init();
-  screen_init();
+  // display_init();
+  // screen_init();
+
+  CANSPI_Initialize();
 
   // show the first screen: boot screen
 #ifndef DEVELOPMENT

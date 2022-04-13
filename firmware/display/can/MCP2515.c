@@ -1,32 +1,59 @@
 #include "MCP2515.h"
+#include "spi.h"
+#include "nrf_gpio.h"
+#include "pins.h"
 
 /* Modify below items for your SPI configurations */
-#define CAN_MODULE_CS_PIN NRF_GPIO_PIN_MAP(0, 10)
-
-#define SPI_TIMEOUT             10
 #define MCP2515_CS_HIGH()   nrf_gpio_pin_set(CAN_MODULE_CS_PIN);
 #define MCP2515_CS_LOW()    nrf_gpio_pin_clear(CAN_MODULE_CS_PIN);
 
 /* Prototypes */
 static void SPI_Tx(uint8_t data);
 static void SPI_TxBuffer(uint8_t *buffer, uint8_t length);
-static uint8_t SPI_Rx(void);
-static void SPI_RxBuffer(uint8_t *buffer, uint8_t length);
+static void SPI_TxRxBuffer(uint8_t *tx_buffer, uint8_t tx_length, uint8_t *rx_buffer, uint8_t rx_length);
 
-bool MCP2515_Initialize(void)
+bool MCP2515_SetLoopbackMode(void)
 {
-  // setup CS pin
-  nrf_gpio_cfg_output(CAN_MODULE_CS_PIN);
-  MCP2515_CS_HIGH();    
-   
-  return true;
+  /* CANCTRL Register Sleep 모드 설정 */  
+  MCP2515_WriteByte(MCP2515_CANCTRL, 0x40);
+  
+  uint8_t loop = 10;
+  
+  do {    
+    /* 모드전환 확인 */    
+    if((MCP2515_ReadByte(MCP2515_CANSTAT) & 0xE0) == 0x40)
+      return true;
+    
+    loop--;
+  } while(loop > 0);
+  
+  return false;
 }
 
 bool MCP2515_SetConfigMode(void)
 {
-  /* CANCTRL Register Configuration mode setting */  
+
+
+  static uint8_t can_ctrl = 0, can_stat = 0;
+
+  MCP2515_CS_LOW();
+
+while (1) {
+
+  can_ctrl = MCP2515_ReadByte(MCP2515_CANCTRL);
+  can_stat = MCP2515_ReadByte(MCP2515_CANSTAT);
+
+  // set config mode
   MCP2515_WriteByte(MCP2515_CANCTRL, 0x80);
+
+  can_ctrl = MCP2515_ReadByte(MCP2515_CANCTRL);
+  can_stat = MCP2515_ReadByte(MCP2515_CANSTAT);
+
+  // set loopback mode
+  MCP2515_SetLoopbackMode();
   
+}
+
   uint8_t loop = 10;
   
   do {    
@@ -87,25 +114,23 @@ void MCP2515_Reset(void)
 
 uint8_t MCP2515_ReadByte (uint8_t address)
 {
-  uint8_t retVal;
+  uint8_t retVal[2];
   
   MCP2515_CS_LOW();
   
   SPI_Tx(MCP2515_READ);
-  SPI_Tx(address);
-  retVal = SPI_Rx();
+  SPI_TxRxBuffer(&address, 1, retVal, 2);
       
   MCP2515_CS_HIGH();
   
-  return retVal;
+  return retVal[1];
 }
 
 void MCP2515_ReadRxSequence(uint8_t instruction, uint8_t *data, uint8_t length)
 {
   MCP2515_CS_LOW();
   
-  SPI_Tx(instruction);        
-  SPI_RxBuffer(data, length);
+  SPI_TxRxBuffer(&instruction, 1, data, length);
     
   MCP2515_CS_HIGH();
 }
@@ -166,11 +191,12 @@ void MCP2515_RequestToSend(uint8_t instruction)
 uint8_t MCP2515_ReadStatus(void)
 {
   uint8_t retVal;
+  uint8_t command;
   
   MCP2515_CS_LOW();
   
-  SPI_Tx(MCP2515_READ_STATUS);
-  retVal = SPI_Rx();
+  command = MCP2515_READ_STATUS;
+  SPI_TxRxBuffer(&command, 1, &retVal, 1);
         
   MCP2515_CS_HIGH();
   
@@ -180,11 +206,12 @@ uint8_t MCP2515_ReadStatus(void)
 uint8_t MCP2515_GetRxStatus(void)
 {
   uint8_t retVal;
+  uint8_t command;
   
   MCP2515_CS_LOW();
-  
-  SPI_Tx(MCP2515_RX_STATUS);
-  retVal = SPI_Rx();
+
+  command = MCP2515_RX_STATUS;
+  SPI_TxRxBuffer(&command, 1, &retVal, 1);
         
   MCP2515_CS_HIGH();
   
@@ -205,22 +232,16 @@ void MCP2515_BitModify(uint8_t address, uint8_t mask, uint8_t data)
 
 static void SPI_Tx(uint8_t data)
 {
-  spi_transfer(&data, 1);
+  spi_tx(&data, 1);
 }
 
 static void SPI_TxBuffer(uint8_t *buffer, uint8_t length)
 {
-  spi_transfer(buffer, length);
+  spi_tx(buffer, length);
 }
 
-static uint8_t SPI_Rx(void)
+static void SPI_TxRxBuffer(uint8_t *tx_buffer, uint8_t tx_length, uint8_t *rx_buffer, uint8_t rx_length)
 {
-  uint8_t retVal;
-  HAL_SPI_Receive(SPI_CAN, &retVal, 1, SPI_TIMEOUT);
-  return retVal;
+  spi_tx_rx(tx_buffer, tx_length, rx_buffer, rx_length);
 }
 
-static void SPI_RxBuffer(uint8_t *buffer, uint8_t length)
-{
-  HAL_SPI_Receive(SPI_CAN, buffer, length, SPI_TIMEOUT);
-}
