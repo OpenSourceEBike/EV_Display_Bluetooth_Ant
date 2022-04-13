@@ -212,6 +212,7 @@ typedef struct{
 /* Functions */
 bool MCP2515_SetConfigMode(void);
 bool MCP2515_SetNormalMode(void);
+bool MCP2515_SetLoopbackMode(void);
 bool MCP2515_SetSleepMode(void);
 void MCP2515_Reset(void);
 uint8_t MCP2515_ReadByte (uint8_t address);

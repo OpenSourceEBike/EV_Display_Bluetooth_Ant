@@ -26,6 +26,7 @@ typedef union {
 
 bool CANSPI_Initialize(void);
 void CANSPI_Sleep(void);
+void CANSPI_Loopback(void);
 uint8_t CANSPI_Transmit(uCAN_MSG *tempCanMsg);
 uint8_t CANSPI_Receive(uCAN_MSG *tempCanMsg);
 uint8_t CANSPI_messagesInBuffer(void);

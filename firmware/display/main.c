@@ -1146,6 +1146,32 @@ int main(void)
 
   CANSPI_Initialize();
 
+
+  uCAN_MSG rxMessage;
+  uint32_t counter = 0;
+  uint32_t wheel_speed_limit;
+  uint32_t wheel_circunference;
+  while (1) {
+
+    if (CANSPI_Receive(&rxMessage))
+    {
+      counter++;
+
+      if (rxMessage.frame.id == 0x02F83203) {
+
+        uint32_t temp = rxMessage.frame.data1;
+        temp = temp << 8;
+        temp = temp + rxMessage.frame.data0;
+        wheel_speed_limit = temp;
+
+        temp = rxMessage.frame.data5;
+        temp = temp << 8;
+        temp = temp + rxMessage.frame.data4;
+        wheel_circunference = temp;
+      }
+    }
+  }
+
   // show the first screen: boot screen
 #ifndef DEVELOPMENT
   screenShow(&bootScreen);
