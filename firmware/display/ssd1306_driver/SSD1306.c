@@ -209,7 +209,7 @@ void set_rotation(uint8_t x)
 }
 
 #ifdef DISPLAY_SPI
-void ssd1306_init_spi(uint32_t dc, uint32_t rs, uint32_t cs)
+void ssd1306_init_spi()
 {
   _dc = DISPLAY_DC_PIN;
   _rs = DISPLAY_RS_PIN;

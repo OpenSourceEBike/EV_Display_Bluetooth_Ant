@@ -108,7 +108,7 @@ int16_t ssd1306_width(void);
 int16_t ssd1306_height(void);
 void set_rotation(uint8_t x);
 void ssd1306_power_off();
-void ssd1306_init_spi(uint32_t dc, uint32_t rs, uint32_t cs);
+void ssd1306_init_spi();
 void ssd1306_init_i2c();
 void ssd1306_command(uint8_t c);
 void ssd1306_begin(uint8_t vccstate, uint8_t i2caddr, bool reset);
