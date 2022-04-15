@@ -32,44 +32,55 @@ void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
 }
 
 void spi_init() {
-
   nrf_gpio_cfg_output(DISPLAY_DC_PIN);
   nrf_gpio_pin_set(DISPLAY_DC_PIN);
+
 #ifdef DISPLAY_USE_RESET_PIN
   nrf_gpio_cfg_output(DISPLAY_RS_PIN);
   nrf_gpio_pin_clear(DISPLAY_RS_PIN); // hold in reset until initialization
   nrf_delay_ms(1);
 #endif
+
 #ifdef DISPLAY_USE_SELECT_PIN
   nrf_gpio_cfg_output(DISPLAY_CS_PIN);
   nrf_gpio_pin_set(DISPLAY_CS_PIN);
 #endif
+
+  nrf_gpio_cfg_output(CAN_MODULE_CS_PIN);
+  nrf_gpio_pin_set(CAN_MODULE_CS_PIN);
 
   nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
   spi_config.ss_pin   = NRF_DRV_SPI_PIN_NOT_USED;
   spi_config.miso_pin = DISPLAY_MISO_PIN;
   spi_config.mosi_pin = DISPLAY_MOSI_PIN;
   spi_config.sck_pin  = DISPLAY_CLK_PIN;
-  spi_config.frequency = NRF_SPIM_FREQ_1M;
+  spi_config.frequency = NRF_SPIM_FREQ_4M;
   spi_config.mode = NRF_SPI_MODE_0;
   spi_config.bit_order = NRF_SPI_BIT_ORDER_MSB_FIRST;
   APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));
 }
 
-void spi_tx(uint8_t* m_tx_buf, uint32_t m_length) {
-
-  spi_xfer_done = false;
+void spi_tx(uint8_t* m_tx_buf, uint32_t m_tx_length) {
+  static uint8_t m_rx_buf[1]; // we are not receiving anything
   
-  APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, NULL, 0));
+  // wait for SPI transfer finish
+  while (spi_xfer_done == false) ;
+  
+  spi_xfer_done = false;
+  APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_tx_length, m_rx_buf, 1));
 
+  // wait for SPI transfer finish
   while (spi_xfer_done == false) ;
 }
 
 void spi_tx_rx(uint8_t* m_tx_buf, uint32_t m_tx_length, uint8_t* m_rx_buf, uint32_t m_rx_length) {
 
-  spi_xfer_done = false;
+  // wait for SPI transfer finish
+  while (spi_xfer_done == false) ;
   
+  spi_xfer_done = false;
   APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_tx_length, m_rx_buf, m_rx_length));
 
+  // wait for SPI transfer finish
   while (spi_xfer_done == false) ;
 }

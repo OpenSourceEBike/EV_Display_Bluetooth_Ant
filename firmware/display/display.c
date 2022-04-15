@@ -76,6 +76,7 @@ void display_off() {
 void display_init(void)
 {
   ssd1306_init_spi();
+
 #ifdef DISPLAY_I2C
   ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
 #elif defined(DISPLAY_SPI)

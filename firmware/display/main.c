@@ -1141,17 +1141,17 @@ int main(void)
 #endif
 
   // init the display
-  // display_init();
-  // screen_init();
+  display_init();
+  screen_init();
 
   CANSPI_Initialize();
 
   // show the first screen: boot screen
-// #ifndef DEVELOPMENT
-//   screenShow(&bootScreen);
-// #else
-//   screenShow(&mainScreen1);
-// #endif
+#ifndef DEVELOPMENT
+  screenShow(&bootScreen);
+#else
+  screenShow(&mainScreen1);
+#endif
 
   uCAN_MSG rxMessage;
   uint32_t counter = 0;

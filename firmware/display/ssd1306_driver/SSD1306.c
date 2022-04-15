@@ -624,7 +624,7 @@ void ssd1306_display(void)
     ssd1306_command(0x10);
     
     _HI_DC(); // data mode
-    _LO_CS();
+    _LO_CS();    
     spi_tx(&buffer[buffer_index], 128);
     _HI_CS();
     buffer_index += 128;
