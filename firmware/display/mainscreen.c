@@ -164,7 +164,7 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
 
 
-Field bootHeading = FIELD_DRAWTEXT_RO("OS Display"),
+Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
    bootURL_1 = FIELD_DRAWTEXT_RO("Bafang"),
    bootURL_2 = FIELD_DRAWTEXT_RO("M500/M600"),
 

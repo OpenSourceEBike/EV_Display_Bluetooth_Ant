@@ -923,7 +923,7 @@ void rt_calc_battery_soc(void) {
 	if (ui32_temp > 100)
 		ui32_temp = 100;
 
-  ui8_g_battery_soc = (uint8_t) (100 - ui32_temp);
+  // ui8_g_battery_soc = (uint8_t) (100 - ui32_temp); // M500/M600 SOC must not be calculated here
 }
 
 // Note: this is called from ISR context every 50ms

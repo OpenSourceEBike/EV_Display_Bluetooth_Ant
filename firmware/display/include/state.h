@@ -15,7 +15,8 @@
 #define PEDAL_CADENCE_FILTER_COEFFICIENT   3
 
 // Battery voltage (readed on motor controller):
-#define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 866
+// #define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 866
+#define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 100 // for Bafang M500/M600 --> each step equal to 10mv
 
 #define NUM_CUSTOMIZABLE_FIELDS 6
 

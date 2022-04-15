@@ -68,6 +68,7 @@
 UG_GUI gui;
 
 extern uint8_t ui8_g_battery_soc;
+rt_vars_t *mp_rt_vars;
 ui_vars_t *mp_ui_vars;
 
 volatile uint8_t ui8_m_enter_bootloader = 0;
@@ -1095,6 +1096,8 @@ void system_power_off(uint8_t updateDistanceOdo)
 int main(void)
 {
   mp_ui_vars = get_ui_vars();
+  mp_rt_vars = get_rt_vars();
+
   // Initialize the async SVCI interface to bootloader before any interrupts are enabled.
   pins_init();
   lfclk_config(); // needed by the APP_TIMER
@@ -1152,31 +1155,6 @@ int main(void)
 #else
   screenShow(&mainScreen1);
 #endif
-
-  uCAN_MSG rxMessage;
-  uint32_t counter = 0;
-  uint32_t wheel_speed_limit;
-  uint32_t wheel_circunference;
-  while (1) {
-
-    if (CANSPI_Receive(&rxMessage))
-    {
-      counter++;
-
-      if (rxMessage.frame.id == 0x02F83203) {
-
-        uint32_t temp = rxMessage.frame.data1;
-        temp = temp << 8;
-        temp = temp + rxMessage.frame.data0;
-        wheel_speed_limit = temp;
-
-        temp = rxMessage.frame.data5;
-        temp = temp << 8;
-        temp = temp + rxMessage.frame.data4;
-        wheel_circunference = temp;
-      }
-    }
-  }
 
   while (1)
   {
@@ -1241,6 +1219,56 @@ int main(void)
       {
         ui8_m_flash_configurations = 0;
         eeprom_write_variables();
+      }
+    }
+
+    // process CAN messages
+    uCAN_MSG rxMessage;
+    if (CANSPI_Receive(&rxMessage))
+    {
+      uint32_t temp;
+
+      switch (rxMessage.frame.id) {
+        case 0x01F83100:
+        break;
+
+        case 0x02F83200:
+          ui8_g_battery_soc = rxMessage.frame.data0;
+        break;
+
+        case 0x02F83201:
+          temp = rxMessage.frame.data1;
+          temp = temp << 8;
+          temp = temp + rxMessage.frame.data0;
+          mp_rt_vars->ui16_wheel_speed_x10 = temp / 10;
+ 
+          temp = rxMessage.frame.data2;
+          temp = temp << 8;
+          temp = temp + rxMessage.frame.data3;
+          mp_rt_vars->ui8_battery_current_x5 = temp / 20;
+
+          temp = rxMessage.frame.data5;
+          temp = temp << 8;
+          temp = temp + rxMessage.frame.data4;
+          mp_rt_vars->ui16_adc_battery_voltage = temp ;
+
+          mp_rt_vars->ui8_motor_temperature = rxMessage.frame.data7 - 40;
+        break;
+
+        case 0x02F83203:
+          // temp = rxMessage.frame.data1;
+          // temp = temp << 8;
+          // temp = temp + rxMessage.frame.data0;
+          // wheel_speed_limit = temp;
+
+          // temp = rxMessage.frame.data5;
+          // temp = temp << 8;
+          // temp = temp + rxMessage.frame.data4;
+          // wheel_circunference = temp;
+        break;
+
+
+         
       }
     }
   }
