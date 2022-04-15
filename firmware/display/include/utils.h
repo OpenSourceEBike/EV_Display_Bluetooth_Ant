@@ -16,6 +16,5 @@ uint8_t ui8_min(uint8_t value_a, uint8_t value_b);
 void crc16(uint8_t ui8_data, uint16_t *ui16_crc);
 uint8_t* itoa(uint32_t ui32_i);
 //void ftoa(float n, char *res, int afterpoint);
-void nrf_gpio_cfg_output_HIGH_DRIVE(uint32_t pin_number);
 
 #endif /* _UTILS_H */

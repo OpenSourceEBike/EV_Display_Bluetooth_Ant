@@ -33,9 +33,6 @@ void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
 
 void spi_init() {
 
-  nrf_gpio_cfg_output_HIGH_DRIVE(CAN_MODULE_CS_PIN);
-  nrf_gpio_pin_set(CAN_MODULE_CS_PIN);
-
   nrf_gpio_cfg_output(DISPLAY_DC_PIN);
   nrf_gpio_pin_set(DISPLAY_DC_PIN);
 #ifdef DISPLAY_USE_RESET_PIN
@@ -53,7 +50,7 @@ void spi_init() {
   spi_config.miso_pin = DISPLAY_MISO_PIN;
   spi_config.mosi_pin = DISPLAY_MOSI_PIN;
   spi_config.sck_pin  = DISPLAY_CLK_PIN;
-  spi_config.frequency = NRF_SPIM_FREQ_8M;
+  spi_config.frequency = NRF_SPIM_FREQ_1M;
   spi_config.mode = NRF_SPI_MODE_0;
   spi_config.bit_order = NRF_SPI_BIT_ORDER_MSB_FIRST;
   APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));

@@ -554,23 +554,6 @@ void ssd1306_power_off()
   ssd1306_command(SSD1306_DISPLAYOFF);
 }
 
-// void ssd1306_data(uint8_t c)
-// {
-// // if (use_i2c) {
-//   ret_code_t ret;
-//   uint8_t dta_send[] = {0x40, c};
-//   ret = nrf_drv_twi_tx(&m_twi_master, _i2caddr, dta_send, 2, false);
-//   UNUSED_VARIABLE(ret);
-//   // }
-//   // else {
-//   //   _HI_CS();
-//   //   _HI_DC();
-//   //   _LO_CS();
-//   //   UNUSED_VARIABLE(spi_tx(&c, 1));
-//   //   _HI_CS();
-//   // }
-// }
-
 void ssd1306_display(void)
 {
 #ifdef DISPLAY_SSD1306
@@ -598,7 +581,9 @@ void ssd1306_display(void)
     ssd1306_command(0x10);
     
     _HI_DC(); // data mode
+    _LO_CS();
     spi_tx(&buffer[buffer_index], 128);
+    _HI_CS();
     buffer_index += 128;
     nrf_delay_us(200); // needed otherwise the pixels on the OLED screen are not written correctly
   }
@@ -639,7 +624,9 @@ void ssd1306_display(void)
     ssd1306_command(0x10);
     
     _HI_DC(); // data mode
+    _LO_CS();
     spi_tx(&buffer[buffer_index], 128);
+    _HI_CS();
     buffer_index += 128;
     nrf_delay_us(200); // needed otherwise the pixels on the OLED screen are not written correctly
   }

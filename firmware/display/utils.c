@@ -146,14 +146,3 @@ uint8_t* itoa(uint32_t ui32_i) {
 	}
 	return p;
 }
-
-void nrf_gpio_cfg_output_HIGH_DRIVE(uint32_t pin_number)
-{
-	nrf_gpio_cfg(
-		pin_number,
-		NRF_GPIO_PIN_DIR_OUTPUT,
-		NRF_GPIO_PIN_INPUT_DISCONNECT,
-		NRF_GPIO_PIN_NOPULL,
-		GPIO_PIN_CNF_DRIVE_H0H1,
-		NRF_GPIO_PIN_NOSENSE);
-}
