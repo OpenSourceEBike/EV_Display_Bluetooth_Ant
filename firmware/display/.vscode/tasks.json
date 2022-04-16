@@ -4,14 +4,30 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build DISPLAY_OLED_1.3_SPI",
+            "label": "build TSDZ2 DISPLAY_OLED_1.3_SPI",
             "type": "shell",
             "args": [],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "linux": {
-                "command": "make default DISPLAY_OLED_1.3_SPI=1"
+                "command": "make default MOTOR_TSDZ2=1 DISPLAY_OLED_1.3_SPI=1"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build Bafang DISPLAY_OLED_1.3_SPI",
+            "type": "shell",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "linux": {
+                "command": "make default MOTOR_BAFANG=1 DISPLAY_OLED_1.3_SPI=1"
             },
             "problemMatcher": [],
             "group": {

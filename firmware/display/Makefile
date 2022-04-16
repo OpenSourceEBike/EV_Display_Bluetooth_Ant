@@ -2,7 +2,7 @@ PROJECT_NAME     := display_firmware
 TARGETS          := display_firmware
 
 # This is the user visible string for the version
-VERSION_STRING := 0.12.0
+VERSION_STRING := 0.15.0
 
 # This is the expected version of the motor firmware. Display will stop to work with correct TSDZ2 firmware version
 MOTOR_FIRMWARE_MAJOR := 1
@@ -11,8 +11,21 @@ MOTOR_FIRMWARE_MINOR := 1
 APP_VER_MAJOR = 1
 APP_VER_MINOR = 0
 
-ifdef DISPLAY_OLED_1.3_SPI
+ifdef MOTOR_TSDZ2
 $(warning )
+$(warning MOTOR: TSDZ2)
+MOTOR = TSDZ2
+CFLAGS = -DMOTOR_TSDZ2
+endif
+
+ifdef MOTOR_BAFANG
+$(warning )
+$(warning MOTOR: BAFANG)
+MOTOR = BAFANG_M500_M600
+CFLAGS = -DMOTOR_BAFANG
+endif
+
+ifdef DISPLAY_OLED_1.3_SPI
 $(warning DISPLAY OLED 1.3 SPI)
 $(warning )
 DISPLAY = OLED_1.3_SPI
@@ -21,7 +34,6 @@ CFLAGS += -DDISPLAY_SPI
 endif
 
 ifdef DISPLAY_OLED_1.3_I2C
-$(warning )
 $(warning DISPLAY OLED 1.3 I2C)
 $(warning )
 DISPLAY = OLED_1.3_I2C
@@ -30,7 +42,6 @@ CFLAGS += -DDISPLAY_I2C
 endif
 
 ifdef DISPLAY_OLED_0.96_SPI
-$(warning )
 $(warning DISPLAY OLED 0.96 SPI)
 $(warning )
 DISPLAY = OLED_0.96_SPI
@@ -39,7 +50,6 @@ CFLAGS += -DDISPLAY_SPI
 endif
 
 ifdef DISPLAY_OLED_0.96_I2C
-$(warning )
 $(warning DISPLAY_OLED_0.96_I2C)
 $(warning )
 DISPLAY = OLED_0.96_I2C
@@ -382,7 +392,7 @@ bl_settings:
 	$(SREC_PATH)nrfutil settings generate --family NRF52840 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --bootloader-version 1 --bl-settings-version 2 $(OUTPUT_DIRECTORY)/bl_settings.hex
 
 OTA:
-	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/firmware_ota-$(DISPLAY)-$(VERSION_STRING).zip
+	$(SREC_PATH)nrfutil pkg generate --hw-version 52 --sd-req 0xB9 --application-version-string $(APP_VER_MAJOR).$(APP_VER_MINOR).0 --application $(OUTPUT_DIRECTORY)/display_firmware.hex --key-file private.key --app-boot-validation VALIDATE_ECDSA_P256_SHA256 $(OUTPUT_DIRECTORY)/firmware_ota-$(MOTOR)-$(DISPLAY)-$(VERSION_STRING).zip
 
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc

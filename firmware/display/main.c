@@ -1121,7 +1121,10 @@ int main(void)
 
   // ble_init();
   // ant_setup();
+#ifdef MOTOR_TSDZ2
   uart_init();
+#endif
+
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
   ui_vars.ui8_street_mode_function_enabled = 1;
@@ -1134,20 +1137,26 @@ int main(void)
 
   led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
 
-#ifdef DISPLAY_I2C
-  ssd1306_init_i2c();
-#elif defined(DISPLAY_SPI)
+#ifdef MOTOR_TSDZ2
+  #ifdef DISPLAY_I2C
+    ssd1306_init_i2c();
+  #elif defined(DISPLAY_SPI)
+    // SPI is used to display
+    spi_init();
+  #else
+  #error MUST define DISPLAY_I2C or DISPLAY_SPI
+  #endif
+#elif defined(MOTOR_BAFANG)
   // SPI is used to display and CAN module
   spi_init();
+  CANSPI_Initialize();
 #else
-#error MUST define DISPLAY_I2C or DISPLAY_SPI
+  #error MUST define MOTOR_TSDZ2 or MOTOR_BAFANG
 #endif
 
   // init the display
   display_init();
   screen_init();
-
-  CANSPI_Initialize();
 
   // show the first screen: boot screen
 #ifndef DEVELOPMENT
@@ -1222,6 +1231,7 @@ int main(void)
       }
     }
 
+#ifdef MOTOR_BAFANG
     // process CAN messages
     uCAN_MSG rxMessage;
     if (CANSPI_Receive(&rxMessage))
@@ -1265,11 +1275,9 @@ int main(void)
           // temp = temp << 8;
           // temp = temp + rxMessage.frame.data4;
           // wheel_circunference = temp;
-        break;
-
-
-         
+        break;         
       }
     }
+#endif
   }
 }
