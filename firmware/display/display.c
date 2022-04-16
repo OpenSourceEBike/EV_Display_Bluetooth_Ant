@@ -13,17 +13,6 @@
 #include "SSD1306.h"
 #include "ugui.h"
 
-// I2C pins
-#define DISPLAY_CONFIG_SCL_PIN NRF_GPIO_PIN_MAP(1,10) 
-#define DISPLAY_CONFIG_SDA_PIN NRF_GPIO_PIN_MAP(1,13)
-
-// SPI pins
-#define DISPLAY_CONFIG_CLK_PIN NRF_GPIO_PIN_MAP(1,10)
-#define DISPLAY_CONFIG_MOSI_PIN NRF_GPIO_PIN_MAP(1,13)
-#define DISPLAY_CONFIG_RS_PIN NRF_GPIO_PIN_MAP(1,15)
-#define DISPLAY_CONFIG_DC_PIN NRF_GPIO_PIN_MAP(0,2)
-#define DISPLAY_CONFIG_CS_PIN 0xFF // not used
-
 /* uGUI instance from main */
 extern UG_GUI gui;
 
@@ -87,15 +76,9 @@ void display_off() {
 void display_init(void)
 {
 #ifdef DISPLAY_I2C
-  ssd1306_init_i2c(DISPLAY_CONFIG_SCL_PIN, DISPLAY_CONFIG_SDA_PIN);
   ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
 #elif defined(DISPLAY_SPI)
-  ssd1306_init_spi(
-    DISPLAY_CONFIG_DC_PIN,
-    DISPLAY_CONFIG_RS_PIN,
-    DISPLAY_CONFIG_CS_PIN,
-    DISPLAY_CONFIG_CLK_PIN,
-    DISPLAY_CONFIG_MOSI_PIN);
+  ssd1306_init_spi();
   ssd1306_begin(SSD1306_SWITCHCAPVCC, 0, true);
 #else
 #error MUST define DISPLAY_I2C or DISPLAY_SPI

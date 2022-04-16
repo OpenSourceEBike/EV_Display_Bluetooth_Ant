@@ -164,9 +164,9 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
 
 
-Field bootHeading = FIELD_DRAWTEXT_RO("OS Display"),
-   bootURL_1 = FIELD_DRAWTEXT_RO("Keep pedal"),
-   bootURL_2 = FIELD_DRAWTEXT_RO("free"),
+Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
+   bootURL_1 = FIELD_DRAWTEXT_RO("Bafang"),
+   bootURL_2 = FIELD_DRAWTEXT_RO("M500/M600"),
 
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
    bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
@@ -214,7 +214,6 @@ Screen bootScreen = {
       .field = &bootURL_1,
       .font = &SMALL_TEXT_FONT,
     },
-
     {
       .x = 0, .y = -6, .height = -1,
       .field = &bootURL_2,

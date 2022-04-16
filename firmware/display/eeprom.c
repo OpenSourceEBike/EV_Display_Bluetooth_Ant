@@ -184,8 +184,8 @@ const configurations_t m_configurations_defaults = {
   .ui8_enter_bootloader = 0,
 
   .field_selectors = {
-    6, // batteryVoltageField
-    16, // batteryPowerRemainField
+    10, // motor temperature
+    6, // battery voltage
 
     0, // upTimeField
     5, // motor power

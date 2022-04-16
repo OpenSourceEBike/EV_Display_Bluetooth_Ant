@@ -11,7 +11,11 @@
     "git.ignoreLimitWarning": true,
     "files.associations": {
       "nrf_assert.h": "c",
-      "state.h": "c"
+      "state.h": "c",
+      "string_view": "c",
+      "main.h": "c",
+      "spi.h": "c",
+      "pins.h": "c"
     }
   }
 }

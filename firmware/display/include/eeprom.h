@@ -157,7 +157,7 @@
 #define DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_7               317
 #define DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_WEIGHT_8            105
 #define DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_8               330
-#define DEFAULT_BATTERY_SOC_ENABLE                                  2 // show voltage
+#define DEFAULT_BATTERY_SOC_ENABLE                                  1 // show SOC
 
 #define DEFAULT_ANT_LEV_ID                                          1
 #define DEFAULT_ANT_LEV_ENABLE                                      0

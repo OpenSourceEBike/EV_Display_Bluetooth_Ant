@@ -61,18 +61,22 @@
 #include "screen.h"
 #include "mainscreen.h"
 #include "configscreen.h"
+#include "utils.h"
+#include "spi.h"
+#include "CANSPI.h"
 
 UG_GUI gui;
 
 extern uint8_t ui8_g_battery_soc;
+rt_vars_t *mp_rt_vars;
 ui_vars_t *mp_ui_vars;
 
 volatile uint8_t ui8_m_enter_bootloader = 0;
 volatile uint8_t ui8_m_ant_device_id = 0;
 volatile uint8_t ui8_m_flash_configurations = 0;
 
-uint8_t ui8_m_wheel_speed_integer;
-uint8_t ui8_m_wheel_speed_decimal;
+// uint8_t ui8_m_wheel_speed_integer;
+// uint8_t ui8_m_wheel_speed_decimal;
 
 static uint8_t ui8_walk_assist_timeout = 0;
 static uint8_t ui8_walk_assist_state_process_locally = 0;
@@ -1092,6 +1096,8 @@ void system_power_off(uint8_t updateDistanceOdo)
 int main(void)
 {
   mp_ui_vars = get_ui_vars();
+  mp_rt_vars = get_rt_vars();
+
   // Initialize the async SVCI interface to bootloader before any interrupts are enabled.
   pins_init();
   lfclk_config(); // needed by the APP_TIMER
@@ -1113,12 +1119,15 @@ int main(void)
     NVIC_SystemReset(); // reboot into bootloader
   }
 
-  ble_init();
-  ant_setup();
+  // ble_init();
+  // ant_setup();
+#ifdef MOTOR_TSDZ2
   uart_init();
+#endif
+
   led_init();
   led_set_global_brightness(7); // For wireless controller - brightest
-  // ui_vars.ui8_street_mode_function_enabled = 1;
+  ui_vars.ui8_street_mode_function_enabled = 1;
 
   // setup this member variable ui8_m_ant_device_id
   ui8_m_ant_device_id = mp_ui_vars->ui8_ant_device_id;
@@ -1127,6 +1136,23 @@ int main(void)
   uint8_t ui8_ble_connected_shown = 0;
 
   led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
+
+#ifdef MOTOR_TSDZ2
+  #ifdef DISPLAY_I2C
+    ssd1306_init_i2c();
+  #elif defined(DISPLAY_SPI)
+    // SPI is used to display
+    spi_init();
+  #else
+  #error MUST define DISPLAY_I2C or DISPLAY_SPI
+  #endif
+#elif defined(MOTOR_BAFANG)
+  // SPI is used to display and CAN module
+  spi_init();
+  CANSPI_Initialize();
+#else
+  #error MUST define MOTOR_TSDZ2 or MOTOR_BAFANG
+#endif
 
   // init the display
   display_init();
@@ -1204,5 +1230,54 @@ int main(void)
         eeprom_write_variables();
       }
     }
+
+#ifdef MOTOR_BAFANG
+    // process CAN messages
+    uCAN_MSG rxMessage;
+    if (CANSPI_Receive(&rxMessage))
+    {
+      uint32_t temp;
+
+      switch (rxMessage.frame.id) {
+        case 0x01F83100:
+        break;
+
+        case 0x02F83200:
+          ui8_g_battery_soc = rxMessage.frame.data0;
+        break;
+
+        case 0x02F83201:
+          temp = rxMessage.frame.data1;
+          temp = temp << 8;
+          temp = temp + rxMessage.frame.data0;
+          mp_rt_vars->ui16_wheel_speed_x10 = temp / 10;
+ 
+          temp = rxMessage.frame.data2;
+          temp = temp << 8;
+          temp = temp + rxMessage.frame.data3;
+          mp_rt_vars->ui8_battery_current_x5 = temp / 20;
+
+          temp = rxMessage.frame.data5;
+          temp = temp << 8;
+          temp = temp + rxMessage.frame.data4;
+          mp_rt_vars->ui16_adc_battery_voltage = temp ;
+
+          mp_rt_vars->ui8_motor_temperature = rxMessage.frame.data7 - 40;
+        break;
+
+        case 0x02F83203:
+          // temp = rxMessage.frame.data1;
+          // temp = temp << 8;
+          // temp = temp + rxMessage.frame.data0;
+          // wheel_speed_limit = temp;
+
+          // temp = rxMessage.frame.data5;
+          // temp = temp << 8;
+          // temp = temp + rxMessage.frame.data4;
+          // wheel_circunference = temp;
+        break;         
+      }
+    }
+#endif
   }
 }

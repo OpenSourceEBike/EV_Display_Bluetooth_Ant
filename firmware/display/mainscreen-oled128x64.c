@@ -336,7 +336,7 @@ void mainScreenonPostUpdate(void) {
 }
 
 // Screens in a loop, shown when the user short presses the power button
-Screen *screens[] = { &mainScreen1, &mainScreen2, &mainScreen3,
+Screen *screens[] = { &mainScreen1, /* &mainScreen2, &mainScreen3, */
 		NULL };
 
 

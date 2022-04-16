@@ -12,13 +12,31 @@
 #include <stdbool.h>
 #include "boards.h"
 
-#define MOTOR_POWER_ENABLE__PIN   NRF_GPIO_PIN_MAP(1,0)
+#ifdef DISPLAY_SPI
+  #define DISPLAY_USE_RESET_PIN
+  #define DISPLAY_USE_SELECT_PIN
+#endif
+
+// I2C pins
+#define DISPLAY_SCL_PIN NRF_GPIO_PIN_MAP(1, 10) 
+#define DISPLAY_SDA_PIN NRF_GPIO_PIN_MAP(1, 13)
+
+// SPI pins
+#define DISPLAY_CLK_PIN NRF_GPIO_PIN_MAP(1, 10)
+#define DISPLAY_MOSI_PIN NRF_GPIO_PIN_MAP(1, 13)
+#define DISPLAY_MISO_PIN NRF_GPIO_PIN_MAP(1, 15)
+#define DISPLAY_RS_PIN NRF_GPIO_PIN_MAP(0, 10)
+#define DISPLAY_DC_PIN NRF_GPIO_PIN_MAP(0, 2)
+#define DISPLAY_CS_PIN NRF_GPIO_PIN_MAP(0, 29)
+#define CAN_MODULE_CS_PIN NRF_GPIO_PIN_MAP(0, 31)
 
 // UART pins
 #define RX_PIN_NUMBER 24
 #define TX_PIN_NUMBER 22
 #define RTS_PIN_NUMBER 0xFFFFFFFF  // UART_PIN_DISCONNECTED
 #define CTS_PIN_NUMBER 0xFFFFFFFF  // UART_PIN_DISCONNECTED
+
+#define MOTOR_POWER_ENABLE__PIN   NRF_GPIO_PIN_MAP(1,0)
 
 void pins_init(void);
 void motor_power_enable(bool state);
