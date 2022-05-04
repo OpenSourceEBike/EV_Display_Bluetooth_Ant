@@ -15,7 +15,11 @@
 
 // EEPROM memory variables default values
 #define DEFAULT_VALUE_ASSIST_LEVEL                                  0
+#ifdef MOTOR_TSDZ2
 #define DEFAULT_VALUE_NUMBER_OF_ASSIST_LEVELS                       20
+#elif defined(MOTOR_BAFANG)
+#define DEFAULT_VALUE_NUMBER_OF_ASSIST_LEVELS                       9
+#endif
 #define DEFAULT_VALUE_WHEEL_PERIMETER                               2100 // 27.5'' wheel: 2100mm perimeter
 #define DEFAULT_VALUE_WHEEL_MAX_SPEED                               99
 #define DEFAULT_VALUE_UNITS_TYPE                                    0 // 0 = km/h

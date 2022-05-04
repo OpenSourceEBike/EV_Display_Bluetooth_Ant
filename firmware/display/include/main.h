@@ -7,6 +7,8 @@
 
 #define DEVELOPMENT
 
+// #define MOTOR_BAFANG
+
 extern antplus_controls_profile_t m_antplus_controls;
 
 /* Typedef of unions for handy access of single bytes */
