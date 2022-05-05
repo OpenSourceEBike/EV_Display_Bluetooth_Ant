@@ -60,6 +60,9 @@ static bool renderWarning(FieldLayout *layout);
 void DisplayResetToDefaults(void);
 void TripMemoriesReset(void);
 void DisplayResetBluetoothPeers(void);
+void torqueSensorCalibration(void);
+void positionSensorCalibration(void);
+void updateAssistLevels();
 void onSetConfigurationBatteryTotalWh(uint32_t v);
 void batteryTotalWh(void);
 void batteryCurrent(void);
@@ -557,6 +560,11 @@ void mainscreen_clock(void) {
   DisplayResetToDefaults();
   TripMemoriesReset();
   DisplayResetBluetoothPeers();
+#ifdef MOTOR_BAFANG
+  updateAssistLevels();
+  torqueSensorCalibration();
+  positionSensorCalibration();
+#endif
   batteryCurrent();
   batteryResistance();
   motorCurrent();
@@ -849,14 +857,47 @@ void TripMemoriesReset(void) {
 }
 
 void DisplayResetBluetoothPeers(void) {
-//   if (ui8_g_configuration_display_reset_bluetooth_peers) {
-//     ui8_g_configuration_display_reset_bluetooth_peers = 0;
-//     // TODO: fist disable any connection
-//     // Warning: Use this (pm_peers_delete) function only when not connected or connectable. If a peer is or becomes connected
-//     // or a PM_PEER_DATA_FUNCTIONS function is used during this procedure (until the success or failure event happens),
-//     // the behavior is undefined.
-//     pm_peers_delete();
-//   }
+  if (ui8_g_configuration_display_reset_bluetooth_peers) {
+    ui8_g_configuration_display_reset_bluetooth_peers = 0;
+    // TODO: fist disable any connection
+    // Warning: Use this (pm_peers_delete) function only when not connected or connectable. If a peer is or becomes connected
+    // or a PM_PEER_DATA_FUNCTIONS function is used during this procedure (until the success or failure event happens),
+    // the behavior is undefined.
+    pm_peers_delete();
+  }
+}
+
+void torqueSensorCalibration(void) {
+  if (ui8_g_configuration_torque_sensor_calibration) {
+    ui8_g_configuration_torque_sensor_calibration = 0;
+    
+    // TODO: CAN send command
+  }
+}
+
+void positionSensorCalibration(void) {
+  if (ui8_g_configuration_position_sensor_calibration) {
+    ui8_g_configuration_position_sensor_calibration = 0;
+    
+    // TODO: CAN send command
+  }
+}
+
+void updateAssistLevels() {
+
+  switch (ui8_g_configuration_assist_levels) {
+    case 0:
+      ui_vars.ui8_number_of_assist_levels = 3;
+    break;
+
+    case 1:
+      ui_vars.ui8_number_of_assist_levels = 5;
+    break;
+
+    case 2:
+      ui_vars.ui8_number_of_assist_levels = 9;
+    break;
+  }
 }
 
 void batteryCurrent(void) {
@@ -937,12 +978,6 @@ void batteryResistance(void) {
 void motorCurrent(void) {
 
   ui16_m_motor_current_filtered_x10 = ui_vars.ui16_motor_current_filtered_x5 * 2;
-}
-
-void onSetConfigurationWheelOdometer(uint32_t v) {
-
-  // let's update the main variable used for calculations of odometer
-  rt_vars.ui32_odometer_x10 = v;
 }
 
 void batteryPower(void) {

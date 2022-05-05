@@ -1265,6 +1265,12 @@ int main(void)
 
       switch (canMessage.frame.id) {
         case 0x01F83100:
+          temp = canMessage.frame.data1;
+          temp = temp << 8;
+          temp = temp + canMessage.frame.data0;
+          mp_rt_vars->ui16_adc_pedal_torque_sensor = temp;
+
+          mp_rt_vars->ui8_pedal_cadence = canMessage.frame.data2;
         break;
 
         case 0x02F83200:
@@ -1285,7 +1291,7 @@ int main(void)
           temp = canMessage.frame.data5;
           temp = temp << 8;
           temp = temp + canMessage.frame.data4;
-          mp_rt_vars->ui16_adc_battery_voltage = temp ;
+          mp_rt_vars->ui16_adc_battery_voltage = temp;
 
           mp_rt_vars->ui8_motor_temperature = canMessage.frame.data7 - 40;
         break;

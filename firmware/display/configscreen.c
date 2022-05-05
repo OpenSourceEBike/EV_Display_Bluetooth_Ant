@@ -23,6 +23,7 @@ static Field batterySOCMenus[] =
             FIELD_EDITABLE_UINT("Used Wh", &ui_vars.ui32_wh_x10, "whr", 0, 99900, .div_digits = 1, .inc_step = 100, .onSetEditable = onSetConfigurationBatterySOCUsedWh),
         FIELD_END };
 
+#ifdef MOTOR_TSDZ2
 static Field batteryMenus[] =
 		{
 						FIELD_EDITABLE_UINT(_S("Max current", "Max curren"), &ui_vars.ui8_battery_max_current, "amps", 1, 20),
@@ -32,6 +33,15 @@ static Field batteryMenus[] =
             FIELD_READONLY_UINT(_S("Resistance est", "Resist est"), &ui_vars.ui16_battery_pack_resistance_estimated_x1000, "mohm", 0, 1000),
 						FIELD_READONLY_UINT(_S("Power loss est", "Power loss"), &ui_vars.ui16_battery_power_loss, "watts", false, .div_digits = 0),
 				FIELD_END };
+#elif defined(MOTOR_BAFANG)
+static Field batteryMenus[] =
+		{
+            FIELD_EDITABLE_UINT(_S("Resistance", "Resistance"), &ui_vars.ui16_battery_pack_resistance_x1000, "mohm", 0, 1000),
+            FIELD_READONLY_UINT(_S("Voltage est", "Voltag est"), &ui_vars.ui16_battery_voltage_soc_x10, "volts", false, .div_digits = 1),
+            FIELD_READONLY_UINT(_S("Resistance est", "Resist est"), &ui_vars.ui16_battery_pack_resistance_estimated_x1000, "mohm", 0, 1000),
+						FIELD_READONLY_UINT(_S("Power loss est", "Power loss"), &ui_vars.ui16_battery_power_loss, "watts", false, .div_digits = 0),
+				FIELD_END };
+#endif
 
 static Field motorMenus[] = {
             FIELD_EDITABLE_ENUM(_S("Motor voltage", "Motor volt"), &ui_vars.ui8_motor_type, "48V", "36V"),
@@ -182,13 +192,23 @@ static Field motorTempMenus[] =
 //       FIELD_EDITABLE_ENUM(_S("Hotkey enable", "HotKy enab"), &ui_vars.ui8_street_mode_hotkey_enabled, "no", "yes"),
 //     FIELD_END };
 
+#ifdef MOTOR_TSDZ2
 static Field displayMenus[] =
 		{
   FIELD_EDITABLE_UINT(_S("Auto power off", "Auto p off"), &ui_vars.ui8_system_power_off_time_minutes, "mins", 0, 255),
   FIELD_EDITABLE_ENUM("Units", &ui_vars.ui8_units_type, "SI", "Imperial"),
-  // FIELD_EDITABLE_ENUM(_S("Reset BLE connections", "Reset BLE"), &ui8_g_configuration_display_reset_bluetooth_peers, "no", "yes"),
+  FIELD_EDITABLE_ENUM(_S("Reset BLE connections", "Reset BLE"), &ui8_g_configuration_display_reset_bluetooth_peers, "no", "yes"),
   FIELD_EDITABLE_ENUM(_S("Reset to defaults", "Reset def"), &ui8_g_configuration_display_reset_to_defaults, "no", "yes"),
   FIELD_END };
+#elif defined(MOTOR_BAFANG)
+static Field displayMenus[] =
+		{
+  FIELD_EDITABLE_ENUM(_S("Num assist levels", "Num Levels"), &ui8_g_configuration_assist_levels, "3", "5", "9"),
+  FIELD_EDITABLE_UINT(_S("Auto power off", "Auto p off"), &ui_vars.ui8_system_power_off_time_minutes, "mins", 0, 255),
+  FIELD_EDITABLE_ENUM(_S("Reset BLE connections", "Reset BLE"), &ui8_g_configuration_display_reset_bluetooth_peers, "no", "yes"),
+  FIELD_EDITABLE_ENUM(_S("Reset to defaults", "Reset def"), &ui8_g_configuration_display_reset_to_defaults, "no", "yes"),
+  FIELD_END };
+#endif
 
 static Field variousMenus[] = {
     FIELD_EDITABLE_ENUM(_S("Cadence fast stop", "Cadenc stp"), &ui_vars.ui8_pedal_cadence_fast_stop, "no", "yes"),
@@ -197,6 +217,7 @@ static Field variousMenus[] = {
     FIELD_EDITABLE_UINT("Odometer", &ui_vars.ui32_odometer_x10, "km", 0, UINT32_MAX, .div_digits = 1, .inc_step = 100, .onSetEditable = onSetConfigurationWheelOdometer),
   FIELD_END };
 
+#ifdef MOTOR_TSDZ2
 static Field technicalMenus[] = {
   FIELD_READONLY_UINT(_S("ADC battery current", "ADC bat cu"), &ui_vars.ui16_adc_battery_current, ""),
   FIELD_READONLY_UINT(_S("ADC throttle sensor", "ADC thrott"), &ui_vars.ui8_adc_throttle, ""),
@@ -211,12 +232,21 @@ static Field technicalMenus[] = {
   FIELD_READONLY_UINT("Motor FOC", &ui_vars.ui8_foc_angle, ""),
   FIELD_READONLY_UINT(_S("Hall sensors", "Hall sens"), &ui_vars.ui8_motor_hall_sensors, ""),
   FIELD_END };
+#elif defined(MOTOR_BAFANG)
+static Field technicalMenus[] = {
+  FIELD_READONLY_UINT("Torque", &ui_vars.ui16_adc_pedal_torque_sensor, ""),
+  FIELD_READONLY_UINT("Cadence", &ui_vars.ui8_pedal_cadence, "rpm"),
+  FIELD_EDITABLE_ENUM("Torque cal", &ui8_g_configuration_torque_sensor_calibration, "no", "yes"),
+  FIELD_EDITABLE_ENUM("Posit cal", &ui8_g_configuration_position_sensor_calibration, "no", "yes"),
+  FIELD_END };
+#endif
 
+#ifdef MOTOR_TSDZ2
 static Field topMenus[] = {
   // FIELD_SCROLLABLE("Trip memories", tripMenus),
   FIELD_SCROLLABLE("Wheel", wheelMenus),
   FIELD_SCROLLABLE("Battery", batteryMenus),
-  FIELD_SCROLLABLE("SOC", batterySOCMenus),
+  FIELD_SCROLLABLE("Bat SOC", batterySOCMenus),
   FIELD_SCROLLABLE(_S("Motor", "Motor"), motorMenus),
   FIELD_SCROLLABLE(_S("Torque sensor", "Torque sen"), torqueSensorMenus),
   FIELD_SCROLLABLE(_S("Assist level", "Assist"), assistMenus),
@@ -228,6 +258,15 @@ static Field topMenus[] = {
   FIELD_SCROLLABLE("Display", displayMenus),
   FIELD_SCROLLABLE("Technical", technicalMenus),
   FIELD_END };
+#elif defined(MOTOR_BAFANG)
+static Field topMenus[] = {
+  FIELD_SCROLLABLE("Wheel", wheelMenus),
+  FIELD_SCROLLABLE("Battery", batteryMenus),
+  FIELD_SCROLLABLE("Bat SOC", batterySOCMenus),
+  FIELD_SCROLLABLE("Display", displayMenus),
+  FIELD_SCROLLABLE("Technical", technicalMenus),
+  FIELD_END };
+#endif
 
 static Field configRoot = FIELD_SCROLLABLE(_S("Configurations", "Config"), topMenus);
 
@@ -235,6 +274,15 @@ uint8_t ui8_g_configuration_display_reset_to_defaults = 0;
 uint8_t ui8_g_configuration_display_reset_bluetooth_peers = 0;
 uint8_t ui8_g_configuration_trip_a_reset = 0;
 uint8_t ui8_g_configuration_trip_b_reset = 0;
+uint8_t ui8_g_configuration_assist_levels = 3;
+uint8_t ui8_g_configuration_torque_sensor_calibration = 0;
+uint8_t ui8_g_configuration_position_sensor_calibration = 0;
+
+void onSetConfigurationWheelOdometer(uint32_t v) {
+
+  // let's update the main variable used for calculations of odometer
+  rt_vars.ui32_odometer_x10 = v;
+}
 
 static void configScreenOnEnter() {
 	// Set the font preference for this screen
