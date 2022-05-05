@@ -169,7 +169,9 @@ Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
    bootURL_2 = FIELD_DRAWTEXT_RO("M500/M600"),
 
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
+#ifdef MOTOR_TSDZ2
    bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
+#endif
 
 static void bootScreenOnPreUpdate() {
   switch (g_motor_init_state) {
@@ -179,6 +181,7 @@ static void bootScreenOnPreUpdate() {
         buttons_clear_all_events();
         showNextScreen();
       } else {
+#ifdef MOTOR_TSDZ2
         if ((g_motor_init_state == MOTOR_INIT_WAIT_GOT_CONFIGURATIONS_OK) ||
             (g_motor_init_state == MOTOR_INIT_READY)) {
           fieldPrintf(&bootStatus2, "%u.%u.%u",
@@ -186,6 +189,7 @@ static void bootScreenOnPreUpdate() {
           g_tsdz2_firmware_version.minor,
           g_tsdz2_firmware_version.patch);
         }
+#endif
       }
 
     // any error state will block here and avoid leave the boot screen
@@ -224,11 +228,13 @@ Screen bootScreen = {
       .field = &bootVersion,
       .font = &SMALL_TEXT_FONT,
     },
+#ifdef MOTOR_TSDZ2
     {
       .x = 0, .y = YbyEighths(7), .height = -1,
       .field = &bootStatus2,
       .font = &SMALL_TEXT_FONT,
     },
+#endif
     {
       .field = NULL
     }
@@ -733,12 +739,14 @@ void showNextScreen() {
 
 bool appwide_onpress(buttons_events_t events)
 {
-  // power off only after we release first time the onoff button
+// on Bafang M500/M600, at long press, the motor controller will turn off the display power
+#ifdef MOTOR_TSDZ2
   if (events & ONOFF_LONG_CLICK)
   {
     system_power_off(1);
     return true;
   }
+#endif
 
 #ifdef DEVELOPMENT
   if ((events & SCREENCLICK_NEXT_SCREEN)) {

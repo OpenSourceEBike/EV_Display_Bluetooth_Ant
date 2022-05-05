@@ -13,6 +13,7 @@
 #include "timer.h"
 #include "pins.h"
 #include "buttons.h"
+#include "adc.h"
 
 #define TIME_1 1500 // changed to 1.5 sec because 2 secs seems too long to me and a user asked for it also
 #define TIME_2 200
@@ -89,7 +90,13 @@ uint32_t buttons_get_down_state (void)
 
 uint32_t buttons_get_onoff_state (void)
 {
+#ifdef MOTOR_TSDZ2
   return PollButton(&buttonPWR);
+#elif defined(MOTOR_BAFANG)
+  uint32_t state = 0;
+  state = (adc_read_on_off_button_volts() < 2850) ? 1: 0;
+  return state;
+#endif
 }
 
 uint32_t buttons_get_m_state (void)

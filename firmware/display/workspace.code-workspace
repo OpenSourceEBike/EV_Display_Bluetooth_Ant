@@ -15,7 +15,10 @@
       "string_view": "c",
       "main.h": "c",
       "spi.h": "c",
-      "pins.h": "c"
+      "pins.h": "c",
+      "functional": "c",
+      "nrf_gpio.h": "c",
+      "stdlib.h": "c"
     }
   }
 }

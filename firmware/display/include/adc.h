@@ -2,5 +2,4 @@
 
 #include <stdint.h>
 
-void battery_voltage_init(void);
-uint16_t battery_voltage_10x_get();
+uint32_t adc_read_on_off_button_volts();

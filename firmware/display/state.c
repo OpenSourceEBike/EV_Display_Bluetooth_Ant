@@ -931,12 +931,14 @@ void rt_calc_battery_soc(void) {
 // Note: this is called from ISR context every 50ms
 void rt_processing(void)
 {
+#ifdef MOTOR_TSDZ2
   communications();
 
   // called here because this state machine for motor_init should run every 100ms
   // montor init processing must be done when exiting the configurations menu
   // once motor is initialized, this should take almost no processing time
   motor_init();
+#endif
 
   calc_battery_resistance();
 

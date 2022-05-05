@@ -5,9 +5,11 @@
 #include "antplus_controls.h"
 #include "utils.h"
 
-#define DEVELOPMENT
+// #define DEVELOPMENT
 
-// #define MOTOR_BAFANG
+#ifndef MOTOR_BAFANG
+#define MOTOR_BAFANG
+#endif
 
 extern antplus_controls_profile_t m_antplus_controls;
 

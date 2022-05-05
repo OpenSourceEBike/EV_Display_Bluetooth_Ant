@@ -1236,7 +1236,7 @@ int main(void)
     uCAN_MSG canMessage;
 
     // every 100ms
-    // CAN ID 0x03106300 needs to be sent periodically every 100ms or the motor controller will turn off after a timeout
+    // CAN ID 0x03106300 needs to be sent periodically every 100ms or so, so the motor controller will turn off after a timeout
     ui32_time_now = get_time_base_counter_1ms();
     if ((ui32_time_now - ui32_can_last_run_time) >= 100)
     {
@@ -1260,6 +1260,8 @@ int main(void)
     if (CANSPI_Receive(&canMessage))
     {
       uint32_t temp;
+
+      g_motor_init_state = MOTOR_INIT_READY;
 
       switch (canMessage.frame.id) {
         case 0x01F83100:
@@ -1300,6 +1302,8 @@ int main(void)
           // wheel_circunference = temp;
         break;         
       }
+    } else {
+
     }
 #endif
   }
