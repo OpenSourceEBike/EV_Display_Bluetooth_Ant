@@ -168,9 +168,11 @@ Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
    bootURL_1 = FIELD_DRAWTEXT_RO("Bafang"),
    bootURL_2 = FIELD_DRAWTEXT_RO("M500/M600"),
 
-   bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
 #ifdef MOTOR_TSDZ2
+   bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
    bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
+#elif defined(MOTOR_BAFANG)
+   bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING);
 #endif
 
 static void bootScreenOnPreUpdate() {
