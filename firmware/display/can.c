@@ -34,8 +34,128 @@ void can_processing(uint32_t ui32_time_now) {
     canMessage.frame.id = 0x03106300;
     canMessage.frame.dlc = 4;
     canMessage.frame.data0 = mp_ui_vars->ui8_number_of_assist_levels; // number of assist level: 3, 5 or 9 (seems M600 only supports up to 5)
-    canMessage.frame.data1 = 0; //mp_ui_vars->ui8_assist_level; // assist level: 0 = 00 / 1 = 01 / 2 = 0B / 3 = 0C / 4 = 0D / 5 = 02 / 6 = 15 / 7 = 16 / 8 = 17 / 9 = 03
 
+    // assist level has some code scheme, implement it
+    uint8_t assist_level_coded = 0;
+    switch (mp_ui_vars->ui8_number_of_assist_levels) {
+      case 3:
+        switch (mp_ui_vars->ui8_assist_level) {
+          case 0:
+            assist_level_coded = 0x00;
+          break;
+
+          case 1:
+            assist_level_coded = 0x0C;
+          break;
+
+          case 2:
+            assist_level_coded = 0x02;
+          break;
+
+          case 3:
+            assist_level_coded = 0x03;
+          break;
+
+          default:
+            assist_level_coded = 0x00;
+          break;
+        }
+      break;
+
+      case 5:
+        switch (mp_ui_vars->ui8_assist_level) {
+          case 0:
+            assist_level_coded = 0x00;
+          break;
+
+          case 1:
+            assist_level_coded = 0x0B;
+          break;
+
+          case 2:
+            assist_level_coded = 0x0D;
+          break;
+
+          case 3:
+            assist_level_coded = 0x15;
+          break;
+
+          case 4:
+            assist_level_coded = 0x17;
+          break;
+
+          case 5:
+            assist_level_coded = 0x03;
+          break;
+
+          default:
+            assist_level_coded = 0x00;
+          break;
+        }
+      break;
+
+      case 9:
+        switch (mp_ui_vars->ui8_assist_level) {
+          case 0:
+            assist_level_coded = 0x00;
+          break;
+
+          case 1:
+            assist_level_coded = 0x01;
+          break;
+
+          case 2:
+            assist_level_coded = 0x0B;
+          break;
+
+          case 3:
+            assist_level_coded = 0x0C;
+          break;
+
+          case 4:
+            assist_level_coded = 0x0D;
+          break;
+
+          case 5:
+            assist_level_coded = 0x02;
+          break;
+
+          case 6:
+            assist_level_coded = 0x15;
+          break;
+
+          case 7:
+            assist_level_coded = 0x16;
+          break;
+
+          case 8:
+            assist_level_coded = 0x17;
+          break;
+
+          case 9:
+            assist_level_coded = 0x03;
+          break;
+
+          default:
+            assist_level_coded = 0x00;
+          break;
+        }
+      break;
+
+      default:
+        assist_level_coded = 0x00;
+      break;
+    }
+
+    // if walk assist is enabled, assist level coded is always 0x06
+    if (mp_ui_vars->ui8_walk_assist_feature_enabled &&
+        mp_ui_vars->ui8_walk_assist) {
+      assist_level_coded = 0x06;
+    }
+    
+    // finally use the assist_level_coded
+    canMessage.frame.data1 = assist_level_coded;
+ 
     uint8_t up_down_button_state;
     up_down_button_state = buttons_get_up_long_click_event() | buttons_get_up_long_click_event();
     up_down_button_state |= buttons_get_down_long_click_event() | buttons_get_down_long_click_event();
@@ -111,7 +231,7 @@ void can_set_max_wheel_speed(uint16_t value) {
   memset(&canMessage.frame, 0, sizeof(canMessage.frame));
   
   canMessage.frame.idType = dEXTENDED_CAN_MSG_ID_2_0B;
-  canMessage.frame.id = 0x03103203;
+  canMessage.frame.id = 0x05103203; // must be 0x05xxxxx, if is 0x03xxxx, the motor controller will instead set the value to 25km/h
   canMessage.frame.dlc = 6;
 
   // Max wheel speed limit Byte 0/1: 60.00km/h(1770Hex) = 70 17 / 25.00km/h(9C4Hex) = C4 09
