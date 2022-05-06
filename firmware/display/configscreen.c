@@ -11,7 +11,11 @@
 
 static Field wheelMenus[] =
 		{
+#ifdef MOTOR_TSDZ2
 						FIELD_EDITABLE_UINT("Max speed", &ui_vars.ui8_wheel_max_speed, "kph", 1, 99, .div_digits = 0, .inc_step = 1, .hide_fraction = true),
+#elif defined(MOTOR_BAFANG)
+						FIELD_EDITABLE_UINT("Max speed", &ui_vars.ui16_wheel_max_speed_x100, "kph", 100, 9990, .div_digits = 2, .inc_step = 10, .onSetEditable = onSetConfigurationChangeMaxWheelSpeed),
+#endif
 						FIELD_EDITABLE_UINT(_S("Circumference", "Circumfere"), &ui_vars.ui16_wheel_perimeter, "mm", 750, 3000, .inc_step = 10),
 				FIELD_END };
 

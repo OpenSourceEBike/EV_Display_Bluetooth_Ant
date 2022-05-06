@@ -209,6 +209,7 @@ SRC_FILES += \
   $(PROJ_DIR)/can/MCP2515.c \
   $(PROJ_DIR)/can/CANSPI.c \
   $(PROJ_DIR)/adc.c \
+  $(PROJ_DIR)/can.c \
  
 # Include folders common to all targets
 INC_FOLDERS += \

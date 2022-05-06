@@ -64,12 +64,13 @@
 #include "utils.h"
 #include "spi.h"
 #include "CANSPI.h"
+#include "can.h"
 
 UG_GUI gui;
 
 extern uint8_t ui8_g_battery_soc;
-rt_vars_t *mp_rt_vars;
-ui_vars_t *mp_ui_vars;
+static rt_vars_t *mp_rt_vars;
+static ui_vars_t *mp_ui_vars;
 
 volatile uint8_t ui8_m_enter_bootloader = 0;
 volatile uint8_t ui8_m_ant_device_id = 0;
@@ -1133,7 +1134,6 @@ int main(void)
   ui8_m_ant_device_id = mp_ui_vars->ui8_ant_device_id;
   uint32_t ui32_rt_last_run_time = 0;
   uint32_t ui32_dfucheck_last_run_time = 0;
-  uint32_t ui32_can_last_run_time = 0;
   uint8_t ui8_ble_connected_shown = 0;
 
   led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
@@ -1233,84 +1233,10 @@ int main(void)
     }
 
 #ifdef MOTOR_BAFANG
-    uCAN_MSG canMessage;
-
-    // every 100ms
-    // CAN ID 0x03106300 needs to be sent periodically every 100ms or so, so the motor controller will turn off after a timeout
+    // process the CAN messages
+    // call as fast as possible
     ui32_time_now = get_time_base_counter_1ms();
-    if ((ui32_time_now - ui32_can_last_run_time) >= 100)
-    {
-      memset(canMessage.array, 0, sizeof(canMessage.array));
-      canMessage.frame.idType = dEXTENDED_CAN_MSG_ID_2_0B;
-      canMessage.frame.id = 0x03106300;
-      canMessage.frame.dlc = 4;
-      canMessage.frame.data0 = mp_ui_vars->ui8_number_of_assist_levels; // number of assist level: 3, 5 or 9 (seems M600 only supports up to 5)
-      canMessage.frame.data1 = 0; //mp_ui_vars->ui8_assist_level; // assist level: 0 = 00 / 1 = 01 / 2 = 0B / 3 = 0C / 4 = 0D / 5 = 02 / 6 = 15 / 7 = 16 / 8 = 17 / 9 = 03
-
-      uint8_t up_down_button_state;
-      up_down_button_state = buttons_get_up_long_click_event() | buttons_get_up_long_click_event();
-      up_down_button_state |= buttons_get_down_long_click_event() | buttons_get_down_long_click_event();
-      canMessage.frame.data2 = mp_ui_vars->ui8_lights | (up_down_button_state << 1); // bit 0 for light state; bit 1 for for UP or DOWN state
-
-      canMessage.frame.data3 = (buttons_get_onoff_click_event() | buttons_get_onoff_long_click_event() | buttons_get_onoff_click_long_click_event()) ? 0: 1; // bit 0 for ON/OFF state
-      CANSPI_Transmit(&canMessage);
-    }
-
-    // process CAN messages
-    if (CANSPI_Receive(&canMessage))
-    {
-      uint32_t temp;
-
-      g_motor_init_state = MOTOR_INIT_READY;
-
-      switch (canMessage.frame.id) {
-        case 0x01F83100:
-          temp = canMessage.frame.data1;
-          temp = temp << 8;
-          temp = temp + canMessage.frame.data0;
-          mp_rt_vars->ui16_adc_pedal_torque_sensor = temp;
-
-          mp_rt_vars->ui8_pedal_cadence = canMessage.frame.data2;
-        break;
-
-        case 0x02F83200:
-          ui8_g_battery_soc = canMessage.frame.data0;
-        break;
-
-        case 0x02F83201:
-          temp = canMessage.frame.data1;
-          temp = temp << 8;
-          temp = temp + canMessage.frame.data0;
-          mp_rt_vars->ui16_wheel_speed_x10 = temp / 10;
- 
-          temp = canMessage.frame.data2;
-          temp = temp << 8;
-          temp = temp + canMessage.frame.data3;
-          mp_rt_vars->ui8_battery_current_x5 = temp / 20;
-
-          temp = canMessage.frame.data5;
-          temp = temp << 8;
-          temp = temp + canMessage.frame.data4;
-          mp_rt_vars->ui16_adc_battery_voltage = temp;
-
-          mp_rt_vars->ui8_motor_temperature = canMessage.frame.data7 - 40;
-        break;
-
-        case 0x02F83203:
-          // temp = canMessage.frame.data1;
-          // temp = temp << 8;
-          // temp = temp + canMessage.frame.data0;
-          // wheel_speed_limit = temp;
-
-          // temp = canMessage.frame.data5;
-          // temp = temp << 8;
-          // temp = temp + canMessage.frame.data4;
-          // wheel_circunference = temp;
-        break;         
-      }
-    } else {
-
-    }
+    can_processing(ui32_time_now);
 #endif
   }
 }

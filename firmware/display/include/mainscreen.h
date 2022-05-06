@@ -59,6 +59,7 @@ void onSetConfigurationDisplayLcdBacklightOffBrightness(uint32_t v);
 void onSetConfigurationBatteryTotalWh(uint32_t v);
 void onSetConfigurationWheelOdometer(uint32_t v);
 void onSetConfigurationBatterySOCUsedWh(uint32_t v);
+void onSetConfigurationChangeMaxWheelSpeed(uint32_t v);
 void mainScreenOnDirtyClean(void);
 void secondMainScreenOnDirtyClean(void);
 void mainScreenonPostUpdate(void);

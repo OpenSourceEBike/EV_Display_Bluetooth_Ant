@@ -85,6 +85,7 @@ void automatic_power_off_management(void) {
 	}
 }
 
+#ifdef MOTOR_TSDZ2
 void rt_send_tx_package(frame_type_t type) {
   uint8_t crc_len = 3; // minimun is 3
 	uint8_t *ui8_usart1_tx_buffer = uart_get_tx_buffer();
@@ -248,6 +249,7 @@ void rt_send_tx_package(frame_type_t type) {
 	// send the full package to UART
   uart_send_tx_buffer(ui8_usart1_tx_buffer, ui8_usart1_tx_buffer[1] + 2);
 }
+#endif
 
 /**
  * Called from the main thread every 50ms
@@ -334,8 +336,10 @@ void copy_rt_ui_vars(void) {
 	rt_vars.ui16_battery_low_voltage_cut_off_x10 =
 			ui_vars.ui16_battery_low_voltage_cut_off_x10;
 	rt_vars.ui16_wheel_perimeter = ui_vars.ui16_wheel_perimeter;
+#ifdef MOTOR_TSDZ2
 	rt_vars.ui8_wheel_max_speed = ui_vars.ui8_wheel_max_speed;
-	rt_vars.ui8_motor_type = ui_vars.ui8_motor_type;
+#endif
+  rt_vars.ui8_motor_type = ui_vars.ui8_motor_type;
 	rt_vars.ui8_motor_current_control_mode = ui_vars.ui8_motor_current_control_mode;
 	rt_vars.ui8_motor_assistance_startup_without_pedal_rotation =
 			ui_vars.ui8_motor_assistance_startup_without_pedal_rotation;

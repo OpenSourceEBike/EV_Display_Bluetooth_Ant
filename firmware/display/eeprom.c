@@ -35,7 +35,11 @@ const configurations_t m_configurations_defaults = {
   .ui8_configurations_version = CONFIGURATIONS_VERSION,
   .ui8_assist_level = DEFAULT_VALUE_ASSIST_LEVEL,
   .ui16_wheel_perimeter = DEFAULT_VALUE_WHEEL_PERIMETER,
+#ifdef MOTOR_TSDZ2
   .ui8_wheel_max_speed = DEFAULT_VALUE_WHEEL_MAX_SPEED,
+#elif defined(MOTOR_BAFANG)
+  .ui16_wheel_max_speed_x100 = DEFAULT_VALUE_WHEEL_MAX_SPEED * 100,
+#endif
   .ui8_units_type = DEFAULT_VALUE_UNITS_TYPE,
   .ui32_wh_x10_offset = DEFAULT_VALUE_WH_X10_OFFSET,
   .ui32_wh_x10_100_percent = DEFAULT_VALUE_HW_X10_100_PERCENT,
@@ -363,7 +367,12 @@ void eeprom_init_variables(void) {
   ui_vars->ui8_configurations_version = m_configurations.ui8_configurations_version;
 	ui_vars->ui8_assist_level = m_configurations.ui8_assist_level;
 	ui_vars->ui16_wheel_perimeter = m_configurations.ui16_wheel_perimeter;
+#ifdef MOTOR_TSDZ2
 	ui_vars->ui8_wheel_max_speed = m_configurations.ui8_wheel_max_speed;
+#elif defined(MOTOR_BAFANG)
+	ui_vars->ui16_wheel_max_speed_x100 = m_configurations.ui16_wheel_max_speed_x100;
+#endif
+
 	ui_vars->ui8_units_type = m_configurations.ui8_units_type;
 	ui_vars->ui32_wh_x10_offset = m_configurations.ui32_wh_x10_offset;
 	ui_vars->ui32_wh_x10_100_percent =
@@ -474,7 +483,11 @@ void eeprom_write_variables(void) {
 	ui_vars_t *ui_vars = get_ui_vars();
 	m_configurations.ui8_assist_level = ui_vars->ui8_assist_level;
 	m_configurations.ui16_wheel_perimeter = ui_vars->ui16_wheel_perimeter;
+#ifdef MOTOR_TSDZ2
 	m_configurations.ui8_wheel_max_speed = ui_vars->ui8_wheel_max_speed;
+#elif defined(MOTOR_BAFANG)
+	m_configurations.ui16_wheel_max_speed_x100 = ui_vars->ui16_wheel_max_speed_x100;
+#endif
 	m_configurations.ui8_units_type = ui_vars->ui8_units_type;
 	m_configurations.ui32_wh_x10_offset = ui_vars->ui32_wh_x10_offset;
 	m_configurations.ui32_wh_x10_100_percent =

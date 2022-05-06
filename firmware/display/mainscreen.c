@@ -1018,3 +1018,9 @@ void onSetConfigurationBatterySOCUsedWh(uint32_t v) {
   reset_wh();
   ui_vars.ui32_wh_x10_offset = v;
 }
+
+#ifdef MOTOR_BAFANG
+void onSetConfigurationChangeMaxWheelSpeed(uint32_t v) {
+  can_set_max_wheel_speed(v);
+}
+#endif

@@ -170,7 +170,11 @@
 typedef struct configurations {
 	uint8_t ui8_assist_level;
 	uint16_t ui16_wheel_perimeter;
+#ifdef MOTOR_TSDZ2
 	uint8_t ui8_wheel_max_speed;
+#elif defined(MOTOR_BAFANG)
+	uint16_t ui16_wheel_max_speed_x100;
+#endif
 	uint8_t ui8_units_type;
 	uint32_t ui32_wh_x10_offset;
 	uint32_t ui32_wh_x10_100_percent;
