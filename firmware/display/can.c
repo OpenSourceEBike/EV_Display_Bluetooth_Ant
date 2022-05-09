@@ -220,7 +220,12 @@ void can_processing(uint32_t ui32_time_now) {
         // temp = temp << 8;
         // temp = temp + canMessage.frame.data4;
         // wheel_circunference = temp;
-      break;         
+      break;
+
+      // brakes state
+      case 0x02FF1200:
+        mp_rt_vars->ui8_braking = canMessage.frame.data0 & 0x01;
+      break;    
     }
   }
 }
