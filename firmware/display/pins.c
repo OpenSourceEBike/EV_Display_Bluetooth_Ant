@@ -14,8 +14,10 @@
 
 void pins_init(void)
 {
+#ifdef TSDZ2
   nrf_gpio_pin_clear(MOTOR_POWER_ENABLE__PIN);
   nrf_gpio_cfg_output(MOTOR_POWER_ENABLE__PIN);
+#endif
 
     /* Buttons */
   InitButton(&buttonPWR, ONOFF__PIN, NRF_GPIO_PIN_NOPULL, BUTTON_ACTIVE_HIGH);
@@ -29,8 +31,10 @@ void pins_init(void)
 
 void motor_power_enable(bool state)
 {
+#ifdef TSDZ2
   if (state)
     nrf_gpio_pin_set(MOTOR_POWER_ENABLE__PIN);
   else
     nrf_gpio_pin_clear(MOTOR_POWER_ENABLE__PIN);
+#endif
 }

@@ -36,6 +36,22 @@
             }
         },
         {
+            "label": "build Bafang DISPLAY_OLED_0.96_SPI",
+            "type": "shell",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "linux": {
+                "command": "make default MOTOR_BAFANG=1 DISPLAY_OLED_0.96_SPI=1"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "clean",
             "type": "shell",
             "args": [],

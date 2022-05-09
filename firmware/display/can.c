@@ -196,10 +196,10 @@ void can_processing(uint32_t ui32_time_now) {
         temp = temp + canMessage.frame.data0;
         mp_rt_vars->ui16_wheel_speed_x10 = temp / 10;
 
-        temp = canMessage.frame.data2;
+        temp = canMessage.frame.data3;
         temp = temp << 8;
-        temp = temp + canMessage.frame.data3;
-        mp_rt_vars->ui8_battery_current_x5 = temp / 20;
+        temp = temp + canMessage.frame.data2;
+        mp_rt_vars->ui8_battery_current_div5 = temp / 20;
 
         temp = canMessage.frame.data5;
         temp = temp << 8;

@@ -18,7 +18,6 @@
 #include "eeprom.h"
 #include "buttons.h"
 #include "display.h"
-#include "adc.h"
 #include "ugui.h"
 #include "battery_gui.h"
 #include "configscreen.h"

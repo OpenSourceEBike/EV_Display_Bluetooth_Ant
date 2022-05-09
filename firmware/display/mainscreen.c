@@ -19,7 +19,6 @@
 #include "eeprom.h"
 #include "buttons.h"
 #include "display.h"
-#include "adc.h"
 #include "ugui.h"
 #include "state.h"
 #include "timer.h"
@@ -128,6 +127,7 @@ Field warnField = FIELD_CUSTOM(renderWarning);
  * NOTE: The indexes into this array are stored in EEPROM, to prevent user confusion add new options only at the end.
  * If you remove old values, either warn users or bump up eeprom version to force eeprom contents to be discarded.
  */
+#ifdef MOTOR_TSDZ2
 Field *customizables[] = {
     &upTimeField, // 0
     &odoField, // 1
@@ -147,16 +147,25 @@ Field *customizables[] = {
     &batteryPowerUsedField, // 15
     &batteryPowerRemainField, // 16
 		NULL
-
-    // &tripADistanceField, // 2
-    // &tripATimeField, // 3
-    // &tripAAvgSpeedField, // 4
-    // &tripAMaxSpeedField, // 5
-    // &tripBDistanceField, // 6
-    // &tripBTimeField, // 7
-    // &tripBMaxSpeedField, // 8
-    // &tripBAvgSpeedField, // 9
 };
+#elif defined(MOTOR_BAFANG)
+Field *customizables[] = {
+    &upTimeField, // 0
+    &odoField, // 1
+    &wheelSpeedField, // 2
+    &cadenceField, // 3
+		&humanPowerField, // 4
+		&batteryPowerField, // 5
+    &batteryVoltageField, // 6
+    &batteryCurrentField, // 7
+    &batterySOCField, // 8
+		&motorTempField, // 9
+		&batteryPowerPerKmField, // 10
+    &batteryPowerUsedField, // 11
+    &batteryPowerRemainField, // 12
+		NULL
+};
+#endif
 
 // Note: field_selectors[0] is used on the 850C for the graphs selector
 Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizables),

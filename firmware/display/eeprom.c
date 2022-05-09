@@ -187,16 +187,29 @@ const configurations_t m_configurations_defaults = {
   .ui8_ant_device_id = DEFAULT_ANT_LEV_ID,
   .ui8_enter_bootloader = 0,
 
+#ifdef MOTOR_TSDZ2
   .field_selectors = {
-    10, // motor temperature
-    6, // battery voltage
-
     0, // upTimeField
     5, // motor power
+
+    6, // battery voltage
+    7, // battery current
 
     4, // humanPowerField
     5, // motor power
   },
+#elif defined(MOTOR_BAFANG)
+  .field_selectors = {
+    4, // humanPowerField
+    5, // motor power
+
+    6, // battery voltage
+    7, // battery current
+
+    9, // motorTempField
+    5, // motor power
+  },
+#endif
   .showNextScreenIndex = 0,
 };
 

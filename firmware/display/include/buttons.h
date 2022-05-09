@@ -30,7 +30,7 @@ typedef enum {
 	ONOFFDOWN_LONG_CLICK = 16,
 	UP_CLICK = 32,
 	UP_LONG_CLICK = 64,
-  UPDOWN_LONG_CLICK = 128,
+  	UPDOWN_LONG_CLICK = 128,
 	DOWN_CLICK = 256,
 	DOWN_LONG_CLICK = 512,
 	M_CLICK = 1024, // Some devices have this extra button

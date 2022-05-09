@@ -66,7 +66,7 @@ void automatic_power_off_management(void) {
 	if (ui_vars.ui8_system_power_off_time_minutes != 0) {
 		// see if we should reset the automatic power off minutes counter
 		if ((ui_vars.ui16_wheel_speed_x10 > 0) ||   // wheel speed > 0
-				(ui_vars.ui8_battery_current_x5 > 0) || // battery current > 0
+				(ui_vars.ui8_battery_current_div5 > 0) || // battery current > 0
 				(ui_vars.ui8_braking) ||                // braking
 				buttons_get_events()) {                 // any button active
 			ui16_system_power_off_time_counter = 0;
@@ -257,7 +257,7 @@ void rt_send_tx_package(frame_type_t type) {
  */
 void copy_rt_ui_vars(void) {
 	ui_vars.ui16_adc_battery_voltage = rt_vars.ui16_adc_battery_voltage;
-	ui_vars.ui8_battery_current_x5 = rt_vars.ui8_battery_current_x5;
+	ui_vars.ui8_battery_current_div5 = rt_vars.ui8_battery_current_div5;
 	ui_vars.ui16_battery_power_loss = rt_vars.ui16_battery_power_loss;
 	ui_vars.ui8_motor_current_x5 = rt_vars.ui8_motor_current_x5;
 	ui_vars.ui8_throttle = rt_vars.ui8_throttle;
@@ -423,7 +423,7 @@ void communications(void) {
 
         case FRAME_TYPE_PERIODIC:
           rt_vars.ui16_adc_battery_voltage = p_rx_buffer[3] | (((uint16_t) (p_rx_buffer[4] & 0x30)) << 4);
-          rt_vars.ui8_battery_current_x5 = p_rx_buffer[5];
+          rt_vars.ui8_battery_current_div5 = p_rx_buffer[5];
           ui16_temp = ((uint16_t) p_rx_buffer[6]) | (((uint16_t) p_rx_buffer[7] << 8));
           rt_vars.ui16_wheel_speed_x10 = ui16_temp & 0x7ff; // 0x7ff = 204.7km/h as the other bits are used for other things
 
@@ -609,7 +609,7 @@ void rt_low_pass_filter_battery_voltage_current_power(void) {
 
 	// low pass filter battery current
 	ui16_battery_current_accumulated_x5 -= ui16_battery_current_accumulated_x5 >> BATTERY_CURRENT_FILTER_COEFFICIENT;
-	ui16_battery_current_accumulated_x5 += (uint16_t) rt_vars.ui8_battery_current_x5;
+	ui16_battery_current_accumulated_x5 += (uint16_t) rt_vars.ui8_battery_current_div5;
 	rt_vars.ui16_battery_current_filtered_x5 = ui16_battery_current_accumulated_x5 >> BATTERY_CURRENT_FILTER_COEFFICIENT;
 
   // low pass filter motor current

@@ -28,7 +28,7 @@
 #define DISPLAY_RS_PIN NRF_GPIO_PIN_MAP(0, 10)
 #define DISPLAY_DC_PIN NRF_GPIO_PIN_MAP(0, 2)
 #define DISPLAY_CS_PIN NRF_GPIO_PIN_MAP(0, 29)
-#define CAN_MODULE_CS_PIN NRF_GPIO_PIN_MAP(0, 9)
+#define CAN_MODULE_CS_PIN NRF_GPIO_PIN_MAP(0, 31)
 
 // UART pins
 #define RX_PIN_NUMBER 24
@@ -36,7 +36,9 @@
 #define RTS_PIN_NUMBER 0xFFFFFFFF  // UART_PIN_DISCONNECTED
 #define CTS_PIN_NUMBER 0xFFFFFFFF  // UART_PIN_DISCONNECTED
 
+#ifdef TSDZ2
 #define MOTOR_POWER_ENABLE__PIN   NRF_GPIO_PIN_MAP(1,0)
+#endif
 
 void pins_init(void);
 void motor_power_enable(bool state);
