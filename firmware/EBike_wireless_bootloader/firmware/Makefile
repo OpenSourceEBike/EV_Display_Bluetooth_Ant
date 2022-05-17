@@ -5,14 +5,27 @@ OUTPUT_DIRECTORY := _build
 SDK_ROOT := ../../common_firmware/nRF5_SDK_16.0.0
 
 PROJ_DIR := .
+
+ifdef MOTOR_TSDZ2
+$(warning )
+$(warning MOTOR: TSDZ2)
+MOTOR = TSDZ2
+CFLAGS = -DMOTOR_TSDZ2
+endif
+
+ifdef MOTOR_BAFANG
+$(warning )
+$(warning MOTOR: BAFANG)
+MOTOR = BAFANG_M500_M600
+CFLAGS = -DMOTOR_BAFANG
+endif
+
 # project build flags
 BOOTLOADER_VERSION:= 10 # integer 10's digit MAJOR VERSION , 1's digit MINOR VERSION ie: 10 = Version 1.0
 DEBUG ?= 0
 SD_REQ := 0xB9 #s340 sd is required
 NRF_DFU_BL_ALLOW_DOWNGRADE := 1 #allow the bootloader to be downgraded
 BOARD_USE_SF_CLOCK := 1 #use the softdevice LFCLK
-
-
 
 ifeq ($(DEBUG), 1)
 #SOFT_DEVICE = $(PROJ_DIR)/include/S340_and_TSDZ2_remote.hex
@@ -23,8 +36,6 @@ endif
 
 $(OUTPUT_DIRECTORY)/nrf52840_xxaa.out: \
 LINKER_SCRIPT  := secure_bootloader_gcc_nrf52.ld
-
-
 
 # Source files common to all targets
 SRC_FILES += \

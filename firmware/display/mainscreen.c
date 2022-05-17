@@ -176,14 +176,16 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
 
 
-Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
-   bootURL_1 = FIELD_DRAWTEXT_RO("Bafang"),
-   bootURL_2 = FIELD_DRAWTEXT_RO("M500/M600"),
-
 #ifdef MOTOR_TSDZ2
+Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
+   bootURL_1 = FIELD_DRAWTEXT_RO("TSDZ2"),
+   bootURL_2 = FIELD_DRAWTEXT_RO(""),
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
    bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
 #elif defined(MOTOR_BAFANG)
+Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
+   bootURL_1 = FIELD_DRAWTEXT_RO("Bafang"),
+   bootURL_2 = FIELD_DRAWTEXT_RO("M500/M600"),
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING);
 #endif
 
@@ -569,7 +571,8 @@ void mainscreen_clock(void) {
   DisplayResetToDefaults();
   TripMemoriesReset();
   DisplayResetBluetoothPeers();
-#ifdef MOTOR_BAFANG
+#ifdef MOTOR_TSDZ2
+#elif defined(MOTOR_BAFANG)
   updateAssistLevels();
   torqueSensorCalibration();
   positionSensorCalibration();
@@ -1028,7 +1031,8 @@ void onSetConfigurationBatterySOCUsedWh(uint32_t v) {
   ui_vars.ui32_wh_x10_offset = v;
 }
 
-#ifdef MOTOR_BAFANG
+#ifdef MOTOR_TSDZ2
+#elif defined(MOTOR_BAFANG)
 void onSetConfigurationChangeMaxWheelSpeed(uint32_t v) {
   can_set_max_wheel_speed(v);
 }

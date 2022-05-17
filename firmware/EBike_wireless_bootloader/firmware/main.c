@@ -270,8 +270,14 @@ static bool gpio_init(void)
   err_code = nrf_drv_gpiote_init();
   APP_ERROR_CHECK(err_code);
     
+#ifdef MOTOR_TSDZ2
   bootloader_pin_pressed = check_pin_and_enable_interrupt(PLUS__PIN);
   bootloader_pin_pressed |= check_pin_and_enable_interrupt(MINUS__PIN);
+#elif defined(MOTOR_BAFANG)
+  bootloader_pin_pressed = check_pin_and_enable_interrupt(PLUS__PIN);
+#else
+#error MOTOR_TSDZ2 or MOTOR_BAFANG must be defined
+#endif
 
   return bootloader_pin_pressed;
 }
@@ -280,8 +286,12 @@ static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
 {
   if (int_type == NRF_DRV_RTC_INT_COMPARE0)
   {
+#ifdef MOTOR_TSDZ2
     if ((read_pin(PLUS__PIN) == 0) &&
         (read_pin(MINUS__PIN) == 0))
+#elif defined(MOTOR_BAFANG)
+    if (read_pin(PLUS__PIN) == 0)
+#endif
     {
       g_start_bootloader = true;
     }
@@ -308,7 +318,12 @@ static void rtc_config(void)
   APP_ERROR_CHECK(err_code);
 
   //Set compare channel to trigger interrupt after COMPARE_COUNTERTIME seconds
+#ifdef MOTOR_TSDZ2
   err_code = nrf_drv_rtc_cc_set(&rtc, 0, 10 * 8, true);
+#elif defined(MOTOR_BAFANG)
+  err_code = nrf_drv_rtc_cc_set(&rtc, 0, 10 * 3, true);
+#endif
+
   APP_ERROR_CHECK(err_code);
 
   //Power on RTC instance
@@ -363,10 +378,15 @@ int main(void)
       lfclk_config();
 
       // disable buttons
+#ifdef MOTOR_TSDZ2
       nrf_drv_gpiote_in_uninit(PLUS__PIN);
       nrf_drv_gpiote_in_event_disable(PLUS__PIN);
       nrf_drv_gpiote_in_uninit(MINUS__PIN);
       nrf_drv_gpiote_in_event_disable(MINUS__PIN);
+#elif defined(MOTOR_BAFANG)
+      nrf_drv_gpiote_in_uninit(PLUS__PIN);
+      nrf_drv_gpiote_in_event_disable(PLUS__PIN);
+#endif
 
       // RTC uninit because it will be used by the softdevice
       rtc_uninit();

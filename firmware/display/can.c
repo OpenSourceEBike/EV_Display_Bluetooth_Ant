@@ -13,6 +13,10 @@
 #include "buttons.h"
 #include "state.h"
 
+#ifdef MOTOR_TSDZ2
+
+#elif defined(MOTOR_BAFANG)
+
 static rt_vars_t *mp_rt_vars = NULL;
 static ui_vars_t *mp_ui_vars = NULL;
 
@@ -264,3 +268,4 @@ void can_set_max_wheel_speed(uint16_t value) {
   CANSPI_Transmit(&canMessage);
   nrf_delay_ms(100);
 }
+#endif

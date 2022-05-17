@@ -383,7 +383,13 @@ for_development_only: display_firmware bl_settings final
 
 
 TSDZ2_bootloader:
-	cd $(BOOTLOADER_DIR) && make -f ./Makefile
+ifdef MOTOR_TSDZ2
+	cd $(BOOTLOADER_DIR) && make -f ./Makefile MOTOR_TSDZ2=1
+endif
+
+ifdef MOTOR_BAFANG
+	cd $(BOOTLOADER_DIR) && make -f ./Makefile DMOTOR_BAFANG=1
+endif
 
 # We use srec_cat here but if you want to be able to use the combined hex file with nRF Connect you should use Nordic's mergehex tool
 final:

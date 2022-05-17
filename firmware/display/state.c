@@ -14,6 +14,7 @@
 #include "state.h"
 #include "ledalert.h"
 #include "display.h"
+#include "buttons.h"
 
 typedef enum {
   FRAME_TYPE_ALIVE = 0,

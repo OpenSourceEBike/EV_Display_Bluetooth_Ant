@@ -1232,7 +1232,9 @@ int main(void)
       }
     }
 
-#ifdef MOTOR_BAFANG
+#ifdef MOTOR_TSDZ2
+
+#elif defined(MOTOR_BAFANG)
     // process the CAN messages
     // call as fast as possible
     ui32_time_now = get_time_base_counter_1ms();

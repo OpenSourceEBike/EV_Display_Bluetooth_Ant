@@ -24,11 +24,19 @@ typedef enum {
 // NRF52840 NORDIC Dongle
 #if defined(BOARD_PCA10059)
                        
+#ifdef MOTOR_TSDZ2
 typedef enum {
     PLUS__PIN  = 13,
     MINUS__PIN  = 15,
     BUTTON_PIN_ELEMENTS = 2 // must be updated when added or removed an element
 } button_pins_t;
+#elif defined(MOTOR_BAFANG)
+typedef enum {
+    PLUS__PIN  = 13,
+    BUTTON_PIN_ELEMENTS = 1 // must be updated when added or removed an element
+} button_pins_t;
+#endif
+
 #endif
 
 // NRF52840 Dongle (The Blue One)
