@@ -11,7 +11,7 @@
 
 #include "state.h"
 
-#define CONFIGURATIONS_VERSION 0xAD
+#define CONFIGURATIONS_VERSION 0xAF
 
 // EEPROM memory variables default values
 #define DEFAULT_VALUE_ASSIST_LEVEL                                  0
@@ -112,6 +112,7 @@
 #define DEFAULT_VALUE_OFFROAD_POWER_LIMIT_DIV25                     10 //10 * 25 = 250W
 #define DEFAULT_VALUE_ODOMETER_X10                                  0
 #define DEFAULT_VALUE_BUTTONS_UP_DOWN_INVERT                        0 // regular state
+#define DEFAULT_VALUE_DISPLAY_INVERT                    		    0 // regular state
 #define DEFAULT_STREET_MODE_FUNCTION_ENABLE                         0 // disabled
 #define DEFAULT_STREET_MODE_ENABLE_AT_STARTUP                       0 // disabled
 #define DEFAULT_STREET_MODE_ENABLE                                  0 // disabled
@@ -207,6 +208,7 @@ typedef struct configurations {
 	uint8_t ui8_walk_assist_feature_enabled;
 	uint8_t ui8_walk_assist_level_factor[ASSIST_LEVEL_NUMBER];
   uint8_t ui8_buttons_up_down_invert;
+  uint8_t ui8_display_invert;
   uint8_t ui8_torque_sensor_calibration_feature_enabled;
   uint8_t ui8_torque_sensor_calibration_pedal_ground;
   uint8_t ui8_torque_sensor_filter;

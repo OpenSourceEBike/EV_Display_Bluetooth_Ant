@@ -76,17 +76,9 @@ volatile uint8_t ui8_m_enter_bootloader = 0;
 volatile uint8_t ui8_m_ant_device_id = 0;
 volatile uint8_t ui8_m_flash_configurations = 0;
 
-// uint8_t ui8_m_wheel_speed_integer;
-// uint8_t ui8_m_wheel_speed_decimal;
-
 static uint8_t ui8_walk_assist_timeout = 0;
 static uint8_t ui8_walk_assist_state_process_locally = 0;
 uint8_t ui8_braking_led_state = 0;
-
-// uint16_t ui16_m_battery_current_filtered_x10;
-// uint16_t ui16_m_motor_current_filtered_x10;
-// uint16_t ui16_m_battery_power_filtered
-// uint16_t ui16_m_pedal_power_filtered;
 
 typedef enum
 {

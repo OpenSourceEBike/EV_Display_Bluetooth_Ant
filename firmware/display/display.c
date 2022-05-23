@@ -12,6 +12,7 @@
 #include "pins.h"
 #include "SSD1306.h"
 #include "ugui.h"
+#include "state.h"
 
 /* uGUI instance from main */
 extern UG_GUI gui;
@@ -75,6 +76,9 @@ void display_off() {
 
 void display_init(void)
 {
+  ui_vars_t* mp_ui_vars = get_ui_vars();
+  uint8_t display_invert = mp_ui_vars->ui8_display_invert;
+
 #ifdef DISPLAY_I2C
   ssd1306_begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS, false);
 #elif defined(DISPLAY_SPI)
@@ -86,7 +90,12 @@ void display_init(void)
 
   ssd1306_clear_display();
   ssd1306_display();
-  set_rotation(3); // makes vertical
+
+  if (display_invert) {
+    set_rotation(1); // 2 horizontal
+  } else {
+    set_rotation(3);
+  }
 
   // Setup uGUI library
   UG_Init(&gui, ssd1306_draw_pixel, display_show, 64, 128); // Pixel set function

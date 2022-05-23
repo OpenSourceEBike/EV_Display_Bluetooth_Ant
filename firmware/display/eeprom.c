@@ -168,6 +168,7 @@ const configurations_t m_configurations_defaults = {
   .ui16_torque_sensor_calibration_table_right[7][1] = DEFAULT_TORQUE_SENSOR_CALIBRATION_RIGHT_ADC_8,
 
   .ui8_buttons_up_down_invert = DEFAULT_VALUE_BUTTONS_UP_DOWN_INVERT,
+  .ui8_display_invert = DEFAULT_VALUE_DISPLAY_INVERT,
 
   .ui8_street_mode_function_enabled = DEFAULT_STREET_MODE_FUNCTION_ENABLE,
   .ui8_street_mode_enabled_on_startup = DEFAULT_STREET_MODE_ENABLE_AT_STARTUP,
@@ -487,6 +488,7 @@ void eeprom_init_variables(void) {
     m_configurations.ui8_enter_bootloader;
 
   ui_vars->ui8_buttons_up_down_invert = m_configurations.ui8_buttons_up_down_invert;
+  ui_vars->ui8_display_invert = m_configurations.ui8_display_invert;
 
   COPY_ARRAY(ui_vars, &m_configurations, field_selectors);
   g_showNextScreenIndex = m_configurations.showNextScreenIndex;
@@ -600,6 +602,7 @@ void eeprom_write_variables(void) {
     ui_vars->ui8_enter_bootloader;
 
   m_configurations.ui8_buttons_up_down_invert = ui_vars->ui8_buttons_up_down_invert;
+  m_configurations.ui8_display_invert = ui_vars->ui8_display_invert;
 
   COPY_ARRAY(&m_configurations, ui_vars, field_selectors);
   m_configurations.showNextScreenIndex = g_showNextScreenPreviousIndex;

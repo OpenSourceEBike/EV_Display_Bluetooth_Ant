@@ -280,6 +280,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_walk_assist;
 	uint8_t ui8_offroad_mode;
   uint8_t ui8_buttons_up_down_invert;
+  uint8_t ui8_display_invert;
 
 	uint8_t ui8_torque_sensor_calibration_feature_enabled;
 	uint8_t ui8_torque_sensor_calibration_pedal_ground;

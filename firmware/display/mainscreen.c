@@ -919,6 +919,12 @@ void batteryCurrent(void) {
 
 void batteryResistance(void) {
 
+#ifdef MOTOR_TSDZ2
+  #define CALC_BATTERY_RESISTANCE_MIN_CURRENT 10
+#elif defined(MOTOR_BAFANG)
+  #define CALC_BATTERY_RESISTANCE_MIN_CURRENT 6
+#endif
+
   typedef enum {
     WAIT_MOTOR_STOP = 0,
     STARTUP = 1,
@@ -945,8 +951,12 @@ void batteryResistance(void) {
 
     case STARTUP:
       // wait for motor running and at high battery current
+#ifdef MOTOR_TSDZ2
       if ((ui_vars.ui16_motor_speed_erps > 10) &&
-          (ui_vars.ui16_battery_current_filtered_x5 > (2 * 5))) {
+          (ui_vars.ui16_battery_current_filtered_x5 > CALC_BATTERY_RESISTANCE_MIN_CURRENT)) {
+#elif defined(MOTOR_BAFANG)
+      if (ui_vars.ui16_battery_current_filtered_x5 > CALC_BATTERY_RESISTANCE_MIN_CURRENT) {
+#endif
         ui8_counter = 0;
         state = DELAY;
       } else {
@@ -957,7 +967,7 @@ void batteryResistance(void) {
       break;
 
     case DELAY:
-      if (ui_vars.ui16_battery_current_filtered_x5 > (2 * 5)) {
+      if (ui_vars.ui16_battery_current_filtered_x5 > CALC_BATTERY_RESISTANCE_MIN_CURRENT) {
 
         if (++ui8_counter > 40) // sample battery final voltage after 4 seconds
           state = CALC_RESISTANCE;
@@ -984,7 +994,6 @@ void batteryResistance(void) {
       state = WAIT_MOTOR_STOP;
       break;
   }
-
 }
 
 void motorCurrent(void) {
