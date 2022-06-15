@@ -333,7 +333,7 @@ void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_e
 
   // set variables for ANT transmission in order of connectIQ fields
   //  1. lev speed
-  p_profile->common.lev_speed = ui_vars.ui16_wheel_speed_x10 / 10;
+  p_profile->common.lev_speed = ui_vars.ui16_wheel_speed_x10;
 
   // 2.  assist level
   uint8_t temp = mp_ui_vars->ui8_assist_level;
@@ -342,7 +342,7 @@ void antplus_lev_evt_handler_pre(antplus_lev_profile_t *p_profile, antplus_lev_e
   {
     temp = 7;
   }
-  p_profile->common.travel_mode_state |= (temp << 3) & 0x38;
+  p_profile->common.travel_mode_state = (temp << 3) & 0x38;
   p_profile->page_16.travel_mode = p_profile->common.travel_mode_state;
 
   // 3. lights
@@ -546,7 +546,6 @@ static void ant_setup(void)
   m_antplus_controls.page_82 = ANTPLUS_CONTROLS_PAGE82(295); // battery 2.95 volts, fully charged
 
   // fill manufacturer's common data page.
-
   m_antplus_controls.page_80 = ANT_COMMON_page80(CONTROLS_HW_REVISION,
                                                  CONTROLS_MANUFACTURER_ID,
                                                  CONTROLS_MODEL_NUMBER);
@@ -559,8 +558,8 @@ static void ant_setup(void)
   APP_ERROR_CHECK(err_code);
   err_code = antplus_controls_sens_open(&m_antplus_controls);
   APP_ERROR_CHECK(err_code);
-  // err_code = ant_search_init(&controls_search_config);
-  // APP_ERROR_CHECK(err_code);
+  err_code = ant_search_init(&controls_search_config);
+  APP_ERROR_CHECK(err_code);
 }
 
 static void main_timer_timeout(void *p_context)
@@ -621,18 +620,18 @@ static void ble_stack_init(void)
   err_code = nrf_sdh_enable_request();
   APP_ERROR_CHECK(err_code);
 
-  // Configure the BLE stack using the default settings.
-  // Fetch the start address of the application RAM.
-  uint32_t ram_start = 0;
-  err_code = nrf_sdh_ble_default_cfg_set(APP_BLE_CONN_CFG_TAG, &ram_start);
-  APP_ERROR_CHECK(err_code);
+  // // Configure the BLE stack using the default settings.
+  // // Fetch the start address of the application RAM.
+  // uint32_t ram_start = 0;
+  // err_code = nrf_sdh_ble_default_cfg_set(APP_BLE_CONN_CFG_TAG, &ram_start);
+  // APP_ERROR_CHECK(err_code);
 
-  // Enable BLE stack.
-  err_code = nrf_sdh_ble_enable(&ram_start);
-  APP_ERROR_CHECK(err_code);
+  // // Enable BLE stack.
+  // err_code = nrf_sdh_ble_enable(&ram_start);
+  // APP_ERROR_CHECK(err_code);
 
-  // Register a handler for BLE events.
-  NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
+  // // Register a handler for BLE events.
+  // NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
 }
 
 /**@brief Function for the GAP initialization.
@@ -929,13 +928,13 @@ static void peer_manager_init(void)
 void ble_init(void)
 {
   ble_stack_init();
-  gap_params_init();
-  gatt_init();
-  services_init();
-  advertising_init();
-  conn_params_init();
-  peer_manager_init();
-  advertising_start(true);
+  // gap_params_init();
+  // gatt_init();
+  // services_init();
+  // advertising_init();
+  // conn_params_init();
+  // peer_manager_init();
+  // advertising_start(true);
 }
 
 void eeprom_write_variables_and_reset(void)
@@ -1112,8 +1111,8 @@ int main(void)
     NVIC_SystemReset(); // reboot into bootloader
   }
 
-  // ble_init();
-  // ant_setup();
+  ble_init();
+  ant_setup();
 #ifdef MOTOR_TSDZ2
   uart_init();
 #endif

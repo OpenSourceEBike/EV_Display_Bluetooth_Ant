@@ -400,21 +400,29 @@ void buttons_clock(void) {
       break;
 
     case 1:
-      // event long click
-      if (ui32_m_button_state_counter++ > MS_TO_TICKS(TIME_1)) {
-        
-        buttons_set_events(M_LONG_CLICK);
+      ui32_m_button_state_counter++;
 
+      // event long click
+      if (ui32_m_button_state_counter > MS_TO_TICKS(TIME_1)) {
+        buttons_set_events(M_LONG_CLICK);
         ui32_m_button_state = 2;
-        ui32_m_button_state_counter = 0;
         break;
       }
 
       // if button release
       if (!buttons_get_m_state()) {
-        buttons_set_events(M_CLICK);
-        ui32_m_button_state = 0;
-        break;
+        // let's validade if will be a quick click + long click
+        if (ui32_m_button_state_counter <= MS_TO_TICKS(TIME_2)) {
+          ui32_m_button_state_counter = 0;
+          ui32_m_button_state = 3;
+          break;
+        }
+        // event click
+        else {
+          buttons_set_events(M_CLICK);
+          ui32_m_button_state = 0;
+          break;
+        }
       }
       break;
 
@@ -422,6 +430,43 @@ void buttons_clock(void) {
       // wait for button release
       if (!buttons_get_m_state()) {
         ui32_m_button_state = 0;
+        break;
+      }
+      break;
+
+    case 3:
+      ui32_m_button_state_counter++;
+
+      // on next step, start counting for long click
+      if (buttons_get_m_state()) {
+        ui32_m_button_state_counter = 0;
+        ui32_m_button_state = 4;
+        break;
+      }
+
+      // event click
+      if (ui32_m_button_state_counter > MS_TO_TICKS(TIME_3)) {
+        buttons_set_events(M_CLICK);
+        ui32_m_button_state = 0;
+        break;
+      }
+      break;
+
+    case 4:
+      ui32_m_button_state_counter++;
+
+      // event click, but this time it is: click + long click
+      if (ui32_m_button_state_counter > MS_TO_TICKS(TIME_4)) {
+        buttons_set_events(M_CLICK_LONG_CLICK);
+        ui32_m_button_state = 2;
+        break;
+      }
+
+      // button release
+      if (!buttons_get_m_state()) {
+        buttons_set_events(M_CLICK);
+        ui32_m_button_state = 0;
+        break;
       }
       break;
 

@@ -33,9 +33,10 @@ typedef enum {
   	UPDOWN_LONG_CLICK = 128,
 	DOWN_CLICK = 256,
 	DOWN_LONG_CLICK = 512,
-	M_CLICK = 1024, // Some devices have this extra button
-	M_LONG_CLICK = 2048,
-	ONOFFUPDOWN_LONG_CLICK = 4096,
+	M_CLICK = 1024,
+	M_CLICK_LONG_CLICK = 2048,
+	M_LONG_CLICK = 4096,
+	ONOFFUPDOWN_LONG_CLICK = 8192,
 } buttons_events_t;
 
 extern Button buttonDWN, buttonUP, buttonPWR, buttonM;
