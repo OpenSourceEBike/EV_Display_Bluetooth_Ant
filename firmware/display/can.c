@@ -211,7 +211,8 @@ void can_processing(uint32_t ui32_time_now) {
         temp = temp + canMessage.frame.data4;
         mp_rt_vars->ui16_adc_battery_voltage = temp;
 
-        mp_rt_vars->ui8_motor_temperature = canMessage.frame.data7 - 40;
+        mp_rt_vars->ui8_motor_temperature = canMessage.frame.data6 - 40;
+        mp_rt_vars->ui8_esc_temperature = canMessage.frame.data7 - 40;
       break;
 
       // wheel speed limit; wheel circunference

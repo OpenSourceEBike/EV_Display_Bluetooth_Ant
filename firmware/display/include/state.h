@@ -84,6 +84,7 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_motor_hall_sensors;
 	uint8_t ui8_pas_pedal_right;
 	uint8_t ui8_motor_temperature;
+	uint8_t ui8_esc_temperature;
 	uint32_t ui32_wheel_speed_sensor_tick_counter;
 	uint16_t ui16_battery_voltage_filtered_x10;
 	uint16_t ui16_battery_current_filtered_x5;
@@ -202,6 +203,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_motor_hall_sensors;
 	uint8_t ui8_pas_pedal_right;
 	uint8_t ui8_motor_temperature;
+	uint8_t ui8_esc_temperature;
 	uint32_t ui32_wheel_speed_sensor_tick_counter;
 	uint32_t ui32_wheel_speed_sensor_tick_counter_offset;
 	uint16_t ui16_battery_voltage_filtered_x10;
@@ -312,6 +314,7 @@ typedef struct ui_vars_struct {
 
     uint8_t ui8_ant_device_id;
     uint8_t ui8_enter_bootloader;
+
 } ui_vars_t;
 
 ui_vars_t* get_ui_vars(void);
