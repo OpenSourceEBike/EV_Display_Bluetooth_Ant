@@ -208,7 +208,7 @@ const configurations_t m_configurations_defaults = {
     7, // battery current
 
     9, // motorTempField
-    5, // motor power
+    13, // EscTempField
   },
 #endif
   .showNextScreenIndex = 0,

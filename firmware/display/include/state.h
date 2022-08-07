@@ -67,7 +67,7 @@ typedef struct battery_energy_h_km_struct {
 typedef struct rt_vars_struct {
 	uint16_t ui16_adc_battery_voltage;
 	uint8_t ui8_battery_current_div5;
-  uint16_t ui16_battery_power_loss;
+    uint16_t ui16_battery_power_loss;
 	uint8_t ui8_motor_current_x5;
 	uint8_t ui8_adc_throttle;
 	uint8_t ui8_throttle;
@@ -84,6 +84,7 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_motor_hall_sensors;
 	uint8_t ui8_pas_pedal_right;
 	uint8_t ui8_motor_temperature;
+	uint8_t ui8_esc_temperature;
 	uint32_t ui32_wheel_speed_sensor_tick_counter;
 	uint16_t ui16_battery_voltage_filtered_x10;
 	uint16_t ui16_battery_current_filtered_x5;
@@ -105,16 +106,17 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	uint16_t ui16_wheel_max_speed_x100;
+	uint16_t ui16_wheel_size;
 #endif
 	uint8_t ui8_units_type;
 	uint32_t ui32_wh_x10_offset;
 	uint32_t ui32_wh_x10_100_percent;
-  uint32_t ui32_wh_x10_remain;
+    uint32_t ui32_wh_x10_remain;
 	uint8_t ui8_target_max_battery_power_div25;
 	uint8_t ui8_battery_max_current;
 	uint8_t ui8_motor_max_current;
-  uint8_t ui8_motor_current_min_adc;
-  uint8_t ui8_field_weakening;
+    uint8_t ui8_motor_current_min_adc;
+    uint8_t ui8_field_weakening;
 	uint8_t ui8_ramp_up_amps_per_second_x10;
 	uint16_t ui16_battery_low_voltage_cut_off_x10;
 	uint16_t ui16_battery_voltage_reset_wh_counter_x10;
@@ -146,10 +148,10 @@ typedef struct rt_vars_struct {
 //   	uint16_t ui16_trip_b_avg_speed_x10;
 //   	uint16_t ui16_trip_b_max_speed_x10;
 
-	uint8_t ui8_lights;
-	uint8_t ui8_braking;
-	uint8_t ui8_walk_assist;
-	uint8_t ui8_offroad_mode;
+  uint8_t ui8_lights;
+  uint8_t ui8_braking;
+  uint8_t ui8_walk_assist;
+  uint8_t ui8_offroad_mode;
 
   uint8_t ui8_torque_sensor_calibration_feature_enabled;
   uint8_t ui8_torque_sensor_calibration_pedal_ground;
@@ -183,10 +185,10 @@ typedef struct rt_vars_struct {
 // #define NUM_CUSTOMIZABLE_FIELDS 6
 
 typedef struct ui_vars_struct {
-  uint8_t ui8_configurations_version;
+    uint8_t ui8_configurations_version;
 	uint16_t ui16_adc_battery_voltage;
 	uint8_t ui8_battery_current_div5;
-  uint16_t ui16_battery_power_loss;
+    uint16_t ui16_battery_power_loss;
 	uint8_t ui8_motor_current_x5;
 	uint8_t ui8_adc_throttle;
 	uint8_t ui8_throttle;
@@ -202,6 +204,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_motor_hall_sensors;
 	uint8_t ui8_pas_pedal_right;
 	uint8_t ui8_motor_temperature;
+	uint8_t ui8_esc_temperature;
 	uint32_t ui32_wheel_speed_sensor_tick_counter;
 	uint32_t ui32_wheel_speed_sensor_tick_counter_offset;
 	uint16_t ui16_battery_voltage_filtered_x10;
@@ -209,7 +212,7 @@ typedef struct ui_vars_struct {
 	uint16_t ui16_motor_current_filtered_x5;
 	uint16_t ui16_full_battery_power_filtered_x50;
 	uint16_t ui16_battery_power;
-  uint16_t ui16_battery_power_filtered_ui;
+    uint16_t ui16_battery_power_filtered_ui;
 	uint16_t ui16_pedal_torque_filtered;
 	uint16_t ui16_pedal_power;
 	uint8_t ui8_pedal_cadence_filtered;
@@ -225,11 +228,13 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	uint16_t ui16_wheel_max_speed_x100;
+	uint16_t ui16_wheel_size;
+//	uint8_t ui8_g_configuration_assist_levels;
 #endif
 	uint8_t ui8_units_type;
 	uint32_t ui32_wh_x10_offset;
 	uint32_t ui32_wh_x10_100_percent;
-  uint32_t ui32_wh_x10_remain;
+    uint32_t ui32_wh_x10_remain;
 	uint8_t ui8_battery_soc_enable;
 	uint8_t ui8_target_max_battery_power_div25;
 	uint8_t ui8_battery_max_current;
@@ -257,7 +262,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_motor_temperature_min_value_to_limit;
 	uint8_t ui8_motor_temperature_max_value_to_limit;
 	uint8_t ui8_system_power_off_time_minutes;
-  uint8_t ui8_lcd_backlight_on_brightness;
+    uint8_t ui8_lcd_backlight_on_brightness;
 	uint8_t ui8_lcd_backlight_off_brightness;
 	uint32_t ui32_odometer_x10;
 
@@ -279,16 +284,16 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_braking;
 	uint8_t ui8_walk_assist;
 	uint8_t ui8_offroad_mode;
-  uint8_t ui8_buttons_up_down_invert;
-  uint8_t ui8_display_invert;
+    uint8_t ui8_buttons_up_down_invert;
+    uint8_t ui8_display_invert;
 
 	uint8_t ui8_torque_sensor_calibration_feature_enabled;
 	uint8_t ui8_torque_sensor_calibration_pedal_ground;
 	uint16_t ui16_torque_sensor_calibration_table_left[8][2];
 	uint16_t ui16_torque_sensor_calibration_table_right[8][2];
 
-  uint8_t field_selectors[NUM_CUSTOMIZABLE_FIELDS]; // this array is opaque to the app, but the screen layer uses it to store which field is being displayed (it is stored to EEPROM)
-  uint8_t showNextScreenIndex;
+    uint8_t field_selectors[NUM_CUSTOMIZABLE_FIELDS]; // this array is opaque to the app, but the screen layer uses it to store which field is being displayed (it is stored to EEPROM)
+    uint8_t showNextScreenIndex;
 
 	uint8_t ui8_street_mode_function_enabled;
 	uint8_t ui8_street_mode_enabled;
@@ -299,17 +304,18 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_street_mode_throttle_enabled;
 	uint8_t ui8_street_mode_hotkey_enabled;
 
-  uint8_t ui8_pedal_cadence_fast_stop;
-  uint8_t ui8_coast_brake_adc;
-  uint16_t ui16_adc_battery_current;
-  uint8_t ui8_throttle_virtual;
-  uint8_t ui8_throttle_virtual_step;
-  uint8_t ui8_torque_sensor_filter;
-  uint8_t ui8_torque_sensor_adc_threshold;
-  uint8_t ui8_coast_brake_enable;
+    uint8_t ui8_pedal_cadence_fast_stop;
+    uint8_t ui8_coast_brake_adc;
+    uint16_t ui16_adc_battery_current;
+    uint8_t ui8_throttle_virtual;
+    uint8_t ui8_throttle_virtual_step;
+    uint8_t ui8_torque_sensor_filter;
+    uint8_t ui8_torque_sensor_adc_threshold;
+    uint8_t ui8_coast_brake_enable;
 
-  uint8_t ui8_ant_device_id;
-  uint8_t ui8_enter_bootloader;
+    uint8_t ui8_ant_device_id;
+    uint8_t ui8_enter_bootloader;
+
 } ui_vars_t;
 
 ui_vars_t* get_ui_vars(void);

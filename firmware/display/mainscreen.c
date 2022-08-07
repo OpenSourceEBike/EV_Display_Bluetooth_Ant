@@ -119,6 +119,7 @@ Field motorErpsField = FIELD_READONLY_UINT(_S("motor speed", "MOT SPEED"), &ui_v
 Field pwmDutyField = FIELD_READONLY_UINT(_S("motor pwm", "MOT PWM"), &ui_vars.ui8_duty_cycle, "", true, .div_digits = 0);
 Field motorFOCField = FIELD_READONLY_UINT(_S("motor foc", "MOT FOC"), &ui_vars.ui8_foc_angle, "", true, .div_digits = 0);
 Field batteryPowerPerKmField = FIELD_READONLY_UINT((char [MAX_BATTERY_POWER_USAGE_STR_LEN]){ 0 }, &ui_vars.battery_energy_km_value_x100, "kph", true, .div_digits = 2);
+Field EscTempField = FIELD_READONLY_UINT(_S("esc temp", "ESC TEMP"), &ui_vars.ui8_esc_temperature, "C", true, .div_digits = 0);
 
 
 Field warnField = FIELD_CUSTOM(renderWarning);
@@ -163,6 +164,7 @@ Field *customizables[] = {
 		&batteryPowerPerKmField, // 10
     &batteryPowerUsedField, // 11
     &batteryPowerRemainField, // 12
+    &EscTempField, //13
 		NULL
 };
 #endif
@@ -1044,5 +1046,11 @@ void onSetConfigurationBatterySOCUsedWh(uint32_t v) {
 #elif defined(MOTOR_BAFANG)
 void onSetConfigurationChangeMaxWheelSpeed(uint32_t v) {
   can_set_max_wheel_speed(v);
+}
+void onSetConfigurationChangeWheelSize(uint32_t v) {
+  can_set_wheel_size(v);
+}
+void onSetConfigurationChangeWheelPerimeter(uint32_t v) {
+  can_set_wheel_perimeter(v);
 }
 #endif

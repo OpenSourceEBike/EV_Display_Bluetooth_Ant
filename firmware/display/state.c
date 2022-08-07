@@ -274,6 +274,7 @@ void copy_rt_ui_vars(void) {
 	ui_vars.ui8_motor_hall_sensors = rt_vars.ui8_motor_hall_sensors;
 	ui_vars.ui8_pas_pedal_right = rt_vars.ui8_pas_pedal_right;
 	ui_vars.ui8_motor_temperature = rt_vars.ui8_motor_temperature;
+	ui_vars.ui8_esc_temperature = rt_vars.ui8_esc_temperature;
 	ui_vars.ui32_wheel_speed_sensor_tick_counter =
 			rt_vars.ui32_wheel_speed_sensor_tick_counter;
 	ui_vars.ui16_battery_voltage_filtered_x10 =
@@ -339,6 +340,9 @@ void copy_rt_ui_vars(void) {
 	rt_vars.ui16_wheel_perimeter = ui_vars.ui16_wheel_perimeter;
 #ifdef MOTOR_TSDZ2
 	rt_vars.ui8_wheel_max_speed = ui_vars.ui8_wheel_max_speed;
+#elif defined(MOTOR_BAFANG)
+	rt_vars.ui16_wheel_max_speed_x100 = ui_vars.ui16_wheel_max_speed_x100;
+	rt_vars.ui16_wheel_size = ui_vars.ui16_wheel_size;
 #endif
   rt_vars.ui8_motor_type = ui_vars.ui8_motor_type;
 	rt_vars.ui8_motor_current_control_mode = ui_vars.ui8_motor_current_control_mode;
