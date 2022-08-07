@@ -166,7 +166,8 @@ void can_processing(uint32_t ui32_time_now) {
     canMessage.frame.data2 = mp_ui_vars->ui8_lights | (up_down_button_state << 1); // bit 0 for light state; bit 1 for for UP or DOWN state
 
     canMessage.frame.data3 = (buttons_get_onoff_click_event() | buttons_get_onoff_long_click_event() | buttons_get_onoff_click_long_click_event()) ? 0: 1; // bit 0 for ON/OFF state
-    CANSPI_Transmit(&canMessage);
+    // CANSPI_Transmit(&canMessage);
+    // Not sending 'keep alive' if configured as second display!!! 
   }
 
   // process CAN messages
@@ -220,10 +221,18 @@ void can_processing(uint32_t ui32_time_now) {
         temp = temp + canMessage.frame.data0;
         mp_ui_vars->ui16_wheel_max_speed_x100 = temp;
 
-        // temp = canMessage.frame.data5;
-        // temp = temp << 8;
-        // temp = temp + canMessage.frame.data4;
-        // wheel_circunference = temp;
+        temp = canMessage.frame.data3;
+        temp = temp << 8;
+        temp = temp + canMessage.frame.data2;
+        temp = temp >> 4;
+        temp = temp * 10;
+        temp = temp + (canMessage.frame.data2 & 15);
+        mp_ui_vars->ui16_wheel_size = temp;
+
+        temp = canMessage.frame.data5;
+        temp = temp << 8;
+        temp = temp + canMessage.frame.data4;
+        mp_ui_vars->ui16_wheel_perimeter = temp;
       break;
 
       // brakes state
@@ -248,11 +257,11 @@ void can_set_max_wheel_speed(uint16_t value) {
   canMessage.frame.data1 = (value >> 8) & 0xff;
 
   // Wheel Size Byte 2/3: 29.0(1DHex) = D0 01 / 27.5(1B5Hex) = B5 01
-  canMessage.frame.data2 = 0xD0; // TODO
+  canMessage.frame.data2 = 0xC0; // TODO 28.0 inch
   canMessage.frame.data3 = 0x01; // TODO
 
   // Wheel perimeter Byte 4/5: 2280(8E8Hex) = E8 08 / 2240mm(8C0Hex) = C0 08
-  canMessage.frame.data4 = 0xE8; // TODO
+  canMessage.frame.data4 = 0x9D; // TODO 
   canMessage.frame.data5 = 0x08; // TODO
 
   // don´t know why but if sending only once the canMessage, sometimes the motor controller does not assume it

@@ -72,24 +72,18 @@
           "type": "shell",
           "args": [],
           "linux": {
-              "command": "openocd -c 'interface jlink; transport select swd; source [find target/nrf52.cfg]'"
+              "command": "openocd -c 'adapter driver cmsis-dap; cmsis_dap_backend hid; transport select swd; source [find target/nrf52.cfg]'"
           },
           "problemMatcher": []
         },
         {
-          "label": "OpenOCD ST-LINK",
+          "label": "OpenOCD nRF52_recovery",
           "type": "shell",
           "args": [],
           "linux": {
-              "command": "openocd",
-              "args": [
-                  "-f",
-                  "${workspaceFolder}/../../common_firmware/tools/openocd-scripts/stlink.cfg",
-                  "-f",
-                  "${workspaceFolder}/../../common_firmware/tools/openocd-scripts/nrf52.cfg"
-              ]
+              "command": "openocd -c 'adapter driver cmsis-dap; cmsis_dap_backend hid; transport select swd; source [find target/nrf52.cfg]' -c 'init' -c 'nrf52_recover' -c 'exit'"
           },
-            "problemMatcher": []
+          "problemMatcher": []
         }
     ]
 }
