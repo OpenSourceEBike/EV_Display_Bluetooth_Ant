@@ -340,6 +340,9 @@ void copy_rt_ui_vars(void) {
 	rt_vars.ui16_wheel_perimeter = ui_vars.ui16_wheel_perimeter;
 #ifdef MOTOR_TSDZ2
 	rt_vars.ui8_wheel_max_speed = ui_vars.ui8_wheel_max_speed;
+#elif defined(MOTOR_BAFANG)
+	rt_vars.ui16_wheel_max_speed_x100 = ui_vars.ui16_wheel_max_speed_x100;
+	rt_vars.ui16_wheel_size = ui_vars.ui16_wheel_size;
 #endif
   rt_vars.ui8_motor_type = ui_vars.ui8_motor_type;
 	rt_vars.ui8_motor_current_control_mode = ui_vars.ui8_motor_current_control_mode;

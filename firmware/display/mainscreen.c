@@ -1047,4 +1047,10 @@ void onSetConfigurationBatterySOCUsedWh(uint32_t v) {
 void onSetConfigurationChangeMaxWheelSpeed(uint32_t v) {
   can_set_max_wheel_speed(v);
 }
+void onSetConfigurationChangeWheelSize(uint32_t v) {
+  can_set_wheel_size(v);
+}
+void onSetConfigurationChangeWheelPerimeter(uint32_t v) {
+  can_set_wheel_perimeter(v);
+}
 #endif

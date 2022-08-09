@@ -68,7 +68,16 @@
             "group": "build"
         },
         {
-          "label": "OpenOCD JLink",
+            "label": "OpenOCD J-Link",
+            "type": "shell",
+            "args": [],
+            "linux": {
+                "command": "openocd -c 'interface jlink; transport select swd; source [find target/nrf52.cfg]'"
+            },
+            "problemMatcher": []
+          },
+        {
+          "label": "OpenOCD Cmsis-dap",
           "type": "shell",
           "args": [],
           "linux": {
@@ -77,13 +86,22 @@
           "problemMatcher": []
         },
         {
-          "label": "OpenOCD nRF52_recovery",
-          "type": "shell",
-          "args": [],
-          "linux": {
-              "command": "openocd -c 'adapter driver cmsis-dap; cmsis_dap_backend hid; transport select swd; source [find target/nrf52.cfg]' -c 'init' -c 'nrf52_recover' -c 'exit'"
-          },
-          "problemMatcher": []
+            "label": "OpenOCD J-Link nRF52_recovery",
+            "type": "shell",
+            "args": [],
+            "linux": {
+                "command": "openocd -c 'interface jlink; transport select swd; source [find target/nrf52.cfg]' -c 'init' -c 'nrf52_recover' -c 'exit'"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenOCD Cmsis-dap nRF52_recovery",
+            "type": "shell",
+            "args": [],
+            "linux": {
+                "command": "openocd -c 'adapter driver cmsis-dap; cmsis_dap_backend hid; transport select swd; source [find target/nrf52.cfg]' -c 'init' -c 'nrf52_recover' -c 'exit'"
+            },
+            "problemMatcher": []
         }
     ]
 }

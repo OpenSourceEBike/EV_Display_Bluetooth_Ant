@@ -106,6 +106,7 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	uint16_t ui16_wheel_max_speed_x100;
+	uint16_t ui16_wheel_size;
 #endif
 	uint8_t ui8_units_type;
 	uint32_t ui32_wh_x10_offset;

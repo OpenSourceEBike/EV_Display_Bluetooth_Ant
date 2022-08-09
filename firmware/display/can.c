@@ -166,8 +166,8 @@ void can_processing(uint32_t ui32_time_now) {
     canMessage.frame.data2 = mp_ui_vars->ui8_lights | (up_down_button_state << 1); // bit 0 for light state; bit 1 for for UP or DOWN state
 
     canMessage.frame.data3 = (buttons_get_onoff_click_event() | buttons_get_onoff_long_click_event() | buttons_get_onoff_click_long_click_event()) ? 0: 1; // bit 0 for ON/OFF state
-    // CANSPI_Transmit(&canMessage);
-    // Not sending 'keep alive' if configured as second display!!! 
+    CANSPI_Transmit(&canMessage);
+    // Not sending 'keep alive' if used as second display!!! 
   }
 
   // process CAN messages
@@ -247,23 +247,96 @@ void can_processing(uint32_t ui32_time_now) {
 void can_set_max_wheel_speed(uint16_t value) {
 
   static uCAN_MSG canMessage;
+  uint32_t temp_wheel_size;
   memset(&canMessage.frame, 0, sizeof(canMessage.frame));
   
   canMessage.frame.idType = dEXTENDED_CAN_MSG_ID_2_0B;
   canMessage.frame.id = 0x05103203; // must be 0x05xxxxx, if is 0x03xxxx, the motor controller will instead set the value to 25km/h
   canMessage.frame.dlc = 6;
 
-  // Max wheel speed limit Byte 0/1: 60.00km/h(1770Hex) = 70 17 / 25.00km/h(9C4Hex) = C4 09
   canMessage.frame.data0 = (value & 0xff);
   canMessage.frame.data1 = (value >> 8) & 0xff;
 
-  // Wheel Size Byte 2/3: 29.0(1DHex) = D0 01 / 27.5(1B5Hex) = B5 01
-  canMessage.frame.data2 = 0xC0; // TODO 28.0 inch
-  canMessage.frame.data3 = 0x01; // TODO
+  temp_wheel_size = (ui_vars.ui16_wheel_size / 10) & 0x0f;
+  temp_wheel_size = temp_wheel_size << 4;
+  temp_wheel_size += (ui_vars.ui16_wheel_size % 10);
+  canMessage.frame.data2 = temp_wheel_size; 
+  temp_wheel_size = ui_vars.ui16_wheel_size;
+  canMessage.frame.data3 = (temp_wheel_size >> 8) & 0xff;
 
-  // Wheel perimeter Byte 4/5: 2280(8E8Hex) = E8 08 / 2240mm(8C0Hex) = C0 08
-  canMessage.frame.data4 = 0x9D; // TODO 
-  canMessage.frame.data5 = 0x08; // TODO
+  canMessage.frame.data4 = (ui_vars.ui16_wheel_perimeter & 0xff);
+  canMessage.frame.data5 = (ui_vars.ui16_wheel_perimeter >> 8) & 0xff;
+
+  // don´t know why but if sending only once the canMessage, sometimes the motor controller does not assume it
+  // sending 5x and with the 100ms delay makes it works "always"
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+}
+void can_set_wheel_size(uint16_t value) {
+
+  static uCAN_MSG canMessage;
+  uint32_t temp_wheel_size;
+  memset(&canMessage.frame, 0, sizeof(canMessage.frame));
+  
+  canMessage.frame.idType = dEXTENDED_CAN_MSG_ID_2_0B;
+  canMessage.frame.id = 0x05103203; // must be 0x05xxxxx, if is 0x03xxxx, the motor controller will instead set the value to 25km/h
+  canMessage.frame.dlc = 6;
+
+  canMessage.frame.data0 = ((ui_vars.ui16_wheel_speed_x10 * 10) & 0xff);
+  canMessage.frame.data1 = ((ui_vars.ui16_wheel_speed_x10 * 10) >> 8) & 0xff;
+
+  temp_wheel_size = (value / 10) & 0x0f;
+  temp_wheel_size = temp_wheel_size << 4;
+  temp_wheel_size += (value % 10);
+  canMessage.frame.data2 = temp_wheel_size; 
+  canMessage.frame.data3 = (value >> 8) & 0xff;
+
+  canMessage.frame.data4 = (ui_vars.ui16_wheel_perimeter & 0xff);
+  canMessage.frame.data5 = (ui_vars.ui16_wheel_perimeter >> 8) & 0xff;
+
+  // don´t know why but if sending only once the canMessage, sometimes the motor controller does not assume it
+  // sending 5x and with the 100ms delay makes it works "always"
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+  CANSPI_Transmit(&canMessage);
+  nrf_delay_ms(100);
+}
+void can_set_wheel_perimeter(uint16_t value) {
+
+  static uCAN_MSG canMessage;
+  uint32_t temp_wheel_size;
+  memset(&canMessage.frame, 0, sizeof(canMessage.frame));
+  
+  canMessage.frame.idType = dEXTENDED_CAN_MSG_ID_2_0B;
+  canMessage.frame.id = 0x05103203; // must be 0x05xxxxx, if is 0x03xxxx, the motor controller will instead set the value to 25km/h
+  canMessage.frame.dlc = 6;
+
+  canMessage.frame.data0 = ((ui_vars.ui16_wheel_speed_x10 * 10) & 0xff);
+  canMessage.frame.data1 = ((ui_vars.ui16_wheel_speed_x10 * 10) >> 8) & 0xff;
+
+  temp_wheel_size = (ui_vars.ui16_wheel_size / 10) & 0x0f;
+  temp_wheel_size = temp_wheel_size << 4;
+  temp_wheel_size += (ui_vars.ui16_wheel_size % 10);
+  canMessage.frame.data2 = temp_wheel_size; 
+  temp_wheel_size = ui_vars.ui16_wheel_size;
+  canMessage.frame.data3 = (temp_wheel_size >> 8) & 0xff;
+
+  canMessage.frame.data4 = (value & 0xff);
+  canMessage.frame.data5 = (value >> 8) & 0xff;
 
   // don´t know why but if sending only once the canMessage, sometimes the motor controller does not assume it
   // sending 5x and with the 100ms delay makes it works "always"
