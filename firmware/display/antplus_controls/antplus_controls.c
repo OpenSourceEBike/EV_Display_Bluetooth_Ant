@@ -18,8 +18,6 @@
 #include "app_button.h"
 #include "nrf_pwr_mgmt.h"
 
-extern void shutdown(void);
-
 typedef struct
 {
   antplus_controls_page_t page_number;
@@ -150,40 +148,39 @@ void antplus_controls_sens_evt_handler(ant_evt_t *p_ant_evt, void *p_context)
       break;
 
     case EVENT_RX:
-      /*
-      if (p_ant_evt->message.ANT_MESSAGE_ucMesgID == MESG_BROADCAST_DATA_ID || p_ant_evt->message.ANT_MESSAGE_ucMesgID == MESG_ACKNOWLEDGED_DATA_ID || p_ant_evt->message.ANT_MESSAGE_ucMesgID == MESG_BURST_DATA_ID)
-      {
-         
-         uint8_t p_message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE];
-         antplus_controls_sens_cb_t *p_CONTROLS_cb = p_profile->_cb.p_sens_cb;
+      // if (p_ant_evt->message.ANT_MESSAGE_ucMesgID == MESG_BROADCAST_DATA_ID ||
+      //     p_ant_evt->message.ANT_MESSAGE_ucMesgID == MESG_ACKNOWLEDGED_DATA_ID ||
+      //     p_ant_evt->message.ANT_MESSAGE_ucMesgID == MESG_BURST_DATA_ID)
+      // {
+      //    uint8_t p_message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE];
+      //    antplus_controls_sens_cb_t *p_CONTROLS_cb = p_profile->_cb.p_sens_cb;
 
-         bool buttons_page_sent = buttons_clock_pag73(p_profile);
+      //    bool buttons_page_sent = buttons_clock_pag73(p_profile);
       
 
-       //only look to send for requested pages if no button pages sent
-       //  if (buttons_page_sent == false) {
-         ant_request_controller_sens_evt_handler(&(p_CONTROLS_cb->req_controller), p_ant_evt);
+      //  //only look to send for requested pages if no button pages sent
+      //  //  if (buttons_page_sent == false) {
+      //    ant_request_controller_sens_evt_handler(&(p_CONTROLS_cb->req_controller), p_ant_evt);
 
-         bool page_encoded = message_encode(p_profile, p_message_payload);
-         if (page_encoded)
-         {
-           if (ant_request_controller_ack_needed(&(p_CONTROLS_cb->req_controller)))
-           {
-             err_code = sd_ant_acknowledge_message_tx(p_profile->channel_number,
-                                                     sizeof(p_message_payload),
-                                                     p_message_payload);
-           }
-           else
-           {
-             err_code = sd_ant_broadcast_message_tx(p_profile->channel_number,
-                                                   sizeof(p_message_payload),
-                                                   p_message_payload);
-           }
-           APP_ERROR_CHECK(err_code);
-         }
-         }
-      }
-      */
+      //    bool page_encoded = message_encode(p_profile, p_message_payload);
+      //    if (page_encoded)
+      //    {
+      //      if (ant_request_controller_ack_needed(&(p_CONTROLS_cb->req_controller)))
+      //      {
+      //        err_code = sd_ant_acknowledge_message_tx(p_profile->channel_number,
+      //                                                sizeof(p_message_payload),
+      //                                                p_message_payload);
+      //      }
+      //      else
+      //      {
+      //        err_code = sd_ant_broadcast_message_tx(p_profile->channel_number,
+      //                                              sizeof(p_message_payload),
+      //                                              p_message_payload);
+      //      }
+      //      APP_ERROR_CHECK(err_code);
+      //    }
+      //    }
+      // }
       break;
 
     case EVENT_CHANNEL_CLOSED:
