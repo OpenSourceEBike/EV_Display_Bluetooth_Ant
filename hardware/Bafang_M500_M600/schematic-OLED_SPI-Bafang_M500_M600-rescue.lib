@@ -25,6 +25,24 @@ X VCC 7 300 350 100 D 50 50 1 1 I
 ENDDRAW
 ENDDEF
 #
+# DC-DC
+#
+DEF DC-DC U 0 40 Y Y 1 F N
+F0 "U" 0 0 60 H V C CNN
+F1 "DC-DC" 0 250 60 H V C CNN
+F2 "" -50 0 60 H V C CNN
+F3 "" -50 0 60 H V C CNN
+DRAW
+S -300 200 300 -200 0 1 0 N
+X IN+ 1 -500 100 200 R 50 50 1 1 W
+X 10 10 0 -400 200 U 50 50 1 1 W
+X OUT+ 5 500 100 200 L 50 50 1 1 w
+X 6 6 -100 -400 200 U 50 50 1 1 W
+X OUT- 7 500 -100 200 L 50 50 1 1 w
+X IN- 9 -500 -100 200 R 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
 # Generic_DC-DC-Wireless_eBike-Wireless_Ebike-Wired_remote-rescue
 #
 DEF Generic_DC-DC-Wireless_eBike-Wireless_Ebike-Wired_remote-rescue U 0 40 Y Y 1 F N
