@@ -5,11 +5,17 @@
 #include "antplus_controls.h"
 #include "utils.h"
 
-// #define DEVELOPMENT
+// uncomment for development 
+#define DEVELOPMENT
 
-#ifndef MOTOR_BAFANG
-#define MOTOR_BAFANG
-#endif
+// #ifdef DEVELOPMENT
+
+// #warning WARNING
+// #warning DEVELOPMENT version!!!
+
+// #define DISPLAY_SH1106
+// #define DDISPLAY_SPI
+// #endif
 
 extern antplus_controls_profile_t m_antplus_controls;
 

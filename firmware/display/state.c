@@ -15,6 +15,7 @@
 #include "ledalert.h"
 #include "display.h"
 #include "buttons.h"
+#include "nrf_delay.h"
 
 typedef enum {
   FRAME_TYPE_ALIVE = 0,
@@ -520,6 +521,9 @@ static void motor_init(void) {
 
       case MOTOR_INIT_WAIT_MOTOR_FIRMWARE_VERSION:
         rt_send_tx_package(FRAME_TYPE_FIRMWARE_VERSION);
+
+        // nrf_delay_ms(10); // give time for the motor controlller board to process previous data
+
         // check timeout
         ui16_motor_init_command_error_cnt--;
         if (ui16_motor_init_command_error_cnt == 0) {
@@ -540,6 +544,7 @@ static void motor_init(void) {
 
       case MOTOR_INIT_SET_CONFIGURATIONS:
         ui16_motor_init_command_error_cnt = 2000;
+        ui8_motor_init_status_cnt = 10;
         g_motor_init_state_conf = MOTOR_INIT_CONFIG_SEND_CONFIG;
         g_motor_init_state = MOTOR_INIT_WAIT_CONFIGURATIONS_OK;
         // not break here to follow for next case
@@ -556,8 +561,14 @@ static void motor_init(void) {
         switch (g_motor_init_state_conf) {
           case MOTOR_INIT_CONFIG_SEND_CONFIG:
             rt_send_tx_package(FRAME_TYPE_CONFIGURATIONS);
-            ui8_motor_init_status_cnt = 20;
-            g_motor_init_state_conf = MOTOR_INIT_CONFIG_GET_STATUS;
+
+            // nrf_delay_ms(10); // give time for the motor controlller board to process previous data
+
+            ui8_motor_init_status_cnt--;
+            if (ui8_motor_init_status_cnt == 0) {
+              ui8_motor_init_status_cnt = 10;
+              g_motor_init_state_conf = MOTOR_INIT_CONFIG_GET_STATUS;
+            }
             break;
 
           case MOTOR_INIT_CONFIG_GET_STATUS:
