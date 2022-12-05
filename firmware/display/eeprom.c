@@ -35,7 +35,7 @@ const configurations_t m_configurations_defaults = {
   .ui8_configurations_version = CONFIGURATIONS_VERSION,
   .ui8_assist_level = DEFAULT_VALUE_ASSIST_LEVEL,
   .ui16_wheel_perimeter = DEFAULT_VALUE_WHEEL_PERIMETER,
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   .ui8_wheel_max_speed = DEFAULT_VALUE_WHEEL_MAX_SPEED,
 #elif defined(MOTOR_BAFANG)
   .ui16_wheel_max_speed_x100 = DEFAULT_VALUE_WHEEL_MAX_SPEED * 100,
@@ -188,7 +188,7 @@ const configurations_t m_configurations_defaults = {
   .ui8_ant_device_id = DEFAULT_ANT_LEV_ID,
   .ui8_enter_bootloader = 0,
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   .field_selectors = {
     0, // upTimeField
     5, // motor power
@@ -381,7 +381,7 @@ void eeprom_init_variables(void) {
   ui_vars->ui8_configurations_version = m_configurations.ui8_configurations_version;
 	ui_vars->ui8_assist_level = m_configurations.ui8_assist_level;
 	ui_vars->ui16_wheel_perimeter = m_configurations.ui16_wheel_perimeter;
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 	ui_vars->ui8_wheel_max_speed = m_configurations.ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	ui_vars->ui16_wheel_max_speed_x100 = m_configurations.ui16_wheel_max_speed_x100;
@@ -498,7 +498,7 @@ void eeprom_write_variables(void) {
 	ui_vars_t *ui_vars = get_ui_vars();
 	m_configurations.ui8_assist_level = ui_vars->ui8_assist_level;
 	m_configurations.ui16_wheel_perimeter = ui_vars->ui16_wheel_perimeter;
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 	m_configurations.ui8_wheel_max_speed = ui_vars->ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	m_configurations.ui16_wheel_max_speed_x100 = ui_vars->ui16_wheel_max_speed_x100;

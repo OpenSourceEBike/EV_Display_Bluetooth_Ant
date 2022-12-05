@@ -11,7 +11,7 @@
 
 static Field wheelMenus[] =
     {
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
         FIELD_EDITABLE_UINT("Max speed", &ui_vars.ui8_wheel_max_speed, "kph", 1, 99, .div_digits = 0, .inc_step = 1, .hide_fraction = true),
         FIELD_EDITABLE_UINT(_S("Circumference", "Circumfere"), &ui_vars.ui16_wheel_perimeter, "mm", 750, 3000, .inc_step = 5),
 #elif defined(MOTOR_BAFANG)
@@ -29,7 +29,7 @@ static Field batterySOCMenus[] =
         FIELD_EDITABLE_UINT("Used Wh", &ui_vars.ui32_wh_x10, "whr", 0, 99900, .div_digits = 1, .inc_step = 100, .onSetEditable = onSetConfigurationBatterySOCUsedWh),
         FIELD_END};
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 static Field batteryMenus[] =
     {
         FIELD_EDITABLE_UINT(_S("Max current", "Max curren"), &ui_vars.ui8_battery_max_current, "amps", 1, 20),
@@ -49,7 +49,7 @@ static Field batteryMenus[] =
         FIELD_END};
 #endif
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 static Field motorMenus[] = {
     FIELD_EDITABLE_ENUM(_S("Motor voltage", "Motor volt"), &ui_vars.ui8_motor_type, "48V", "36V"),
     FIELD_EDITABLE_UINT(_S("Max current", "Max curren"), &ui_vars.ui8_motor_max_current, "amps", 1, 30),
@@ -207,7 +207,7 @@ static Field variousMenus[] = {
 //       FIELD_EDITABLE_ENUM(_S("Hotkey enable", "HotKy enab"), &ui_vars.ui8_street_mode_hotkey_enabled, "no", "yes"),
 //     FIELD_END };
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 static Field displayMenus[] =
     {
         FIELD_EDITABLE_UINT(_S("Auto power off", "Auto p off"), &ui_vars.ui8_system_power_off_time_minutes, "mins", 0, 255),
@@ -227,7 +227,7 @@ static Field displayMenus[] =
         FIELD_END};
 #endif
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 static Field technicalMenus[] = {
     FIELD_READONLY_UINT(_S("ADC battery current", "ADC bat cu"), &ui_vars.ui16_adc_battery_current, ""),
     FIELD_READONLY_UINT(_S("ADC throttle sensor", "ADC thrott"), &ui_vars.ui8_adc_throttle, ""),
@@ -251,7 +251,7 @@ static Field technicalMenus[] = {
     FIELD_END};
 #endif
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 static Field topMenus[] = {
     // FIELD_SCROLLABLE("Trip memories", tripMenus),
     FIELD_SCROLLABLE("Wheel", wheelMenus),

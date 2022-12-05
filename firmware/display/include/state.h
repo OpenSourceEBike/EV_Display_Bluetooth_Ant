@@ -19,6 +19,8 @@
 #define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 866
 #elif MOTOR_BAFANG
 #define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 100 // for Bafang M500/M600, each step equal to 10mv, to simulate the voltage calculated with ADC steps
+#elif MOTOR_VESC
+#define ADC_BATTERY_VOLTAGE_PER_ADC_STEP_X10000 100 // for VESC, each step equal to 10mv, to simulate the voltage calculated with ADC steps
 #endif
 
 #define NUM_CUSTOMIZABLE_FIELDS 6
@@ -102,7 +104,7 @@ typedef struct rt_vars_struct {
 	uint8_t ui8_assist_level;
 	uint8_t ui8_number_of_assist_levels;
 	uint16_t ui16_wheel_perimeter;
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 	uint8_t ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	uint16_t ui16_wheel_max_speed_x100;
@@ -224,7 +226,7 @@ typedef struct ui_vars_struct {
 	uint8_t ui8_assist_level;
 	uint8_t ui8_number_of_assist_levels;
 	uint16_t ui16_wheel_perimeter;
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 	uint8_t ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	uint16_t ui16_wheel_max_speed_x100;

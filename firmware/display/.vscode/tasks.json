@@ -4,6 +4,22 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build VESC DISPLAY_OLED_1.3_SPI",
+            "type": "shell",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "linux": {
+                "command": "make default MOTOR_VESC=1 DISPLAY_OLED_1.3_SPI=1"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "build TSDZ2 DISPLAY_OLED_1.3_SPI",
             "type": "shell",
             "args": [],

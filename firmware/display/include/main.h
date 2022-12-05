@@ -6,16 +6,7 @@
 #include "utils.h"
 
 // uncomment for development 
-#define DEVELOPMENT
-
-// #ifdef DEVELOPMENT
-
-// #warning WARNING
-// #warning DEVELOPMENT version!!!
-
-// #define DISPLAY_SH1106
-// #define DDISPLAY_SPI
-// #endif
+// #define DEVELOPMENT
 
 extern antplus_controls_profile_t m_antplus_controls;
 

@@ -128,7 +128,7 @@ Field warnField = FIELD_CUSTOM(renderWarning);
  * NOTE: The indexes into this array are stored in EEPROM, to prevent user confusion add new options only at the end.
  * If you remove old values, either warn users or bump up eeprom version to force eeprom contents to be discarded.
  */
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 Field *customizables[] = {
     &upTimeField, // 0
     &odoField, // 1
@@ -178,9 +178,15 @@ Field custom1 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[0], customizable
   custom6 = FIELD_CUSTOMIZABLE_PTR(&ui_vars.field_selectors[5], customizables);
 
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2)
 Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
    bootURL_1 = FIELD_DRAWTEXT_RO("TSDZ2"),
+   bootURL_2 = FIELD_DRAWTEXT_RO(""),
+   bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
+   bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
+#elif defined(MOTOR_VESC)
+Field bootHeading = FIELD_DRAWTEXT_RO("EasyDIY"),
+   bootURL_1 = FIELD_DRAWTEXT_RO("VESC"),
    bootURL_2 = FIELD_DRAWTEXT_RO(""),
    bootVersion = FIELD_DRAWTEXT_RO(VERSION_STRING),
    bootStatus2 = FIELD_DRAWTEXT_RW(.msg = "");
@@ -199,7 +205,7 @@ static void bootScreenOnPreUpdate() {
         buttons_clear_all_events();
         showNextScreen();
       } else {
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
         if ((g_motor_init_state == MOTOR_INIT_WAIT_GOT_CONFIGURATIONS_OK) ||
             (g_motor_init_state == MOTOR_INIT_READY)) {
           fieldPrintf(&bootStatus2, "%u.%u.%u",
@@ -246,7 +252,7 @@ Screen bootScreen = {
       .field = &bootVersion,
       .font = &SMALL_TEXT_FONT,
     },
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
     {
       .x = 0, .y = YbyEighths(7), .height = -1,
       .field = &bootStatus2,
@@ -573,7 +579,7 @@ void mainscreen_clock(void) {
   DisplayResetToDefaults();
   TripMemoriesReset();
   DisplayResetBluetoothPeers();
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 #elif defined(MOTOR_BAFANG)
   updateAssistLevels();
   torqueSensorCalibration();
@@ -764,7 +770,7 @@ void showNextScreen() {
 bool appwide_onpress(buttons_events_t events)
 {
 // on Bafang M500/M600, at long press, the motor controller will turn off the display power
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   if (events & ONOFF_LONG_CLICK)
   {
     system_power_off(1);
@@ -921,7 +927,7 @@ void batteryCurrent(void) {
 
 void batteryResistance(void) {
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   #define CALC_BATTERY_RESISTANCE_MIN_CURRENT 10
 #elif defined(MOTOR_BAFANG)
   #define CALC_BATTERY_RESISTANCE_MIN_CURRENT 6
@@ -953,7 +959,7 @@ void batteryResistance(void) {
 
     case STARTUP:
       // wait for motor running and at high battery current
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
       if ((ui_vars.ui16_motor_speed_erps > 10) &&
           (ui_vars.ui16_battery_current_filtered_x5 > CALC_BATTERY_RESISTANCE_MIN_CURRENT)) {
 #elif defined(MOTOR_BAFANG)
@@ -1007,8 +1013,12 @@ void batteryPower(void) {
 
   uint16_t ui16_battery_power = ui_vars.ui16_battery_power;
 
+  // do not loose resolution under 20W
+  if (ui16_battery_power < 20) {
+
+  }
   // loose resolution under 200W
-  if (ui16_battery_power < 200) {
+  else if (ui16_battery_power < 200) {
     ui16_battery_power /= 10;
     ui16_battery_power *= 10;
   }
@@ -1042,7 +1052,7 @@ void onSetConfigurationBatterySOCUsedWh(uint32_t v) {
   ui_vars.ui32_wh_x10_offset = v;
 }
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 #elif defined(MOTOR_BAFANG)
 void onSetConfigurationChangeMaxWheelSpeed(uint32_t v) {
   can_set_max_wheel_speed(v);

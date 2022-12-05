@@ -24,7 +24,7 @@ typedef enum {
 // NRF52840 NORDIC Dongle
 #if defined(BOARD_PCA10059)
                        
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 typedef enum {
     PLUS__PIN  = 13,
     MINUS__PIN  = 15,

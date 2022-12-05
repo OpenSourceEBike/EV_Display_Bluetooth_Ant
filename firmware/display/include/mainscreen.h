@@ -35,7 +35,7 @@ extern Field
   pwmDutyField,
   motorFOCField,
   motorTempGraph,
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   bootStatus2,
 #endif
   custom1, custom2,

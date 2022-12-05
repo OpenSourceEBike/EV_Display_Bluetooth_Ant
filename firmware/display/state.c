@@ -87,7 +87,7 @@ void automatic_power_off_management(void) {
 	}
 }
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 void rt_send_tx_package(frame_type_t type) {
   uint8_t crc_len = 3; // minimun is 3
 	uint8_t *ui8_usart1_tx_buffer = uart_get_tx_buffer();
@@ -339,7 +339,7 @@ void copy_rt_ui_vars(void) {
 	rt_vars.ui16_battery_low_voltage_cut_off_x10 =
 			ui_vars.ui16_battery_low_voltage_cut_off_x10;
 	rt_vars.ui16_wheel_perimeter = ui_vars.ui16_wheel_perimeter;
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 	rt_vars.ui8_wheel_max_speed = ui_vars.ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	rt_vars.ui16_wheel_max_speed_x100 = ui_vars.ui16_wheel_max_speed_x100;
@@ -428,7 +428,7 @@ void communications(void) {
           break;
 
         case FRAME_TYPE_PERIODIC:
-          rt_vars.ui16_adc_battery_voltage = p_rx_buffer[3] | (((uint16_t) (p_rx_buffer[4] & 0x30)) << 4);
+          rt_vars.ui16_adc_battery_voltage = ((uint16_t) p_rx_buffer[3]) | (((uint16_t) p_rx_buffer[4] << 8));
           rt_vars.ui8_battery_current_div5 = p_rx_buffer[5];
           ui16_temp = ((uint16_t) p_rx_buffer[6]) | (((uint16_t) p_rx_buffer[7] << 8));
           rt_vars.ui16_wheel_speed_x10 = ui16_temp & 0x7ff; // 0x7ff = 204.7km/h as the other bits are used for other things
@@ -522,8 +522,6 @@ static void motor_init(void) {
       case MOTOR_INIT_WAIT_MOTOR_FIRMWARE_VERSION:
         rt_send_tx_package(FRAME_TYPE_FIRMWARE_VERSION);
 
-        // nrf_delay_ms(10); // give time for the motor controlller board to process previous data
-
         // check timeout
         ui16_motor_init_command_error_cnt--;
         if (ui16_motor_init_command_error_cnt == 0) {
@@ -562,7 +560,7 @@ static void motor_init(void) {
           case MOTOR_INIT_CONFIG_SEND_CONFIG:
             rt_send_tx_package(FRAME_TYPE_CONFIGURATIONS);
 
-            // nrf_delay_ms(10); // give time for the motor controlller board to process previous data
+            nrf_delay_ms(30); // give time for the motor controlller board to process previous data
 
             ui8_motor_init_status_cnt--;
             if (ui8_motor_init_status_cnt == 0) {
@@ -874,7 +872,7 @@ void rt_calc_battery_soc(void) {
 	if (ui32_temp > 100)
 		ui32_temp = 100;
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   ui8_g_battery_soc = (uint8_t) (100 - ui32_temp);
 #endif
 }
@@ -882,7 +880,7 @@ void rt_calc_battery_soc(void) {
 // Note: this is called from ISR context every 50ms
 void rt_processing(void)
 {
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   communications();
 
   // called here because this state machine for motor_init should run every 100ms

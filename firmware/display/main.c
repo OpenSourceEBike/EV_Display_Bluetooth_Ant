@@ -1113,7 +1113,7 @@ int main(void)
 
   ble_init();
   ant_setup();
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   uart_init();
 #endif
 
@@ -1129,7 +1129,7 @@ int main(void)
 
   led_sequence_play(LED_EVENT_WIRELESS_BOARD_POWER_ON);
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
   #ifdef DISPLAY_I2C
     ssd1306_init_i2c();
   #elif defined(DISPLAY_SPI)
@@ -1143,7 +1143,7 @@ int main(void)
   spi_init();
   CANSPI_Initialize();
 #else
-  #error MUST define MOTOR_TSDZ2 or MOTOR_BAFANG
+  #error MUST define MOTOR_TSDZ2, MOTOR_BAFANG or MOTOR_VESC
 #endif
 
   // init the display
@@ -1223,7 +1223,7 @@ int main(void)
       }
     }
 
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 
 #elif defined(MOTOR_BAFANG)
     // process the CAN messages

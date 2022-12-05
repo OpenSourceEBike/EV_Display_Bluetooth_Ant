@@ -15,7 +15,7 @@
 
 // EEPROM memory variables default values
 #define DEFAULT_VALUE_ASSIST_LEVEL                                  0
-#ifdef MOTOR_TSDZ2
+#if defined MOTOR_TSDZ2 || MOTOR_VESC
 #define DEFAULT_VALUE_NUMBER_OF_ASSIST_LEVELS                       20
 #elif defined(MOTOR_BAFANG)
 #define DEFAULT_VALUE_NUMBER_OF_ASSIST_LEVELS                       9
@@ -171,7 +171,7 @@
 typedef struct configurations {
 	uint8_t ui8_assist_level;
 	uint16_t ui16_wheel_perimeter;
-#ifdef MOTOR_TSDZ2
+#if defined(MOTOR_TSDZ2) || defined(MOTOR_VESC)
 	uint8_t ui8_wheel_max_speed;
 #elif defined(MOTOR_BAFANG)
 	uint16_t ui16_wheel_max_speed_x100;
