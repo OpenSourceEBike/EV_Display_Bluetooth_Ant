@@ -1,1 +1,1 @@
-# ev_display_bluetooth_ant
+See here for instructions on how to build the display: https://opensourceebike.github.io/
