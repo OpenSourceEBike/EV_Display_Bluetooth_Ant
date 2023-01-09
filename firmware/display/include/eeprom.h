@@ -112,7 +112,7 @@
 #define DEFAULT_VALUE_OFFROAD_POWER_LIMIT_DIV25                     10 //10 * 25 = 250W
 #define DEFAULT_VALUE_ODOMETER_X10                                  0
 #define DEFAULT_VALUE_BUTTONS_UP_DOWN_INVERT                        0 // regular state
-#define DEFAULT_VALUE_DISPLAY_INVERT                    		    0 // regular state
+#define DEFAULT_VALUE_DISPLAY_INVERT                    		    1 // regular state
 #define DEFAULT_STREET_MODE_FUNCTION_ENABLE                         0 // disabled
 #define DEFAULT_STREET_MODE_ENABLE_AT_STARTUP                       0 // disabled
 #define DEFAULT_STREET_MODE_ENABLE                                  0 // disabled

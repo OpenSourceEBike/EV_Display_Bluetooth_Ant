@@ -212,6 +212,8 @@ static Field displayMenus[] =
     {
         FIELD_EDITABLE_UINT(_S("Auto power off", "Auto p off"), &ui_vars.ui8_system_power_off_time_minutes, "mins", 0, 255),
         FIELD_EDITABLE_ENUM("Units", &ui_vars.ui8_units_type, "SI", "Imperial"),
+        FIELD_EDITABLE_ENUM("Butt inv", &ui_vars.ui8_buttons_up_down_invert, "default", "invert"),
+        FIELD_EDITABLE_ENUM("Disp inv", &ui_vars.ui8_display_invert, "default", "invert"),
         FIELD_EDITABLE_ENUM(_S("Reset BLE connections", "Reset BLE"), &ui8_g_configuration_display_reset_bluetooth_peers, "no", "yes"),
         FIELD_EDITABLE_ENUM(_S("Reset to defaults", "Reset def"), &ui8_g_configuration_display_reset_to_defaults, "no", "yes"),
         FIELD_END};

@@ -577,7 +577,7 @@ void ssd1306_display(void)
   uint32_t buffer_index = 0;
   for (uint8_t page = 0; page < 8; page++) {
     ssd1306_command(0xB0 + page); // Set the current RAM page address.
-    ssd1306_command(0x00);
+    ssd1306_command(0x02);
     ssd1306_command(0x10);
     
     _HI_DC(); // data mode
@@ -620,8 +620,7 @@ void ssd1306_display(void)
   uint32_t buffer_index = 0;
   for (uint8_t page = 0; page < 8; page++) {
     ssd1306_command(0xB0 + page); // Set the current RAM page address.
-    ssd1306_command(0x02);
-    ssd1306_command(0x10);
+    ssd1306_command(0x02); //0x02 - 2 pixels offset
     
     _HI_DC(); // data mode
     _LO_CS();    
