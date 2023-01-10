@@ -1,7 +1,9 @@
 import board
 import display_sh1106
-import terminalio
+import displayio
+import time
 from adafruit_display_text import label
+from fruity_menu.menu import Menu
 
 displayObject = display_sh1106.Display(
     board.IO7, # CLK pin
@@ -12,21 +14,31 @@ displayObject = display_sh1106.Display(
     1000000) # spi clock frequency
 display = displayObject.display
 
-# Set text, font, and color
-text = "HELLO"
-font = terminalio.FONT
-color = 0xFFFFFF
+def test1():
+    print("test 1")
 
-# Create the text label
-text_area = label.Label(font, text=text, color=color)
+def test2():
+    print("test 2")
 
-# Set the location
-text_area.x = 2
-text_area.y = int(text_area.height / 2)
+def test3():
+    print("test 3")
 
-# Show it
-display.show(text_area)
+menu = Menu(display, 64, 132, title='Menu', )
+menu.add_action_button('one', action = test1)
+
+menu_2 = Menu(display, 64, 132, title='M 2', )
+menu_2.add_action_button('ONE 1', action = test1)
+
+menu.add_action_button('two', action = test2)
+menu.add_action_button('3', action = test3)
+menu.add_submenu_button('sub one', menu_2)
+
+menu.add_value_button("t", 10, None, None, 1, 0, 100)
+
 
 # Loop forever so you can enjoy your image
 while True:
-    pass
+    menu.scroll(1)
+    menu.click()
+    menu.show_menu()
+    time.sleep(1)
