@@ -117,10 +117,12 @@ class EBikeBoard(object):
     def _process_data(self):
         if self._rx_package.received == True:
             self._ebike_data.battery_voltage = struct.unpack_from('<H', self._rx_package.data, 2)[0] / 100.0
-            self._ebike_data.battery_current = struct.unpack_from('<B', self._rx_package.data, 4)[0] / 5.0
+            self._ebike_data.battery_current = self._rx_package.data[4] / 5.0
             self._ebike_data.motor_power = struct.unpack_from('<H', self._rx_package.data, 5)[0]
             self._ebike_data.vesc_temperature_x10 = struct.unpack_from('<H', self._rx_package.data, 7)[0]
             self._ebike_data.motor_temperature_sensor_x10 = struct.unpack_from('<H', self._rx_package.data, 9)[0]
+            self._ebike_data.vesc_fault_code = self._rx_package.data[11]
+            self._ebike_data.brakes_are_active = self._rx_package.data[12]
 
             self._rx_package.received = False # signal that next package can be processed
                 

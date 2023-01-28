@@ -37,21 +37,16 @@ def motor_power_round(motor_power):
 
     if motor_power < 10:
         motor_power = 0
-    elif motor_power < 20:
-        motor_power /= 2.5
-        motor_power *= 2.5
     elif motor_power < 100:
-        motor_power /= 5
-        motor_power *= 5
-    elif motor_power < 250:
-        motor_power /= 10
-        motor_power *= 10
-    elif motor_power < 500:
-        motor_power /= 20
-        motor_power *= 20
-    elif motor_power < 500:
-        motor_power /= 25
-        motor_power *= 25
+        motor_power = motor_power - (motor_power % 5)
+    elif motor_power < 200:
+        motor_power = motor_power - (motor_power % 10)
+    elif motor_power < 300:
+        motor_power = motor_power - (motor_power % 15)
+    elif motor_power < 400:
+        motor_power = motor_power - (motor_power % 20)
+    else:
+        motor_power = motor_power - (motor_power % 25)
 
     return int(motor_power)
 
@@ -85,12 +80,18 @@ label_3.anchor_point = (0.0, 0.0)
 label_3.anchored_position = (label_x, label_y)
 label_3.scale = 2
 
+warning_area = label.Label(terminalio.FONT, text=TEXT)
+warning_area.anchor_point = (0.0, 0.0)
+warning_area.anchored_position = (2, 116)
+warning_area.scale = 1
+
 text_group = displayio.Group()
 text_group.append(assist_level_area)
 text_group.append(battery_voltage_area)
 text_group.append(label_1)
 text_group.append(label_2)
 text_group.append(label_3)
+text_group.append(warning_area)
 
 display.show(text_group)
 
@@ -104,6 +105,8 @@ battery_voltage_previous = 9999
 motor_power_previous = 9999
 motor_temperature_sensor_x10_previous = 9999
 vesc_temperature_x10_previous = 9999
+brakes_are_active_previous = False
+vesc_fault_code_previous = 9999
 
 while True:
     now = time.monotonic()
@@ -117,7 +120,7 @@ while True:
         if motor_power_previous != ebike_data.motor_power:
             motor_power_previous = ebike_data.motor_power
             motor_power = motor_power_round(ebike_data.motor_power)
-            label_1.text = str(f"{motor_power:5}")
+            label_1.text = str(f"{ebike_data.motor_power:5}")
         
         if motor_temperature_sensor_x10_previous != ebike_data.motor_temperature_sensor_x10:
             motor_temperature_sensor_x10_previous = ebike_data.motor_temperature_sensor_x10  
@@ -128,6 +131,19 @@ while True:
             label_3.text = str(f"{(ebike_data.vesc_temperature_x10 / 10.0): 2.1f}")    
 
     ebike.process_data()
+
+    if brakes_are_active_previous != ebike_data.brakes_are_active:
+        brakes_are_active_previous = ebike_data.brakes_are_active
+        if ebike_data.brakes_are_active:
+            warning_area.text = str("brakes")
+        else:
+            warning_area.text = str("")
+    elif vesc_fault_code_previous != ebike_data.vesc_fault_code:
+        vesc_fault_code_previous = ebike_data.vesc_fault_code
+        if ebike_data.vesc_fault_code:
+            warning_area.text = str(f"mot e: {ebike_data.vesc_fault_code}")
+        else:
+            warning_area.text = str("")
 
     now = time.monotonic()
     if (now - assist_level_time_previous) > 0.05:

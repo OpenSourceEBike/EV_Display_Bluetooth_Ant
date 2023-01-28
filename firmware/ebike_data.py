@@ -14,7 +14,6 @@ class EBike(object):
         self.cadence = 0
         self.ramp_last_time = time.monotonic_ns()
         self.motor_current_target = 0
-        self.brakes_counter = 0
         self.assist_level = 0
         self.vesc_temperature_x10 = 0
         self.motor_temperature_sensor_x10 = 0
