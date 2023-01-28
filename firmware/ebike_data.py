@@ -18,3 +18,4 @@ class EBike(object):
         self.assist_level = 0
         self.vesc_temperature_x10 = 0
         self.motor_temperature_sensor_x10 = 0
+        
