@@ -1,1 +1,1 @@
-See here for instructions on how to build the display: https://opensourceebike.github.io/
+This project files were moved to: https://github.com/OpenSourceEBike/EBike_EScooter_modular_DIY
